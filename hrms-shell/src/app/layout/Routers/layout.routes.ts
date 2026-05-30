@@ -1,6 +1,5 @@
 import { Routes } from "@angular/router";
 import { Layout } from "../layout/layout";
-import { loadRemoteModule } from '@angular-architects/module-federation';
 
 
 export const layoutRoutes: Routes = [

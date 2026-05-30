@@ -1,0 +1,1 @@
+{"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_"},{"v":{"$numberInt":"2"},"key":{"organization_id":{"$numberInt":"1"},"year":{"$numberInt":"1"}},"name":"organization_id_1_year_1","unique":true}],"uuid":"b61fe36128ad4d86b04ecc6a952b1189","collectionName":"leave_calendar","type":"collection"}

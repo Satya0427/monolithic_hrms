@@ -1,0 +1,1 @@
+{"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_"},{"v":{"$numberInt":"2"},"key":{"employee_uuid":{"$numberInt":"1"},"leave_type_id":{"$numberInt":"1"},"effective_date":{"$numberInt":"1"}},"name":"employee_uuid_1_leave_type_id_1_effective_date_1"}],"uuid":"5ca8d2e987004198bda00e9b5ac934a3","collectionName":"leave_ledger","type":"collection"}

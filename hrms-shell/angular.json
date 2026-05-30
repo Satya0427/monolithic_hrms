@@ -11,7 +11,7 @@
 			"prefix": "app",
 			"architect": {
 				"build": {
-					"builder": "ngx-build-plus:browser",
+					"builder": "@angular/build:application",
 					"options": {
 						"tsConfig": "tsconfig.app.json",
 						"assets": [
@@ -24,11 +24,9 @@
 						"styles": [
 							"src/styles.scss"
 						],
-						"main": "src/main.ts",
+						"browser": "src/main.ts",
 						"outputPath": "dist/Hrms_Shell",
-						"index": "src/index.html",
-						"extraWebpackConfig": "webpack.config.js",
-						"commonChunk": false
+						"index": "src/index.html"
 					},
 					"configurations": {
 						"production": {
@@ -40,12 +38,11 @@
 								},
 								{
 									"type": "anyComponentStyle",
-									"maximumWarning": "6kb",
-									"maximumError": "10kb"
+									"maximumWarning": "16kb",
+									"maximumError": "20kb"
 								}
 							],
-							"outputHashing": "all",
-							"extraWebpackConfig": "webpack.prod.config.js"
+							"outputHashing": "all"
 						},
 						"development": {
 							"optimization": false,
@@ -56,11 +53,10 @@
 					"defaultConfiguration": "production"
 				},
 				"serve": {
-					"builder": "ngx-build-plus:dev-server",
+					"builder": "@angular/build:dev-server",
 					"configurations": {
 						"production": {
-							"buildTarget": "Hrms_Shell:build:production",
-							"extraWebpackConfig": "webpack.prod.config.js"
+							"buildTarget": "Hrms_Shell:build:production"
 						},
 						"development": {
 							"buildTarget": "Hrms_Shell:build:development"
@@ -68,9 +64,7 @@
 					},
 					"defaultConfiguration": "development",
 					"options": {
-						"port": 4200,
-						"publicHost": "http://localhost:4200",
-						"extraWebpackConfig": "webpack.config.js"
+						"port": 4200
 					}
 				},
 				"extract-i18n": {

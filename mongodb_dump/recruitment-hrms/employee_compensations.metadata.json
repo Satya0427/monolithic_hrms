@@ -1,0 +1,1 @@
+{"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_"}],"uuid":"7836331534e14675ba2462436be1cdfc","collectionName":"employee_compensations","type":"collection"}

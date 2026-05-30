@@ -1,0 +1,1 @@
+{"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_"},{"v":{"$numberInt":"2"},"key":{"organization_id":{"$numberInt":"1"},"code":{"$numberInt":"1"}},"name":"organization_id_1_code_1","unique":true}],"uuid":"9d22b6cc29aa4e34812b25512acdb098","collectionName":"leave_type","type":"collection"}
