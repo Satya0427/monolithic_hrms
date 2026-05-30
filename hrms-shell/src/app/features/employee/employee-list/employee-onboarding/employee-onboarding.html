@@ -1,0 +1,287 @@
+<!-- Reusable Page Header -->
+<app-page-header title="New Employee Onboarding" [breadcrumbs]="['HRMS', 'Employees', 'Add New']" [tabs]="pageTabs"
+    [(activeTab)]="currentTab" (onBack)="handleBack()">
+</app-page-header>
+<div class="page-container">
+    <div class="content-wrapper">
+
+        <!-- =========================== -->
+        <!-- TAB 1: EMPLOYEE DETAILS     -->
+        <!-- =========================== -->
+        @if (currentTab === pageTabs[0].key) {
+        <div class="tab-content">
+            <div class="tab-content-grid">
+                <!-- LEFT COL: Personal & Emergency -->
+                <div class="column-left">
+                    <mat-card class="form-card" [formGroup]="personalDetails">
+                        <mat-card-header>
+                            <mat-card-title>Personal Information</mat-card-title>
+                        </mat-card-header>
+                        <mat-card-content>
+                            <!-- Image Upload -->
+                            <div class="img-upload-container">
+                                <div class="avatar-circle" (click)="fileInput.click()">
+                                    @if (previewUrl()) {
+                                    <img [src]="previewUrl()" alt="Profile">
+                                    } @else {
+                                    <mat-icon>camera_alt</mat-icon>
+                                    <span class="upload-text">Upload</span>
+                                    }
+                                </div>
+                                <input #fileInput type="file" hidden (change)="onFileSelected($event)" accept="image/*">
+                            </div>
+
+                            <div class="row-2">
+                                <mat-form-field appearance="outline">
+                                    <mat-label>First Name</mat-label>
+                                    <input matInput formControlName="firstName">
+                                </mat-form-field>
+                                <mat-form-field appearance="outline">
+                                    <mat-label>Last Name</mat-label>
+                                    <input matInput formControlName="lastName">
+                                </mat-form-field>
+                            </div>
+
+                            <mat-form-field appearance="outline" class="full-width">
+                                <mat-label>Personal Email</mat-label>
+                                <input matInput formControlName="email">
+                                <mat-icon matSuffix>email</mat-icon>
+                            </mat-form-field>
+
+                            <mat-form-field appearance="outline" class="full-width">
+                                <mat-label>Phone Number</mat-label>
+                                <span matTextPrefix>+91 &nbsp;</span>
+                                <input matInput formControlName="phone">
+                                <mat-icon matSuffix>call</mat-icon>
+                            </mat-form-field>
+
+                            <mat-form-field appearance="outline" class="full-width">
+                                <mat-label>Address</mat-label>
+                                <textarea matInput formControlName="address" rows="2"></textarea>
+                            </mat-form-field>
+
+                            <div class="row-2">
+                                <mat-form-field appearance="outline">
+                                    <mat-label>Date of Birth</mat-label>
+                                    <input matInput [matDatepicker]="dobPicker" formControlName="dob">
+                                    <mat-datepicker-toggle matIconSuffix [for]="dobPicker"></mat-datepicker-toggle>
+                                    <mat-datepicker #dobPicker></mat-datepicker>
+                                </mat-form-field>
+
+                                <mat-form-field appearance="outline">
+                                    <mat-label>Marital Status</mat-label>
+                                    <mat-select formControlName="maritalStatus">
+                                        <mat-option value="single">Single</mat-option>
+                                        <mat-option value="married">Married</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </div>
+
+                            <div class="row-2">
+                                <mat-form-field appearance="outline">
+                                    <mat-label>Gender</mat-label>
+                                    <mat-select formControlName="gender">
+                                        @for (g of genderList(); track g.lookup_key) {
+                                        <mat-option [value]="g.lookup_key">{{g.lookup_value}}</mat-option>
+                                        }
+                                    </mat-select>
+                                </mat-form-field>
+
+                                <mat-form-field appearance="outline" class="full-width">
+                                    <mat-label>Password</mat-label>
+                                    <input matInput formControlName="password" type="password">
+                                    <mat-icon matSuffix>lock</mat-icon>
+                                </mat-form-field>
+                            </div>
+
+
+                        </mat-card-content>
+                    </mat-card>
+
+
+                    <!-- Emergency Contact -->
+                    <mat-card class="form-card" [formGroup]="emergencyContactDetails">
+                        <mat-card-header>
+                            <mat-card-title>Emergency Contact</mat-card-title>
+                        </mat-card-header>
+                        <mat-card-content>
+                            <div class="row-2">
+                                <mat-form-field appearance="outline">
+                                    <mat-label>Name</mat-label>
+                                    <input matInput formControlName="contactName">
+                                </mat-form-field>
+                                <mat-form-field appearance="outline">
+                                    <mat-label>Relation</mat-label>
+                                    <mat-select formControlName="relation">
+                                        @for (rel of emergencyRelationList(); track rel.lookup_key) {
+                                        <mat-option [value]="rel.lookup_key">{{rel.lookup_value}}</mat-option>
+                                        }
+                                    </mat-select>
+                                </mat-form-field>
+                            </div>
+                            <mat-form-field appearance="outline" class="full-width">
+                                <mat-label>Emergency Phone</mat-label>
+                                <input matInput formControlName="phone">
+                            </mat-form-field>
+                        </mat-card-content>
+                    </mat-card>
+                </div>
+
+                <!-- RIGHT COL: Job Details & Documents (from Sketch) -->
+                <div class="column-right">
+                    <mat-card class="form-card" [formGroup]="jobDetails">
+                        <mat-card-header>
+                            <mat-card-title>Job Details</mat-card-title>
+                        </mat-card-header>
+                        <mat-card-content>
+                            <div class="grid-2-col">
+                                <mat-form-field appearance="outline">
+                                    <mat-label>Employee ID</mat-label>
+                                    <input matInput formControlName="employee_id">
+                                </mat-form-field>
+                                <mat-form-field appearance="outline">
+                                    <mat-label>Department</mat-label>
+                                    <mat-select formControlName="department_id"
+                                        (selectionChange)="loadDesignations($event.value)">
+                                        @for (dept of departmentList(); track dept._id) {
+                                        <mat-option [value]="dept._id">{{dept.department_name}}</mat-option>
+                                        }
+                                    </mat-select>
+                                </mat-form-field>
+
+                                <mat-form-field appearance="outline">
+                                    <mat-label>Designation</mat-label>
+                                    <mat-select formControlName="designation_id">
+                                        @for (desig of designationList(); track desig._id) {
+                                        <mat-option [value]="desig._id">{{desig.designation_name}}</mat-option>
+                                        }
+                                    </mat-select>
+                                </mat-form-field>
+
+                                <mat-form-field appearance="outline">
+                                    <mat-label>Work Email</mat-label>
+                                    <input matInput formControlName="workEmail">
+                                </mat-form-field>
+
+                                <mat-form-field appearance="outline">
+                                    <mat-label>Joining Date</mat-label>
+                                    <input matInput [matDatepicker]="joinPicker" formControlName="joiningDate">
+                                    <mat-datepicker-toggle matIconSuffix [for]="joinPicker"></mat-datepicker-toggle>
+                                    <mat-datepicker #joinPicker></mat-datepicker>
+                                </mat-form-field>
+
+                                <mat-form-field appearance="outline">
+                                    <mat-label>Reporting Manager</mat-label>
+                                    <mat-select formControlName="reported_to">
+                                        @for (emp of employeesList(); track emp.id) {
+                                        <mat-option [value]="emp.id">{{emp.name}} ({{emp.employee_id}})</mat-option>
+                                        }
+                                    </mat-select>
+                                </mat-form-field>
+
+                                <mat-form-field appearance="outline">
+                                    <mat-label>Work Mode</mat-label>
+                                    <mat-select formControlName="workMode">
+                                        @for (mode of workModeList(); track mode.lookup_key) {
+                                        <mat-option [value]="mode.lookup_key">{{mode.lookup_value}}</mat-option>
+                                        }
+                                    </mat-select>
+                                </mat-form-field>
+
+                                <mat-form-field appearance="outline">
+                                    <mat-label>Work Location</mat-label>
+                                    <input matInput formControlName="work_location">
+                                </mat-form-field>
+
+                                <mat-form-field appearance="outline">
+                                    <mat-label>Employment Type</mat-label>
+                                    <mat-select formControlName="employmentType">
+                                        @for (type of employmentTypeList(); track type.lookup_key) {
+                                        <mat-option [value]="type.lookup_key">{{type.lookup_value}}</mat-option>
+                                        }
+                                    </mat-select>
+                                </mat-form-field>
+
+                                <mat-form-field appearance="outline">
+                                    <mat-label>Role</mat-label>
+                                    <mat-select formControlName="role_id">
+                                        @for (role of roles(); track role.id) {
+                                        <mat-option [value]="role.id">{{role.name}}</mat-option>
+                                        }
+                                    </mat-select>
+                                </mat-form-field>
+
+                                <mat-form-field appearance="outline">
+                                    <mat-label>Probation Status</mat-label>
+                                    <mat-select formControlName="probationStatus">
+                                        @for (status of probationStatusList(); track status.lookup_key) {
+                                        <mat-option [value]="status.lookup_key">{{status.lookup_value}}</mat-option>
+                                        }
+                                    </mat-select>
+                                </mat-form-field>
+
+                                <mat-form-field appearance="outline">
+                                    <mat-label>Probation Start Date</mat-label>
+                                    <input matInput [matDatepicker]="probationPicker"
+                                        formControlName="probationStartDate">
+                                    <mat-datepicker-toggle matIconSuffix
+                                        [for]="probationPicker"></mat-datepicker-toggle>
+                                    <mat-datepicker #probationPicker></mat-datepicker>
+                                </mat-form-field>
+
+                                <mat-form-field appearance="outline">
+                                    <mat-label>Probation End Date</mat-label>
+                                    <input matInput [matDatepicker]="probationdatePicker"
+                                        formControlName="probationEndDate">
+                                    <mat-datepicker-toggle matIconSuffix
+                                        [for]="probationdatePicker"></mat-datepicker-toggle>
+                                    <mat-datepicker #probationdatePicker></mat-datepicker>
+                                </mat-form-field>
+
+                                <mat-form-field appearance="outline">
+                                    <mat-label>Shift</mat-label>
+                                    <mat-select formControlName="shift">
+                                        @for (shift of shiftList(); track shift.id) {
+                                        <mat-option [value]="shift.id">{{shift.name}}</mat-option>
+                                        }
+                                    </mat-select>
+                                </mat-form-field>
+
+                            </div>
+                            <mat-form-field appearance="outline" class="full-width">
+                                <mat-label>Probation Notes</mat-label>
+                                <textarea matInput formControlName="probationNotes" rows="2"></textarea>
+                            </mat-form-field>
+                        </mat-card-content>
+                    </mat-card>
+                </div>
+            </div>
+        </div>
+        }
+
+        <!-- =========================== -->
+        <!-- TAB 2: BANK & DOCUMENTS     -->
+        <!-- =========================== -->
+        @if (currentTab === pageTabs[1].key) {
+        <div class="tab-content">
+            <app-document-collection></app-document-collection>
+        </div>
+        }
+
+        <!-- =========================== -->
+        <!-- TAB 3: COMPENSATION         -->
+        <!-- =========================== -->
+        @if (currentTab === pageTabs[2].key) {
+        <div class="tab-content">
+            <app-compensation></app-compensation>
+        </div>
+        }
+
+    </div>
+
+    <div class="fixed-footer">
+        <button mat-flat-button color="primary" class="save-btn" (click)="onSubmit()">
+            <mat-icon>save</mat-icon> Save Employee
+        </button>
+    </div>
+</div>

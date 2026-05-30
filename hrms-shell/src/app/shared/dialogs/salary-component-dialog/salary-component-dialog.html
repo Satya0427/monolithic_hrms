@@ -1,0 +1,560 @@
+<div class="dialog-wrapper">
+
+  <!-- ═══ Header ═══ -->
+  <div class="dialog-header" [style.border-color]="dialogColor">
+    <div class="header-left">
+      <div class="icon-badge" [style.background]="dialogColor + '15'" [style.color]="dialogColor">
+        <mat-icon>{{ dialogIcon }}</mat-icon>
+      </div>
+      <div class="header-text">
+        <h2>{{ dialogTitle }}</h2>
+        <span class="subtitle">Configure component details, calculation and statutory rules</span>
+      </div>
+    </div>
+    <button mat-icon-button (click)="close()" class="close-btn" aria-label="Close">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <!-- ═══ Stepper Navigation ═══ -->
+  <div class="stepper-nav">
+    @for (step of steps(); track step; let i = $index) {
+      <button class="step-item"
+              [class.active]="activeStep() === i"
+              [class.completed]="activeStep() > i"
+              (click)="goToStep(i)">
+        <div class="step-circle" [style.--accent]="dialogColor">
+          @if (activeStep() > i) {
+            <mat-icon>check</mat-icon>
+          } @else {
+            <span>{{ i + 1 }}</span>
+          }
+        </div>
+        <span class="step-label">{{ step }}</span>
+      </button>
+      @if (i < steps().length - 1) {
+        <div class="step-connector" [class.active]="activeStep() > i"></div>
+      }
+    }
+  </div>
+
+  <!-- ═══ Form Body ═══ -->
+  <div class="dialog-body">
+    <form [formGroup]="form">
+
+      <!-- ──── Step 0: Basic Information ──── -->
+      @if (activeStep() === 0) {
+        <div class="step-content">
+          <div class="section-label">
+            <mat-icon>info</mat-icon>
+            <span>Basic Details</span>
+          </div>
+
+          <div class="form-grid">
+            <!-- Component Name -->
+            <mat-form-field appearance="outline" class="field-half">
+              <mat-label>Component Name</mat-label>
+              <input matInput formControlName="component_name" placeholder="e.g. Basic Salary"
+                     (blur)="autoGenerateCode()">
+              <mat-icon matSuffix>badge</mat-icon>
+              @if (form.get('component_name')?.hasError('required')) {
+                <mat-error>Component name is required</mat-error>
+              }
+              @if (form.get('component_name')?.hasError('minlength')) {
+                <mat-error>Minimum 2 characters required</mat-error>
+              }
+            </mat-form-field>
+
+            <!-- Component Code -->
+            <mat-form-field appearance="outline" class="field-half">
+              <mat-label>Component Code</mat-label>
+              <input matInput formControlName="component_code" placeholder="e.g. BASIC_SALARY"
+                     style="text-transform: uppercase;">
+              <mat-icon matSuffix>code</mat-icon>
+              @if (form.get('component_code')?.hasError('required')) {
+                <mat-error>Component code is required</mat-error>
+              }
+              @if (form.get('component_code')?.hasError('pattern')) {
+                <mat-error>Only uppercase letters, numbers & underscores</mat-error>
+              }
+              <mat-hint>Auto-generated. Must be unique.</mat-hint>
+            </mat-form-field>
+
+            <!-- Component Category -->
+            <mat-form-field appearance="outline" class="field-half">
+              <mat-label>Component Category</mat-label>
+              <mat-select formControlName="component_category">
+                @for (cat of componentCategories; track cat.value) {
+                  <mat-option [value]="cat.value">{{ cat.label }}</mat-option>
+                }
+              </mat-select>
+              <mat-icon matSuffix>category</mat-icon>
+            </mat-form-field>
+
+            <!-- Effective From -->
+            <mat-form-field appearance="outline" class="field-half">
+              <mat-label>Effective From</mat-label>
+              <input matInput [matDatepicker]="effectivePicker" formControlName="effective_from" readonly>
+              <mat-datepicker-toggle matSuffix [for]="effectivePicker"></mat-datepicker-toggle>
+              <mat-datepicker #effectivePicker></mat-datepicker>
+              @if (form.get('effective_from')?.hasError('required')) {
+                <mat-error>Effective date is required</mat-error>
+              }
+            </mat-form-field>
+
+            <!-- Status -->
+            <mat-form-field appearance="outline" class="field-half">
+              <mat-label>Status</mat-label>
+              <mat-select formControlName="status">
+                <mat-option value="ACTIVE">
+                  <div class="status-option">
+                    <span class="status-dot active"></span> Active
+                  </div>
+                </mat-option>
+                <mat-option value="INACTIVE">
+                  <div class="status-option">
+                    <span class="status-dot inactive"></span> Inactive
+                  </div>
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <!-- Is Basic (only for earnings) -->
+            @if (data.componentType === 'EARNINGS') {
+              <div class="field-half toggle-field">
+                <mat-slide-toggle formControlName="is_basic" color="primary">
+                  <span class="toggle-label">
+                    <mat-icon class="toggle-icon">star</mat-icon>
+                    Mark as Basic Component
+                  </span>
+                </mat-slide-toggle>
+                <span class="toggle-hint">Only one component can be marked as Basic</span>
+              </div>
+            }
+
+            <!-- Deduction Nature (only for deductions) -->
+            @if (data.componentType === 'DEDUCTIONS') {
+              <mat-form-field appearance="outline" class="field-half">
+                <mat-label>Deduction Nature</mat-label>
+                <mat-select formControlName="deduction_nature">
+                  @for (dn of deductionNatures; track dn.value) {
+                    <mat-option [value]="dn.value">{{ dn.label }}</mat-option>
+                  }
+                </mat-select>
+                <mat-icon matSuffix>gavel</mat-icon>
+              </mat-form-field>
+            }
+
+            <!-- Description -->
+            <mat-form-field appearance="outline" class="field-full">
+              <mat-label>Description</mat-label>
+              <textarea matInput formControlName="description" rows="2"
+                        placeholder="Brief description of this component"></textarea>
+              <mat-icon matSuffix>description</mat-icon>
+            </mat-form-field>
+          </div>
+        </div>
+      }
+
+      <!-- ──── Step 1: Calculation Setup ──── -->
+      @if (activeStep() === 1) {
+        <div class="step-content">
+          <div class="section-label">
+            <mat-icon>calculate</mat-icon>
+            <span>Calculation Configuration</span>
+          </div>
+
+          <!-- Calculation Type Cards -->
+          <div class="calc-type-cards">
+            @for (ct of calculationTypes; track ct.value) {
+              <div class="calc-card" [class.selected]="calculationType() === ct.value"
+                   [style.--accent]="dialogColor"
+                   (click)="form.get('calculation_type')?.setValue(ct.value)">
+                <mat-icon>{{ ct.icon }}</mat-icon>
+                <span>{{ ct.label }}</span>
+                @if (calculationType() === ct.value) {
+                  <mat-icon class="check-icon">check_circle</mat-icon>
+                }
+              </div>
+            }
+          </div>
+
+          <div class="form-grid" style="margin-top: 20px;">
+            <!-- Fixed Amount -->
+            @if (calculationType() === 'fixed') {
+              <mat-form-field appearance="outline" class="field-half">
+                <mat-label>Fixed Amount (₹)</mat-label>
+                <input matInput type="number" formControlName="fixed_amount" placeholder="0.00">
+                <mat-icon matSuffix>currency_rupee</mat-icon>
+                @if (form.get('fixed_amount')?.hasError('required')) {
+                  <mat-error>Amount is required for fixed type</mat-error>
+                }
+                @if (form.get('fixed_amount')?.hasError('min')) {
+                  <mat-error>Amount must be positive</mat-error>
+                }
+              </mat-form-field>
+            }
+
+            <!-- Percentage -->
+            @if (calculationType() === 'percentage_of_basic') {
+              <mat-form-field appearance="outline" class="field-half">
+                <mat-label>Percentage of Basic (%)</mat-label>
+                <input matInput type="number" formControlName="percentage" placeholder="0">
+                <mat-icon matSuffix>percent</mat-icon>
+                @if (form.get('percentage')?.hasError('required')) {
+                  <mat-error>Percentage is required</mat-error>
+                }
+                @if (form.get('percentage')?.hasError('max')) {
+                  <mat-error>Cannot exceed 100%</mat-error>
+                }
+              </mat-form-field>
+            }
+
+            <!-- Formula Builder -->
+            @if (calculationType() === 'formula') {
+              <div class="field-full formula-section">
+                <div class="formula-header">
+                  <span class="formula-title">
+                    <mat-icon>functions</mat-icon> Formula Builder
+                  </span>
+                  <span class="formula-hint">Use component codes as variables</span>
+                </div>
+
+                <div class="formula-tokens">
+                  <button mat-stroked-button type="button" class="token-btn"
+                          (click)="insertFormulaToken('BASIC')">BASIC</button>
+                  <button mat-stroked-button type="button" class="token-btn"
+                          (click)="insertFormulaToken('HRA')">HRA</button>
+                  <button mat-stroked-button type="button" class="token-btn"
+                          (click)="insertFormulaToken('GROSS')">GROSS</button>
+                  <button mat-stroked-button type="button" class="token-btn operator"
+                          (click)="insertFormulaToken(' + ')">+</button>
+                  <button mat-stroked-button type="button" class="token-btn operator"
+                          (click)="insertFormulaToken(' - ')">−</button>
+                  <button mat-stroked-button type="button" class="token-btn operator"
+                          (click)="insertFormulaToken(' * ')">×</button>
+                  <button mat-stroked-button type="button" class="token-btn operator"
+                          (click)="insertFormulaToken(' / ')">÷</button>
+                  <button mat-stroked-button type="button" class="token-btn operator"
+                          (click)="insertFormulaToken('(')"> ( </button>
+                  <button mat-stroked-button type="button" class="token-btn operator"
+                          (click)="insertFormulaToken(')')"> ) </button>
+                </div>
+
+                <mat-form-field appearance="outline" class="field-full">
+                  <mat-label>Formula Expression</mat-label>
+                  <textarea matInput formControlName="formula" rows="3"
+                            placeholder="e.g. BASIC * 0.40"></textarea>
+                  @if (form.get('formula')?.hasError('required')) {
+                    <mat-error>Formula is required</mat-error>
+                  }
+                  @if (form.get('formula')?.hasError('invalidFormula')) {
+                    <mat-error>{{ form.get('formula')?.getError('invalidFormula') }}</mat-error>
+                  }
+                </mat-form-field>
+              </div>
+            }
+          </div>
+        </div>
+      }
+
+      <!-- ──── Contribution Settings (Deductions only) ──── -->
+      @if (data.componentType === 'DEDUCTIONS' && activeStep() === 2) {
+        <div class="step-content">
+          <div class="section-label">
+            <mat-icon>group</mat-icon>
+            <span>Contribution Settings</span>
+          </div>
+
+          <div class="form-grid">
+            <div class="field-half toggle-field">
+              <mat-slide-toggle formControlName="employer_contribution" color="primary">
+                <span class="toggle-label">
+                  <mat-icon class="toggle-icon">business</mat-icon>
+                  Employer Contribution
+                </span>
+              </mat-slide-toggle>
+              <span class="toggle-hint">Tracked separately, not deducted from employee's net pay</span>
+            </div>
+
+            <div class="field-half toggle-field">
+              <mat-slide-toggle formControlName="employee_contribution" color="primary">
+                <span class="toggle-label">
+                  <mat-icon class="toggle-icon">person</mat-icon>
+                  Employee Contribution
+                </span>
+              </mat-slide-toggle>
+              <span class="toggle-hint">Deducted from employee's gross salary</span>
+            </div>
+
+            <mat-form-field appearance="outline" class="field-half">
+              <mat-label>Maximum Cap (₹)</mat-label>
+              <input matInput type="number" formControlName="max_cap" placeholder="e.g. 1800 for PF">
+              <mat-icon matSuffix>vertical_align_top</mat-icon>
+              <mat-hint>Leave empty for no cap</mat-hint>
+            </mat-form-field>
+          </div>
+        </div>
+      }
+
+      <!-- ──── Reimbursement Rules (Reimbursements only) ──── -->
+      @if (data.componentType === 'REIMBURSEMENTS' && activeStep() === 2) {
+        <div class="step-content">
+          <div class="section-label">
+            <mat-icon>rule</mat-icon>
+            <span>Reimbursement Rules</span>
+          </div>
+
+          <div class="form-grid">
+            <div class="field-half toggle-field">
+              <mat-slide-toggle formControlName="claim_based" color="primary">
+                <span class="toggle-label">
+                  <mat-icon class="toggle-icon">request_quote</mat-icon>
+                  Claim Based
+                </span>
+              </mat-slide-toggle>
+              <span class="toggle-hint">Linked to reimbursement claims module</span>
+            </div>
+
+            <div class="field-half toggle-field">
+              <mat-slide-toggle formControlName="attachment_required" color="primary">
+                <span class="toggle-label">
+                  <mat-icon class="toggle-icon">attach_file</mat-icon>
+                  Attachment Required
+                </span>
+              </mat-slide-toggle>
+              <span class="toggle-hint">Employee must upload proof documents</span>
+            </div>
+
+            <div class="field-half toggle-field">
+              <mat-slide-toggle formControlName="approval_required" color="primary">
+                <span class="toggle-label">
+                  <mat-icon class="toggle-icon">verified</mat-icon>
+                  Approval Required
+                </span>
+              </mat-slide-toggle>
+              <span class="toggle-hint">Requires manager or HR approval</span>
+            </div>
+
+            <mat-form-field appearance="outline" class="field-half">
+              <mat-label>Max Limit Per Month (₹)</mat-label>
+              <input matInput type="number" formControlName="max_limit_per_month" placeholder="0.00">
+              <mat-icon matSuffix>currency_rupee</mat-icon>
+              <mat-hint>Leave empty for no limit</mat-hint>
+            </mat-form-field>
+          </div>
+        </div>
+      }
+
+      <!-- ──── Variable Pay Config (Variable Pay only) ──── -->
+      @if (data.componentType === 'VARIABLE_PAY' && activeStep() === 2) {
+        <div class="step-content">
+          <div class="section-label">
+            <mat-icon>tune</mat-icon>
+            <span>Variable Pay Configuration</span>
+          </div>
+
+          <div class="form-grid">
+            <mat-form-field appearance="outline" class="field-half">
+              <mat-label>Pay Frequency</mat-label>
+              <mat-select formControlName="pay_frequency">
+                @for (freq of payFrequencies; track freq.value) {
+                  <mat-option [value]="freq.value">{{ freq.label }}</mat-option>
+                }
+              </mat-select>
+              <mat-icon matSuffix>schedule</mat-icon>
+            </mat-form-field>
+
+            <div class="field-half toggle-field">
+              <mat-slide-toggle formControlName="linked_to_kpi" color="primary">
+                <span class="toggle-label">
+                  <mat-icon class="toggle-icon">track_changes</mat-icon>
+                  Linked to KPI
+                </span>
+              </mat-slide-toggle>
+              <span class="toggle-hint">Payout based on performance KPIs</span>
+            </div>
+
+            <div class="field-half toggle-field">
+              <mat-slide-toggle formControlName="auto_calculate" color="primary">
+                <span class="toggle-label">
+                  <mat-icon class="toggle-icon">autorenew</mat-icon>
+                  Auto Calculate
+                </span>
+              </mat-slide-toggle>
+              <span class="toggle-hint">System calculates based on formula/rules</span>
+            </div>
+
+            <div class="field-half toggle-field">
+              <mat-slide-toggle formControlName="manual_override" color="primary">
+                <span class="toggle-label">
+                  <mat-icon class="toggle-icon">edit</mat-icon>
+                  Manual Override
+                </span>
+              </mat-slide-toggle>
+              <span class="toggle-hint">Allow override during payroll processing</span>
+            </div>
+          </div>
+        </div>
+      }
+
+      <!-- ──── Tax & Statutory ──── -->
+      @if ((data.componentType === 'EARNINGS' && activeStep() === 2) ||
+           (data.componentType === 'DEDUCTIONS' && activeStep() === 3)) {
+        <div class="step-content">
+          <div class="section-label">
+            <mat-icon>account_balance</mat-icon>
+            <span>Tax & Statutory Applicability</span>
+          </div>
+
+          <div class="statutory-grid">
+            <div class="statutory-card">
+              <div class="stat-card-header">
+                <mat-icon>receipt</mat-icon>
+                <span>Income Tax</span>
+              </div>
+              <mat-slide-toggle formControlName="taxable" color="primary">
+                Taxable under Income Tax
+              </mat-slide-toggle>
+            </div>
+
+            <div class="statutory-card">
+              <div class="stat-card-header">
+                <mat-icon>savings</mat-icon>
+                <span>Provident Fund</span>
+              </div>
+              <mat-slide-toggle formControlName="pf_applicable" color="primary">
+                Include in PF calculation
+              </mat-slide-toggle>
+            </div>
+
+            <div class="statutory-card">
+              <div class="stat-card-header">
+                <mat-icon>health_and_safety</mat-icon>
+                <span>ESI</span>
+              </div>
+              <mat-slide-toggle formControlName="esi_applicable" color="primary">
+                Include in ESI calculation
+              </mat-slide-toggle>
+            </div>
+
+            <div class="statutory-card">
+              <div class="stat-card-header">
+                <mat-icon>location_city</mat-icon>
+                <span>Professional Tax</span>
+              </div>
+              <mat-slide-toggle formControlName="professional_tax_applicable" color="primary">
+                Professional Tax applicable
+              </mat-slide-toggle>
+            </div>
+          </div>
+        </div>
+      }
+
+      <!-- ──── Display & Payslip (Last step for all) ──── -->
+      @if (activeStep() === steps().length - 1) {
+        <div class="step-content">
+          <div class="section-label">
+            <mat-icon>visibility</mat-icon>
+            <span>Display & Payslip Settings</span>
+          </div>
+
+          <div class="form-grid">
+            <div class="field-half toggle-field">
+              <mat-slide-toggle formControlName="show_in_payslip" color="primary">
+                <span class="toggle-label">
+                  <mat-icon class="toggle-icon">description</mat-icon>
+                  Show in Payslip
+                </span>
+              </mat-slide-toggle>
+              <span class="toggle-hint">Component visible on employee payslip</span>
+            </div>
+
+            <div class="field-half toggle-field">
+              <mat-slide-toggle formControlName="pro_rated" color="primary">
+                <span class="toggle-label">
+                  <mat-icon class="toggle-icon">event_busy</mat-icon>
+                  Pro-rated (LOP based)
+                </span>
+              </mat-slide-toggle>
+              <span class="toggle-hint">Reduce proportionally based on Loss of Pay days</span>
+            </div>
+
+            <div class="field-half toggle-field">
+              <mat-slide-toggle formControlName="include_in_ctc" color="primary">
+                <span class="toggle-label">
+                  <mat-icon class="toggle-icon">attach_money</mat-icon>
+                  Include in CTC
+                </span>
+              </mat-slide-toggle>
+              <span class="toggle-hint">Count this component towards Cost to Company</span>
+            </div>
+
+            @if (data.componentType === 'EARNINGS' || data.componentType === 'DEDUCTIONS') {
+              <!-- Tax & Statutory quick view -->
+              <div class="field-full">
+                <div class="summary-row">
+                  <span class="summary-label">Taxable:</span>
+                  <mat-chip [class]="form.get('taxable')?.value ? 'chip-yes' : 'chip-no'">
+                    {{ form.get('taxable')?.value ? 'Yes' : 'No' }}
+                  </mat-chip>
+                  <span class="summary-label">PF:</span>
+                  <mat-chip [class]="form.get('pf_applicable')?.value ? 'chip-yes' : 'chip-no'">
+                    {{ form.get('pf_applicable')?.value ? 'Yes' : 'No' }}
+                  </mat-chip>
+                  <span class="summary-label">ESI:</span>
+                  <mat-chip [class]="form.get('esi_applicable')?.value ? 'chip-yes' : 'chip-no'">
+                    {{ form.get('esi_applicable')?.value ? 'Yes' : 'No' }}
+                  </mat-chip>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      }
+
+    </form>
+  </div>
+
+  <!-- ═══ Footer ═══ -->
+  <div class="dialog-footer">
+    <div class="footer-left">
+      <span class="step-indicator">Step {{ activeStep() + 1 }} of {{ steps().length }}</span>
+    </div>
+    <div class="footer-right">
+      @if (activeStep() > 0) {
+        <button mat-stroked-button (click)="prevStep()" type="button">
+          <mat-icon>arrow_back</mat-icon> Previous
+        </button>
+      }
+
+      @if (activeStep() < steps().length - 1) {
+        <button mat-flat-button color="primary" (click)="nextStep()" type="button"
+                [style.background]="dialogColor">
+          Next <mat-icon>arrow_forward</mat-icon>
+        </button>
+      } @else if (!isViewMode()) {
+        <button mat-flat-button color="primary" (click)="onSubmit()" type="button"
+                [disabled]="form.invalid || loading()"
+                [style.background]="dialogColor">
+          @if (loading()) {
+            <ng-container>
+              <mat-spinner diameter="18" style="display: inline-block;"></mat-spinner>
+              <span>Saving...</span>
+            </ng-container>
+          } @else {
+            <ng-container>
+              <mat-icon>save</mat-icon>
+              {{ isEditMode() ? 'Update Component' : 'Create Component' }}
+            </ng-container>
+          }
+        </button>
+      }
+
+      @if (isViewMode()) {
+        <button mat-flat-button (click)="close()">Close</button>
+      }
+    </div>
+  </div>
+
+</div>

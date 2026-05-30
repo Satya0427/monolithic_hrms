@@ -1,0 +1,71 @@
+ .dialog-header {
+     display: flex;
+     justify-content: space-between;
+     align-items: center;
+     padding: 12px 16px 0;
+
+     h2 {
+         margin: 0;
+     }
+ }
+
+ .dialog-content {
+     display: flex;
+     flex-direction: column;
+     gap: 16px;
+     padding-top: 20px !important;
+ }
+
+ .row-2 {
+     display: grid;
+     grid-template-columns: 1fr 1fr;
+     gap: 16px;
+ }
+
+ .full-width {
+     width: 100%;
+ }
+
+ .color-picker-wrapper {
+     display: flex;
+     flex-direction: column;
+     gap: 6px;
+
+     label {
+         font-size: 12px;
+         color: #666;
+         font-weight: 500;
+     }
+
+     .picker-container {
+         display: flex;
+         align-items: center;
+         gap: 10px;
+         border: 1px solid #ccc;
+         padding: 4px 12px;
+         border-radius: 4px;
+         height: 50px;
+
+         input[type="color"] {
+             border: none;
+             width: 40px;
+             height: 30px;
+             cursor: pointer;
+             background: none;
+         }
+
+         .hex-value {
+             font-family: monospace;
+             color: #333;
+         }
+     }
+ }
+
+ .toggles-row {
+     display: flex;
+     gap: 24px;
+     margin-top: 8px;
+     padding: 10px;
+     background: #f9fafb;
+     border-radius: 8px;
+ }

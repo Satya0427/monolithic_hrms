@@ -1,0 +1,80 @@
+<app-page-header title="Attendance Regularization Requests"
+  [breadcrumbs]="['Home', 'Requests', 'Attendance Regularization']" (onBack)="handleBack()">
+</app-page-header>
+
+<div class="page-container">
+  <div class="page-header">
+    <div class="pending-chip">
+      {{ regularizationRequests().length }} Pending
+    </div>
+  </div>
+
+  @if (regularizationRequests().length > 0) {
+  <div class="request-list">
+    @for (request of regularizationRequests(); track request._id) {
+    <div class="request-card">
+      <div class="request-main">
+        <div class="avatar">{{ (request.employee_name || 'U').charAt(0) }}</div>
+
+        <div class="request-content">
+          <div class="top-row">
+            <div class="employee-meta">
+              <h4>{{ request.employee_name }}</h4>
+              <p>{{ request.date }}</p>
+            </div>
+
+            <span class="request-type" [ngClass]="request.regularization_type === 'MISSED_PUNCH' ? 'type-missed' : 'type-correction'">
+              {{ request.regularization_type === 'MISSED_PUNCH' ? 'Missed Punch' : 'Time Correction' }}
+            </span>
+          </div>
+
+          <div class="time-details">
+            <div class="time-block">
+              <mat-icon>login</mat-icon>
+              <div>
+                <span class="label">Check-in</span>
+                <span class="value">{{ request.check_in_time || '—' }}</span>
+              </div>
+            </div>
+            <mat-icon class="arrow-icon">arrow_forward</mat-icon>
+            <div class="time-block">
+              <mat-icon>logout</mat-icon>
+              <div>
+                <span class="label">Check-out</span>
+                <span class="value">{{ request.check_out_time || '—' }}</span>
+              </div>
+            </div>
+            <div class="time-block total">
+              <mat-icon>schedule</mat-icon>
+              <div>
+                <span class="label">Total Hours</span>
+                <span class="value">{{ request.total_hours || '—' }}</span>
+              </div>
+            </div>
+          </div>
+
+          <p class="reason">{{ request.reason || 'No reason provided.' }}</p>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button mat-stroked-button color="primary" class="approve"
+          (click)="updateRequestStatus(request._id, 'APPROVED')">
+          Approve
+        </button>
+        <button mat-stroked-button color="warn" class="reject"
+          (click)="updateRequestStatus(request._id, 'REJECTED')">
+          Reject
+        </button>
+      </div>
+    </div>
+    }
+  </div>
+  } @else {
+  <div class="empty-state">
+    <mat-icon class="empty-icon">event_busy</mat-icon>
+    <h3>No pending regularization requests</h3>
+    <p>New attendance regularization requests will appear here for review.</p>
+  </div>
+  }
+</div>

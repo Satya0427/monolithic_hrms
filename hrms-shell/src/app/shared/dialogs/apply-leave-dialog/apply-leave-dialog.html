@@ -1,0 +1,108 @@
+<div class="dialog-header">
+    <h2>Apply Leave</h2>
+    <button mat-icon-button (click)="close()">
+        <mat-icon>close</mat-icon>
+    </button>
+</div>
+
+<form [formGroup]="applyLeaveForm" class="dialog-content">
+    <!-- Leave Type Selection -->
+    <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Leave Type</mat-label>
+        <mat-select formControlName="leave_type_id">
+            @for(balance of leaveBalances; track balance.leave_type_id) {
+            <mat-option [value]="balance.leave_type_id">
+                {{ balance.leave_type_name }} ({{ balance.leave_type_code }}) - Available: {{ balance.available_balance }}
+            </mat-option>
+            }
+        </mat-select>
+        <mat-error>Please select a leave type</mat-error>
+    </mat-form-field>
+
+    <!-- Date Range -->
+    <div class="date-row">
+        <mat-form-field appearance="outline">
+            <mat-label>From Date</mat-label>
+            <input matInput [matDatepicker]="fromPicker" formControlName="from_date">
+            <mat-datepicker-toggle matIconSuffix [for]="fromPicker"></mat-datepicker-toggle>
+            <mat-datepicker #fromPicker></mat-datepicker>
+            <mat-error>From date is required</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+            <mat-label>To Date</mat-label>
+            <input matInput [matDatepicker]="toPicker" formControlName="to_date">
+            <mat-datepicker-toggle matIconSuffix [for]="toPicker"></mat-datepicker-toggle>
+            <mat-datepicker #toPicker></mat-datepicker>
+            <mat-error>To date is required</mat-error>
+        </mat-form-field>
+    </div>
+
+    <!-- Half Day Toggle -->
+    <div class="half-day-section">
+        <mat-slide-toggle formControlName="is_half_day" color="primary">
+            Half Day Leave
+        </mat-slide-toggle>
+
+        @if (applyLeaveForm.get('is_half_day')?.value) {
+        <mat-radio-group formControlName="half_day_type" class="half-day-type">
+            <mat-radio-button value="FIRST_HALF">First Half</mat-radio-button>
+            <mat-radio-button value="SECOND_HALF">Second Half</mat-radio-button>
+        </mat-radio-group>
+        }
+    </div>
+
+    <!-- Calculated Days -->
+    @if (applyLeaveForm.get('from_date')?.value && applyLeaveForm.get('to_date')?.value) {
+    <div class="info-card">
+        <mat-icon>info</mat-icon>
+        <span>Total Days: <strong>{{ calculateLeaveDays() }}</strong></span>
+    </div>
+    }
+
+    <!-- Reason -->
+    <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Reason</mat-label>
+        <textarea matInput formControlName="reason" rows="3" 
+            placeholder="Please provide a reason for your leave (minimum 10 characters)"></textarea>
+        <mat-error>
+            @if (applyLeaveForm.get('reason')?.hasError('required')) {
+            Reason is required
+            } @else if (applyLeaveForm.get('reason')?.hasError('minlength')) {
+            Reason must be at least 10 characters
+            }
+        </mat-error>
+    </mat-form-field>
+
+    <!-- Validation Info -->
+    <div class="validation-info">
+        <mat-icon>check_circle</mat-icon>
+        <div class="validation-text">
+            <p><strong>Pre-validation checks:</strong></p>
+            <ul>
+                <li>Date range validation (From ≤ To)</li>
+                <li>Leave balance check</li>
+                <li>Overlap with existing leaves</li>
+                <li>Policy applicability rules</li>
+            </ul>
+        </div>
+    </div>
+</form>
+
+<div class="dialog-footer">
+    <button mat-stroked-button (click)="close()" [disabled]="submittingLeave() || validatingRequest()">
+        Cancel
+    </button>
+    <button mat-flat-button color="primary" (click)="submitLeaveRequest()" 
+        [disabled]="!applyLeaveForm.valid || submittingLeave() || validatingRequest()">
+        @if (submittingLeave() || validatingRequest()) {
+        <mat-spinner diameter="20"></mat-spinner>
+        <span>{{ validatingRequest() ? 'Validating...' : 'Submitting...' }}</span>
+        } @else {
+        <ng-container>
+            <mat-icon>send</mat-icon>
+            <span>Submit Leave Request</span>
+        </ng-container>
+        }
+    </button>
+</div>

@@ -1,0 +1,123 @@
+<div class="page-wrapper">
+    <!-- Reusable Page Header -->
+    <app-page-header title="All Employees" [breadcrumbs]="['Home', 'Employees', 'All Employees']"
+        (onBack)="handleBack()">
+    </app-page-header>
+    <!-- Toolbar Section -->
+    <div class="table-card">
+        <div class="table-toolbar">
+            <div class="search-box">
+                <mat-icon>search</mat-icon>
+                <input type="text" placeholder="Search" (keyup)="applyFilter($event)">
+            </div>
+
+            <div class="actions">
+                <button mat-icon-button color="primary" class="action-btn">
+                    <mat-icon>filter_list</mat-icon>
+                </button>
+                <button mat-icon-button class="add-btn" routerLink="/home/employee-module/employee-onboarding">
+                    <mat-icon>add_circle_outline</mat-icon>
+                </button>
+                <button mat-icon-button class="action-btn">
+                    <mat-icon>refresh</mat-icon>
+                </button>
+                <button mat-icon-button class="action-btn">
+                    <mat-icon>download</mat-icon>
+                </button>
+            </div>
+        </div>
+
+        <!-- Virtual Scroll Table -->
+        <div class="table-container">
+            <!-- Debug info -->
+            <div style="padding: 8px; background: #f0f0f0; font-size: 12px;">
+                Total Employees: {{ employees.length }}
+            </div>
+
+            <!-- Table Header -->
+            <div class="table-header">
+                <div class="header-cell checkbox-col">
+                    <mat-checkbox (change)="$event ? toggleAllRows() : null"
+                        [checked]="selection.hasValue() && isAllSelected()"
+                        [indeterminate]="selection.hasValue() && !isAllSelected()">
+                    </mat-checkbox>
+                </div>
+                <div class="header-cell name-col">Name</div>
+                <div class="header-cell">Role</div>
+                <div class="header-cell">Department</div>
+                <div class="header-cell">Mobile</div>
+                <div class="header-cell">Joining Date</div>
+                <div class="header-cell email-col">Email</div>
+                <div class="header-cell">Gender</div>
+                <div class="header-cell address-col">Address</div>
+            </div>
+
+            <!-- Virtual Scroll Viewport -->
+            <cdk-virtual-scroll-viewport [itemSize]="itemSize" [minBufferPx]="200" [maxBufferPx]="400"
+                class="table-viewport" (scrolledIndexChange)="onScrollIndexChange($event)">
+
+                <!-- Empty State -->
+                <div *ngIf="employees.length === 0 && !isLoadingMore" class="empty-state">
+                    <p>No employees found</p>
+                </div>
+
+                <div *cdkVirtualFor="let employee of employees; trackBy: trackByEmployeeId" class="table-row"
+                    [routerLink]="['/home/employee-module/employee-edit', employee._id]">
+
+                    <div class="table-cell checkbox-col">
+                        <mat-checkbox (click)="$event.stopPropagation()"
+                            (change)="$event ? selection.toggle(employee) : null"
+                            [checked]="selection.isSelected(employee)">
+                        </mat-checkbox>
+                    </div>
+
+                    <div class="table-cell name-col">
+                        <div class="name-cell">
+                            <img [src]="employee.avatar || 'assets/default-avatar.png'"
+                                (error)="$event.target.src='assets/default-avatar.png'" alt="avatar" class="avatar">
+                            <span>{{employee.name}}</span>
+                        </div>
+                    </div>
+
+                    <div class="table-cell">{{employee.role}}</div>
+
+                    <div class="table-cell">{{employee.department}}</div>
+
+                    <div class="table-cell">
+                        <div class="icon-text">
+                            <mat-icon class="icon-phone">phone</mat-icon>
+                            {{employee.mobile}}
+                        </div>
+                    </div>
+
+                    <div class="table-cell">
+                        <div class="icon-text">
+                            <mat-icon class="icon-date">calendar_today</mat-icon>
+                            {{employee.joiningDate | date:'MM/dd/yyyy'}}
+                        </div>
+                    </div>
+
+                    <div class="table-cell email-col">
+                        <div class="icon-text">
+                            <mat-icon class="icon-email">email</mat-icon>
+                            <span class="email-text">{{employee.email}}</span>
+                        </div>
+                    </div>
+
+                    <div class="table-cell">
+                        <span class="gender-badge" [ngClass]="employee.gender.toLowerCase()">
+                            {{employee.gender}}
+                        </span>
+                    </div>
+
+                    <div class="table-cell address-col">
+                        <div class="icon-text">
+                            <mat-icon class="icon-loc">location_on</mat-icon>
+                            <span class="address-text">{{employee.address}}</span>
+                        </div>
+                    </div>
+                </div>
+            </cdk-virtual-scroll-viewport>
+        </div>
+    </div>
+</div>

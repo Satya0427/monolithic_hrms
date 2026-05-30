@@ -1,0 +1,264 @@
+<app-page-header title="My Attendance" [breadcrumbs]="['Attendance', 'My Attendance']"></app-page-header>
+<div class="att">
+    <!-- ─── Top Bar ─── -->
+    <div class="att__topbar">
+        <div class="att__employee">
+            <div class="emp__avatar">
+                {{ (userDetails?.name || 'U').charAt(0) }}
+            </div>
+            <div class="emp__info">
+                <h2 class="emp__name">{{ userDetails?.name || '--' }}</h2>
+                <div class="emp__meta">
+                    <span class="emp__detail">
+                        <mat-icon>email</mat-icon>
+                        {{ userDetails?.email || userDetails?.email }}
+                    </span>
+                    <span class="emp__detail">
+                        <mat-icon>supervisor_account</mat-icon>
+                        {{ userDetails?.manager_name || '-' }}
+                    </span>
+                </div>
+            </div>
+        </div>
+        @if (!this.id) {
+        <div class="att__actions">
+            <button mat-flat-button class="btn-clock-in" (click)="webClockIn()"
+                [disabled]=" todayStatus == 'checked-in'">
+                <mat-icon>fingerprint</mat-icon>
+                {{ isClockingIn ? 'Clocking In...' : 'Clock In' }}
+            </button>
+            <button mat-stroked-button class="btn-clock-out" (click)="webClockOut()"
+                [disabled]="todayStatus == 'checked-out' || todayStatus == 'not-checked-in'">
+                <mat-icon>fingerprint</mat-icon>
+                <mat-icon>logout</mat-icon>
+                {{ isClockingOut ? 'Clocking Out...' : 'Clock Out' }}
+            </button>
+            <button mat-stroked-button (click)="openWfhDialog()">
+                <mat-icon>home_work</mat-icon>
+                WFH Request
+            </button>
+            <button mat-flat-button class="btn-wfh-clockin" (click)="wfhClockIn()"
+                [disabled]="todayStatus === 'checked-in' || isWfhClockingIn">
+                <mat-icon>home</mat-icon>
+                {{ isWfhClockingIn ? 'Clocking In...' : 'WFH Clock In' }}
+            </button>
+        </div>
+        }
+    </div>
+
+    <!-- ─── Today Strip ─── -->
+
+    <div class="att__today" [ngClass]="{
+		'today--checked-in': todayStatus === 'checked-in',
+		'today--checked-out': todayStatus === 'checked-out',
+		'today--not-checked': todayStatus === 'not-checked-in'
+	}">
+        <div class="today__ring">
+            <div class="ring" [style.background]="ringGradient">
+
+                <div class="ring__inner">
+                    <span class="ring__value">{{ workedDisplay }}</span>
+                    <span class="ring__label">hrs today</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="today__info">
+            <div class="today__status" [ngClass]="{
+				'status--checked-in': todayStatus === 'checked-in',
+				'status--checked-out': todayStatus === 'checked-out',
+				'status--not-checked': todayStatus === 'not-checked-in'
+			}">
+                <span class="dot"
+                    [ngClass]="{
+                    'dot--present': todayStatus === 'checked-in', 'dot--absent': todayStatus === 'not-checked-in', 'dot--checked-out': todayStatus === 'checked-out' }"></span>
+                {{ todayStatus === 'checked-in' ? 'Checked In' : todayStatus === 'checked-out'
+                ? 'Checked Out' : 'Not Checked In' }}
+            </div>
+            <div class="today__meta">
+                <div class="meta"> <span class="meta__label">Date</span> <span class="meta__value">{{ todayDate
+                        }}</span> </div>
+                <div class="meta"> <span class="meta__label">Shift</span> <span class="meta__value">{{ todayShift
+                        }}</span> </div>
+                <div class="meta"> <span class="meta__label">Clock In</span>
+                    <span class="meta__value">{{ clockInDisplay }}
+                        <span class="late-badge" *ngIf="lateMinutes > 0">{{ lateDisplay }}</span>
+                    </span>
+                </div>
+                <div class="meta"> <span class="meta__label">Clock Out</span>
+                    <span class="meta__value">{{ clockOutDisplay }}</span>
+                </div>
+            </div>
+        </div>
+        @if (!this.id) {
+        <div class="today__actions">
+            <button mat-flat-button color="primary" *ngIf="todayStatus === 'checked-in'">
+                <mat-icon>free_breakfast</mat-icon>
+                Break
+            </button>
+            <button mat-stroked-button color="warn" (click)="openRegularizationDialog()">
+                <mat-icon>edit_calendar</mat-icon>
+                Regularize
+            </button>
+        </div>
+        }
+    </div>
+
+    <!-- ─── Stats Strip ─── -->
+    <div class="att__stats">
+        <div class="stat" *ngFor="let s of summaryCards" [ngClass]="'stat--' + s.accent">
+            <div class="stat__icon">
+                <mat-icon>{{ s.icon }}</mat-icon>
+            </div>
+            <div class="stat__body">
+                <span class="stat__value">{{ s.value }}</span>
+                <span class="stat__label">{{ s.label }}</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ─── Main Two-Column Layout ─── -->
+    <div class="att__main">
+        <!-- Left: Calendar + Insights -->
+        <div class="att__left">
+            <mat-card class="card card--calendar">
+                <div class="card__header">
+                    <h3>Monthly Overview</h3>
+                    <button mat-icon-button matTooltip="Download" (click)="calculateWorkedHours()">
+                        <mat-icon>file_download</mat-icon>
+                    </button>
+                </div>
+
+                <div class="calendar-wrap" (mousemove)="onCalendarHover($event)" (mouseleave)="clearCalendarHover()">
+                    <mat-calendar [dateClass]="dateClass" [selected]="selectedDate"
+                        (selectedChange)="onDateSelect($event)">
+                    </mat-calendar>
+
+                    <div class="hover-tip" [class.visible]="hoverDetail" [style.left.px]="hoverPosition.x"
+                        [style.top.px]="hoverPosition.y">
+                        <div class="hover-tip__head">
+                            <span>{{ hoverDetail?.dateLabel }}</span>
+                            <span class="hover-tip__badge" [ngClass]="statusClass(hoverDetail?.status || '')">
+                                {{ hoverDetail?.status }}
+                            </span>
+                        </div>
+                        <div class="hover-tip__row">
+                            <span>In</span><strong>{{ hoverDetail?.clockIn }}</strong>
+                        </div>
+                        <div class="hover-tip__row">
+                            <span>Out</span><strong>{{ hoverDetail?.clockOut }}</strong>
+                        </div>
+                        <div class="hover-tip__row">
+                            <span>Hours</span><strong>{{ hoverDetail?.workDuration }}</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="legend">
+                    <span class="legend__dot present"></span><span>Present</span>
+                    <span class="legend__dot absent"></span><span>Absent</span>
+                    <span class="legend__dot holiday"></span><span>Holiday</span>
+                    <span class="legend__dot weekly-off"></span><span>Week Off</span>
+                    <span class="legend__dot half-day"></span><span>Half Day</span>
+                    <span class="legend__dot on-leave"></span><span>Leave</span>
+                    <span class="legend__dot wfh"></span><span>WFH</span>
+                </div>
+            </mat-card>
+        </div>
+
+        <!-- Right: Filters + Logs Table -->
+        <div class="att__right">
+            <mat-card class="card card--logs">
+                <div class="card__header">
+                    <h3>Daily Logs</h3>
+                    <div class="logs-filters" [formGroup]="filters">
+                        <mat-form-field appearance="outline" class="filter-sm">
+                            <mat-label>Month</mat-label>
+                            <mat-select formControlName="month">
+                                <mat-option *ngFor="let m of monthOptions" [value]="m.value">
+                                    {{ m.label }}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                        <mat-form-field appearance="outline" class="filter-sm">
+                            <mat-label>Status</mat-label>
+                            <mat-select formControlName="status">
+                                <mat-option *ngFor="let s of statusOptions" [value]="s">
+                                    {{ s }}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                        <button mat-icon-button matTooltip="Export">
+                            <mat-icon>file_download</mat-icon>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="table-scroll">
+                    <table mat-table [dataSource]="logs" class="logs-table">
+                        <ng-container matColumnDef="date">
+                            <th mat-header-cell *matHeaderCellDef>Date</th>
+                            <td mat-cell *matCellDef="let row">{{ row.date }}</td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="checkIn">
+                            <th mat-header-cell *matHeaderCellDef>In</th>
+                            <td mat-cell *matCellDef="let row">{{ row.checkIn }}</td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="checkOut">
+                            <th mat-header-cell *matHeaderCellDef>Out</th>
+                            <td mat-cell *matCellDef="let row">{{ row.checkOut }}</td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="workDuration">
+                            <th mat-header-cell *matHeaderCellDef>Hours</th>
+                            <td mat-cell *matCellDef="let row">
+                                <span class="hours-cell">{{ row.workDuration }}</span>
+                            </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="lateMinutes">
+                            <th mat-header-cell *matHeaderCellDef>Late (min)</th>
+                            <td mat-cell *matCellDef="let row">
+                                <span class="late-cell" [ngClass]="{'late--warning': row.lateMinutes > 0}">
+                                    {{ row.lateMinutes > 0 ? row.lateMinutes + ' min' : '-' }}
+                                </span>
+                            </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="earlyMinutes">
+                            <th mat-header-cell *matHeaderCellDef>Early (min)</th>
+                            <td mat-cell *matCellDef="let row">
+                                <span class="hours-cell">{{ row.earlyMinutes }}</span>
+                            </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="status">
+                            <th mat-header-cell *matHeaderCellDef>Status</th>
+                            <td mat-cell *matCellDef="let row">
+                                <span class="status-badge" [ngClass]="statusClass(row.status)">
+                                    <span class="dot" [ngClass]="'dot--' + statusClass(row.status)"></span>
+                                    {{ row.status }}
+                                </span>
+                            </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="action">
+                            <th mat-header-cell *matHeaderCellDef>Regularize</th>
+                            <td mat-cell *matCellDef="let row">
+                                <button mat-icon-button matTooltip="Request Regularization"
+                                    (click)="openRegularizationDialog(row)">
+                                    <mat-icon class="action-icon">edit_calendar</mat-icon>
+                                </button>
+                            </td>
+                        </ng-container>
+
+                        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+                    </table>
+                </div>
+            </mat-card>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,35 @@
+ <div class="dialog-header" *ngIf="config.title || config.showCloseIcon">
+      <h2 class="title" *ngIf="config.title">{{ config.title }}</h2>
+      <button mat-icon-button aria-label="Close" *ngIf="config.showCloseIcon" (click)="close(null)">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+
+    <div class="dialog-content">
+      <!-- TemplateRef from parent -->
+      <ng-container *ngIf="config.contentTemplate; else componentOutlet">
+        <ng-container *ngTemplateOutlet="config.contentTemplate; context: {$implicit: config.data}"></ng-container>
+      </ng-container>
+
+      <!-- Component outlet fallback -->
+      <ng-template #componentOutlet>
+        <ng-container *ngIf="config.contentComponent">
+          <ng-container *ngComponentOutlet="config.contentComponent; injector: childInjector"></ng-container>
+        </ng-container>
+
+        <!-- Plain text/data fallback -->
+        <div *ngIf="!config.contentTemplate && !config.contentComponent">
+          <pre *ngIf="config.data">{{ config.data | json }}</pre>
+        </div>
+      </ng-template>
+    </div>
+
+    <div class="dialog-actions" *ngIf="config.actions?.length">
+      <button *ngFor="let a of config.actions"
+              mat-button
+              [color]="a.color"
+              [disabled]="a.disabled"
+              (click)="actionClick(a)">
+        {{ a.label }}
+      </button>
+    </div>

@@ -1,0 +1,464 @@
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   Salary Component Dialog — Styles
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+$radius: 12px;
+$text-dark: #1f2937;
+$text-muted: #64748b;
+$border: #e5e7eb;
+$bg-light: #f8fafc;
+
+:host {
+  display: block;
+}
+
+.dialog-wrapper {
+  display: flex;
+  flex-direction: column;
+  max-height: 85vh;
+  width: 720px;
+  max-width: 90vw;
+  border-radius: $radius;
+  overflow: hidden;
+}
+
+/* ─── Header ─── */
+.dialog-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  border-bottom: 3px solid;
+  background: #fff;
+
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+
+    .icon-badge {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      mat-icon {
+        font-size: 24px;
+        width: 24px;
+        height: 24px;
+      }
+    }
+
+    .header-text {
+      h2 {
+        margin: 0;
+        font-size: 18px;
+        font-weight: 700;
+        color: $text-dark;
+      }
+      .subtitle {
+        font-size: 12px;
+        color: $text-muted;
+        margin-top: 2px;
+        display: block;
+      }
+    }
+  }
+
+  .close-btn {
+    color: $text-muted;
+    &:hover { color: $text-dark; }
+  }
+}
+
+/* ─── Stepper Nav ─── */
+.stepper-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 24px;
+  background: $bg-light;
+  gap: 0;
+  flex-wrap: wrap;
+
+  .step-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 6px 10px;
+    border-radius: 8px;
+    transition: all 0.2s;
+
+    &:hover { background: rgba(0,0,0,0.04); }
+
+    &.active .step-circle {
+      background: var(--accent);
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+
+    &.completed .step-circle {
+      background: #16a34a;
+      color: #fff;
+
+      mat-icon {
+        font-size: 16px;
+        width: 16px;
+        height: 16px;
+      }
+    }
+
+    .step-circle {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      background: #e2e8f0;
+      color: $text-muted;
+      transition: all 0.3s;
+    }
+
+    .step-label {
+      font-size: 12px;
+      font-weight: 500;
+      color: $text-muted;
+      white-space: nowrap;
+    }
+
+    &.active .step-label { color: $text-dark; font-weight: 600; }
+    &.completed .step-label { color: #16a34a; }
+  }
+
+  .step-connector {
+    width: 24px;
+    height: 2px;
+    background: #e2e8f0;
+    border-radius: 2px;
+    transition: background 0.3s;
+
+    &.active { background: #16a34a; }
+  }
+}
+
+/* ─── Body ─── */
+.dialog-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px;
+  background: #fff;
+}
+
+.step-content {
+  animation: fadeSlide 0.25s ease-out;
+}
+
+@keyframes fadeSlide {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.section-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 20px;
+  font-size: 14px;
+  font-weight: 600;
+  color: $text-dark;
+
+  mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    color: $text-muted;
+  }
+}
+
+/* ─── Form Grid ─── */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  align-items: start;
+
+  .field-half { grid-column: span 1; }
+  .field-full { grid-column: span 2; }
+}
+
+.toggle-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px 16px;
+  border-radius: 10px;
+  border: 1px solid $border;
+  background: $bg-light;
+  transition: border-color 0.2s;
+
+  &:hover { border-color: #94a3b8; }
+
+  .toggle-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    color: $text-dark;
+  }
+
+  .toggle-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    color: $text-muted;
+  }
+
+  .toggle-hint {
+    font-size: 11px;
+    color: $text-muted;
+    margin-left: 44px;
+  }
+}
+
+.status-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  .status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+
+    &.active { background: #16a34a; }
+    &.inactive { background: #dc2626; }
+  }
+}
+
+/* ─── Calculation Type Cards ─── */
+.calc-type-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+
+  .calc-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 20px 16px;
+    border-radius: 12px;
+    border: 2px solid $border;
+    background: #fff;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+
+    mat-icon {
+      font-size: 28px;
+      width: 28px;
+      height: 28px;
+      color: $text-muted;
+    }
+
+    span {
+      font-size: 13px;
+      font-weight: 500;
+      color: $text-muted;
+    }
+
+    .check-icon {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+    }
+
+    &:hover {
+      border-color: #94a3b8;
+      background: $bg-light;
+    }
+
+    &.selected {
+      border-color: var(--accent);
+      background: color-mix(in srgb, var(--accent) 6%, white);
+
+      mat-icon { color: var(--accent); }
+      span { color: var(--accent); font-weight: 600; }
+      .check-icon { color: var(--accent); }
+    }
+  }
+}
+
+/* ─── Formula Section ─── */
+.formula-section {
+  .formula-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+
+    .formula-title {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      color: $text-dark;
+
+      mat-icon { font-size: 18px; width: 18px; height: 18px; }
+    }
+
+    .formula-hint {
+      font-size: 11px;
+      color: $text-muted;
+    }
+  }
+
+  .formula-tokens {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 12px;
+
+    .token-btn {
+      min-width: auto;
+      padding: 4px 12px;
+      font-size: 12px;
+      font-weight: 600;
+      border-radius: 6px;
+      font-family: 'Fira Code', monospace;
+
+      &.operator {
+        min-width: 36px;
+        text-align: center;
+      }
+    }
+  }
+}
+
+/* ─── Statutory Grid ─── */
+.statutory-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+
+  .statutory-card {
+    padding: 16px;
+    border-radius: 12px;
+    border: 1px solid $border;
+    background: $bg-light;
+
+    .stat-card-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+      font-size: 13px;
+      font-weight: 600;
+      color: $text-dark;
+
+      mat-icon {
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
+        color: $text-muted;
+      }
+    }
+  }
+}
+
+/* ─── Summary Row ─── */
+.summary-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 14px 16px;
+  background: $bg-light;
+  border-radius: 10px;
+  border: 1px solid $border;
+
+  .summary-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: $text-muted;
+  }
+}
+
+.chip-yes {
+  background: #dcfce7 !important;
+  color: #16a34a !important;
+  font-weight: 600;
+}
+
+.chip-no {
+  background: #fef2f2 !important;
+  color: #dc2626 !important;
+  font-weight: 600;
+}
+
+/* ─── Footer ─── */
+.dialog-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+  border-top: 1px solid $border;
+  background: $bg-light;
+
+  .footer-left {
+    .step-indicator {
+      font-size: 12px;
+      font-weight: 500;
+      color: $text-muted;
+    }
+  }
+
+  .footer-right {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+
+    button {
+      border-radius: 8px;
+      font-weight: 500;
+
+      mat-icon {
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
+      }
+    }
+  }
+}
+
+/* ─── Material Overrides ─── */
+mat-form-field {
+  width: 100%;
+
+  .mat-mdc-form-field-icon-suffix {
+    color: $text-muted;
+  }
+}
+
+/* ─── Responsive ─── */
+@media (max-width: 640px) {
+  .dialog-wrapper { width: 100%; }
+  .form-grid { grid-template-columns: 1fr; }
+  .calc-type-cards { grid-template-columns: 1fr; }
+  .statutory-grid { grid-template-columns: 1fr; }
+  .stepper-nav { flex-wrap: wrap; }
+}

@@ -1,0 +1,326 @@
+<!-- ═══════════════════════════════════════════════════════════
+     EMPLOYEE SALARY ASSIGNMENT — /home/payroll/employee-assignment
+     ═══════════════════════════════════════════════════════════ -->
+
+<!-- ─── Page Header ─── -->
+<app-page-header title="Employee Salary Assignment" [breadcrumbs]="breadcrumbs">
+    <div header-actions>
+        <button mat-flat-button color="primary" class="add-btn" (click)="openAssignDialog()">
+            <mat-icon>assignment_ind</mat-icon> Assign Salary
+        </button>
+    </div>
+</app-page-header>
+
+<div class="page-content">
+
+    <!-- ─── Stats Cards ─── -->
+    <div class="stats-row">
+        @for (stat of stats(); track stat.label) {
+        <div class="stat-card" [style.--card-color]="stat.color" [style.--card-bg]="stat.bgColor">
+            <div class="stat-icon">
+                <mat-icon>{{ stat.icon }}</mat-icon>
+            </div>
+            <div class="stat-info">
+                <span class="stat-value">{{ stat.value }}</span>
+                <span class="stat-label">{{ stat.label }}</span>
+            </div>
+        </div>
+        }
+    </div>
+
+    <!-- ─── Toolbar: Search + Filters ─── -->
+    <div class="toolbar">
+        <div class="toolbar-left">
+            <mat-form-field appearance="outline" class="search-field">
+                <mat-icon matPrefix>search</mat-icon>
+                <input matInput placeholder="Search by name, code, department..." [ngModel]="searchQuery()"
+                    (ngModelChange)="onSearch($event)">
+                @if (searchQuery()) {
+                <button matSuffix mat-icon-button (click)="onSearch('')" aria-label="Clear">
+                    <mat-icon>close</mat-icon>
+                </button>
+                }
+            </mat-form-field>
+
+            <mat-button-toggle-group [value]="statusFilter()" (change)="onStatusFilter($event.value)"
+                class="status-toggle">
+                <mat-button-toggle value="ALL">All</mat-button-toggle>
+                <mat-button-toggle value="ASSIGNED">
+                    <span class="status-dot active"></span> Assigned
+                </mat-button-toggle>
+                <mat-button-toggle value="NOT_ASSIGNED">
+                    <span class="status-dot inactive"></span> Not Assigned
+                </mat-button-toggle>
+            </mat-button-toggle-group>
+        </div>
+
+        <div class="toolbar-right">
+            <span class="result-count">{{ filteredAssignments().length }} employee(s)</span>
+        </div>
+    </div>
+
+    <!-- ═══ Loading State ═══ -->
+    @if (loading()) {
+    <div class="loading-state">
+        <mat-spinner diameter="40"></mat-spinner>
+        <span>Loading assignments...</span>
+    </div>
+    }
+
+    <!-- ═══ Empty State ═══ -->
+    @if (!loading() && filteredAssignments().length === 0) {
+    <div class="empty-state">
+        <div class="empty-icon">
+            <mat-icon>assignment</mat-icon>
+        </div>
+        <h3>No Assignments Found</h3>
+        <p>
+            @if (searchQuery() || statusFilter() !== 'ALL') {
+            No employees match your search or filter criteria. Try adjusting your filters.
+            } @else {
+            Get started by assigning salary templates to employees.
+            }
+        </p>
+        @if (!searchQuery() && statusFilter() === 'ALL') {
+        <button mat-flat-button color="primary" (click)="openAssignDialog()">
+            <mat-icon>assignment_ind</mat-icon> Assign Salary
+        </button>
+        }
+    </div>
+    }
+
+    <!-- ═══ ASSIGNMENTS TABLE ═══ -->
+    @if (!loading() && filteredAssignments().length > 0) {
+    <div class="table-wrapper">
+        <table mat-table [dataSource]="filteredAssignments()" class="assignment-table" multiTemplateDataRows>
+
+            <!-- Employee Name -->
+            <ng-container matColumnDef="employee_name">
+                <th mat-header-cell *matHeaderCellDef>Employee</th>
+                <td mat-cell *matCellDef="let row">
+                    <div class="name-cell">
+                        <div class="avatar">
+                            {{ (row.employee_name || 'U')[0] }}
+                        </div>
+                        <div class="name-text">
+                            <span class="primary-text">{{ row?.employee_name || 'N/A' }}</span>
+                            <span class="secondary-text">{{ row?.designation || 'Software Engineer' }}</span>
+                        </div>
+                    </div>
+                </td>
+            </ng-container>
+
+            <!-- Employee Code -->
+            <ng-container matColumnDef="employee_code">
+                <th mat-header-cell *matHeaderCellDef>Emp ID</th>
+                <td mat-cell *matCellDef="let row">
+                    <code class="code-badge">{{ row?.employee_code || '--' }}</code>
+                </td>
+            </ng-container>
+
+            <!-- Employee Email -->
+            <ng-container matColumnDef="employee_email">
+                <th mat-header-cell *matHeaderCellDef>Email</th>
+                <td mat-cell *matCellDef="let row">
+                    <span class="email-text">{{ row?.employee_email || '--' }}</span>
+                </td>
+            </ng-container>
+
+            <!-- Earnings Breakdown -->
+            <ng-container matColumnDef="earnings">
+                <th mat-header-cell *matHeaderCellDef>Earnings</th>
+                <td mat-cell *matCellDef="let row"><b>{{ row?.earnings_snapshot?.length || 0 }}</b></td>
+
+
+                <!-- <td mat-cell *matCellDef="let row">
+                    <div class="component-list">
+                        @if (row.earnings_snapshot?.length > 0) {
+                        <ul>
+                            @for (e of row.earnings_snapshot; track e.component_id) {
+                            <li>
+                                <span class="comp-name">{{ e.component_name || e.component_code }}</span>:
+                                <span class="comp-value">{{ formatCurrency(e.monthly_value) }}</span>
+                            </li>
+                            }
+                        </ul>
+                        } @else {
+                        <span class="empty-comp">--</span>
+                        }
+                    </div>
+                </td> -->
+            </ng-container>
+
+            <!-- Deductions Breakdown -->
+            <ng-container matColumnDef="deductions">
+                <th mat-header-cell *matHeaderCellDef>Deductions</th>
+                <td mat-cell *matCellDef="let row"><b>{{ row?.deductions_snapshot?.length || 0 }}</b></td>
+
+                <!-- <td mat-cell *matCellDef="let row">
+                    <div class="component-list">
+                        @if (row.deductions_snapshot?.length > 0) {
+                            <ul>
+                                @for (d of row.deductions_snapshot; track d.component_id) {
+                                    <li>
+                                        <span class="comp-name">{{ d.component_name || d.component_code }}</span>:
+                                        <span class="comp-value">{{ formatCurrency(d.monthly_value) }}</span>
+                                    </li>
+                                }
+                            </ul>
+                        } @else {
+                            <span class="empty-comp">--</span>
+                        }
+                    </div>
+                </td> -->
+            </ng-container>
+
+            <!-- Template Name -->
+            <ng-container matColumnDef="template_name">
+                <th mat-header-cell *matHeaderCellDef>Assigned Template</th>
+                <td mat-cell *matCellDef="let row">
+                    @if (row.template_name) {
+                    <div class="template-cell">
+                        <mat-icon class="tpl-icon">description</mat-icon>
+                        <div>
+                            <span class="tpl-name">{{ row?.template_name }}</span>
+                            <span class="tpl-code">{{ row?.template_code }}</span>
+                        </div>
+                    </div>
+                    } @else {
+                    <span class="not-assigned-badge">
+                        <mat-icon>warning_amber</mat-icon> Not Assigned
+                    </span>
+                    }
+                </td>
+            </ng-container>
+
+            <!-- Monthly CTC -->
+            <ng-container matColumnDef="monthly_ctc">
+                <th mat-header-cell *matHeaderCellDef>Monthly CTC</th>
+                <td mat-cell *matCellDef="let row">
+                    <span class="currency-value">{{ formatCurrency(row?.monthly_ctc) }}</span>
+                </td>
+            </ng-container>
+
+            <!-- Effective From -->
+            <ng-container matColumnDef="effective_from">
+                <th mat-header-cell *matHeaderCellDef>Effective From</th>
+                <td mat-cell *matCellDef="let row">
+                    @if (row?.effective_from) {
+                    <span class="date-cell">{{ row?.effective_from ? (row?.effective_from | date:'mediumDate') : '--'
+                        }}</span>
+                    } @else {
+                    <span>--</span>
+                    }
+                </td>
+            </ng-container>
+
+            <!-- Status -->
+            <ng-container matColumnDef="status">
+                <th mat-header-cell *matHeaderCellDef>Status</th>
+                <td mat-cell *matCellDef="let row">
+                    @if (row?.template_id) {
+                    <span class="status-badge" [class]="getStatusColor(row?.status)">
+                        {{ row?.status }}
+                        @if (row?.version > 1) {
+                        <span class="version-tag">v{{ row?.version }}</span>
+                        }
+                    </span>
+                    } @else {
+                    <span class="status-badge inactive">PENDING</span>
+                    }
+                </td>
+            </ng-container>
+
+            <!-- Actions -->
+            <ng-container matColumnDef="actions">
+                <th mat-header-cell *matHeaderCellDef>Actions</th>
+                <td mat-cell *matCellDef="let row">
+                    <div class="action-btns">
+                        @if (row?.template_id) {
+                        <button mat-icon-button matTooltip="View Details" (click)="openViewDialog(row)">
+                            <mat-icon>visibility</mat-icon>
+                        </button>
+                        <button mat-icon-button matTooltip="Edit" (click)="openEditDialog(row)">
+                            <mat-icon>edit</mat-icon>
+                        </button>
+                        <button mat-icon-button matTooltip="Revise Salary" class="revise-btn"
+                            (click)="openReviseDialog(row)">
+                            <mat-icon>history</mat-icon>
+                        </button>
+                        <button mat-icon-button matTooltip="Salary History" (click)="toggleHistory(row)">
+                            <mat-icon>{{ expandedRow() === row?.employee_id ? 'expand_less' : 'expand_more'
+                                }}</mat-icon>
+                        </button>
+                        <button mat-icon-button matTooltip="Deactivate" class="danger-btn"
+                            (click)="deactivateAssignment(row)" [disabled]="row?.status === 'INACTIVE'">
+                            <mat-icon>block</mat-icon>
+                        </button>
+                        } @else {
+                        <button mat-flat-button color="primary" class="assign-mini-btn" (click)="openAssignDialog()">
+                            <mat-icon>add</mat-icon> Assign
+                        </button>
+                        }
+                    </div>
+                </td>
+            </ng-container>
+
+            <!-- Expanded Row (Salary History) -->
+            <ng-container matColumnDef="expandedDetail">
+                <td mat-cell *matCellDef="let row" [attr.colspan]="displayedColumns.length">
+                    @if (expandedRow() === row.employee_id) {
+                    <div class="history-panel" [@.disabled]="true">
+                        <div class="history-header">
+                            <mat-icon>history</mat-icon>
+                            <span>Salary Revision History — {{ row.employee_name }}</span>
+                        </div>
+                        @if (historyLoading()) {
+                        <div class="history-loading">
+                            <mat-spinner diameter="24"></mat-spinner>
+                            <span>Loading history...</span>
+                        </div>
+                        } @else if (salaryHistory().length === 0) {
+                        <div class="history-empty">No revision history found.</div>
+                        } @else {
+                        <table class="history-table">
+                            <thead>
+                                <tr>
+                                    <th>Version</th>
+                                    <th>Template</th>
+                                    <th>Annual CTC</th>
+                                    <th>Monthly Gross</th>
+                                    <th>Effective From</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @for (h of salaryHistory(); track h._id) {
+                                <tr [class.active-row]="h.is_active">
+                                    <td><span class="version-badge">v{{ h.version }}</span></td>
+                                    <td>{{ h.template_name || '--' }}</td>
+                                    <td>{{ formatCurrency(h.annual_ctc) }}</td>
+                                    <td>{{ formatCurrency(h.monthly_gross) }}</td>
+                                    <td>{{ h.effective_from | date:'mediumDate' }}</td>
+                                    <td>
+                                        <span class="status-badge sm" [class]="h.is_active ? 'active' : 'inactive'">
+                                            {{ h.is_active ? 'ACTIVE' : 'SUPERSEDED' }}
+                                        </span>
+                                    </td>
+                                </tr>
+                                }
+                            </tbody>
+                        </table>
+                        }
+                    </div>
+                    }
+                </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"
+                [class.expanded-row]="expandedRow() === row.employee_id"></tr>
+            <tr mat-row *matRowDef="let row; columns: ['expandedDetail'];" class="detail-row"></tr>
+        </table>
+    </div>
+    }
+
+</div>

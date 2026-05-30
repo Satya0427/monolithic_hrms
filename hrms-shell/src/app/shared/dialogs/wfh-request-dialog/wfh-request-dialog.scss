@@ -1,0 +1,58 @@
+$border: #e0e0e0;
+$text: #333;
+
+.dialog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid $border;
+
+  h2 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 500;
+    color: $text;
+  }
+
+  button {
+    color: #666;
+  }
+}
+
+.dialog-content {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  .full-width {
+    width: 100%;
+  }
+
+  .date-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+}
+
+.dialog-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 16px 24px;
+  border-top: 1px solid $border;
+
+  button {
+    min-width: 120px;
+  }
+}
+
+@media (max-width: 768px) {
+  .dialog-content {
+    .date-row {
+      grid-template-columns: 1fr;
+    }
+  }
+}

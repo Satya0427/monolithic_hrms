@@ -1,0 +1,270 @@
+<!-- Reusable Page Header -->
+<app-page-header title="Create Leave Policy" [breadcrumbs]="['Home', 'Leave & Attendance', 'Leave Policy', 'Create']"
+    [tabs]="pageTabs" [(activeTab)]="currentTab" (onBack)="handleBack()">
+</app-page-header>
+
+<div class="page-container">
+    <div class="content-wrapper">
+        <div class="policy-card">
+            <!-- MAIN STEPPER -->
+            <mat-stepper orientation="horizontal" [linear]="true" #stepper labelPosition="bottom" 
+                (selectionChange)="currentStepIndex.set($event.selectedIndex)">
+
+                <!-- STEP 1: BASIC INFO -->
+                <mat-step [stepControl]="policyForm.get('basicInfo')!" label="Basic Info">
+                    <form [formGroup]="$any(policyForm.get('basicInfo'))" class="step-content">
+
+                        <div class="row-2">
+                            <mat-form-field appearance="outline">
+                                <mat-label>Policy Name</mat-label>
+                                <input matInput formControlName="policyName" placeholder="e.g. Standard Policy 2024">
+                            </mat-form-field>
+
+                            <mat-form-field appearance="outline">
+                                <mat-label>Status</mat-label>
+                                <mat-select formControlName="status">
+                                    <mat-option value="DRAFT">Draft</mat-option>
+                                    <mat-option value="ACTIVE">Active</mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+
+                        <div class="row-2">
+                            <mat-form-field appearance="outline">
+                                <mat-label>Effective From</mat-label>
+                                <input matInput [matDatepicker]="picker1" formControlName="effectiveFrom">
+                                <mat-datepicker-toggle matIconSuffix [for]="picker1"></mat-datepicker-toggle>
+                                <mat-datepicker #picker1></mat-datepicker>
+                            </mat-form-field>
+
+                            <mat-form-field appearance="outline">
+                                <mat-label>Effective To (Optional)</mat-label>
+                                <input matInput [matDatepicker]="picker2" formControlName="effectiveTo">
+                                <mat-datepicker-toggle matIconSuffix [for]="picker2"></mat-datepicker-toggle>
+                                <mat-datepicker #picker2></mat-datepicker>
+                            </mat-form-field>
+                        </div>
+
+                        <mat-form-field appearance="outline" class="full-width">
+                            <mat-label>Description</mat-label>
+                            <textarea matInput formControlName="description" rows="2"></textarea>
+                        </mat-form-field>
+                    </form>
+                </mat-step>
+
+                <!-- STEP 2: APPLICABILITY -->
+                <mat-step [stepControl]="policyForm.get('applicability')!" label="Applicability">
+                    <form [formGroup]="$any(policyForm.get('applicability'))" class="step-content">
+                        <p class="hint-text">Define who falls under this policy.</p>
+
+                        <div class="grid-3">
+                            <mat-form-field appearance="outline">
+                                <mat-label>Employee Type</mat-label>
+                                <mat-select formControlName="employeeType">
+                                    <mat-option value="ALL">All Employees</mat-option>
+                                    @for (type of employee_type(); track type.lookup_key) {
+                                    <mat-option [value]="type.lookup_key">{{ type.lookup_value }}</mat-option>
+                                    }
+                                </mat-select>
+                            </mat-form-field>
+
+                            <mat-form-field appearance="outline">
+                                <mat-label>Gender</mat-label>
+                                <mat-select formControlName="gender">
+                                    <mat-option value="ALL">All</mat-option>
+                                    <mat-option value="MALE">Male</mat-option>
+                                    <mat-option value="FEMALE">Female</mat-option>
+                                </mat-select>
+                            </mat-form-field>
+
+                            <mat-form-field appearance="outline">
+                                <mat-label>Marital Status</mat-label>
+                                <mat-select formControlName="maritalStatus">
+                                    <mat-option value="ALL">All</mat-option>
+                                    <mat-option value="SINGLE">Single</mat-option>
+                                    <mat-option value="MARRIED">Married</mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+
+                        <div class="toggles-wrapper">
+                            <div class="toggle-item">
+                                <span>Allow during Probation?</span>
+                                <mat-button-toggle-group formControlName="probation">
+                                    <mat-button-toggle [value]="true">Yes</mat-button-toggle>
+                                    <mat-button-toggle [value]="false">No</mat-button-toggle>
+                                </mat-button-toggle-group>
+                            </div>
+
+                            <div class="toggle-item">
+                                <span>Allow during Notice Period?</span>
+                                <mat-button-toggle-group formControlName="noticePeriod">
+                                    <mat-button-toggle [value]="true">Yes</mat-button-toggle>
+                                    <mat-button-toggle [value]="false">No</mat-button-toggle>
+                                </mat-button-toggle-group>
+                            </div>
+                        </div>
+
+                        <!-- LEAVE TYPE SELECTOR FOR NEXT STEP -->
+                        <mat-form-field appearance="outline" class="full-width mt-3">
+                            <mat-label>Select Leave Types Included in Policy</mat-label>
+                            <mat-select [formControl]="$any(policyForm.get('selectedLeaves'))" multiple
+                                (selectionChange)="onLeaveSelectionChange($event.value)">
+                                @for (leave of availableLeaveTypes(); track leave.id) {
+                                <mat-option [value]="leave">{{ leave.name }} ({{ leave.code }})</mat-option>
+                                }
+                            </mat-select>
+                        </mat-form-field>
+                    </form>
+                </mat-step>
+
+                <!-- STEP 3: LEAVE RULES -->
+                <mat-step label="Leave Rules">
+                    <div class="step-content">
+                        @if (leaveRulesArray.controls.length === 0) {
+                        <div class="empty-msg">Please select leave types in the previous step.</div>
+                        }
+
+                        <mat-accordion multi>
+                            <!-- Loop through the dynamic FormArray -->
+                            @for (ruleCtrl of leaveRulesArray.controls; track ruleCtrl; let i = $index) {
+                            <mat-expansion-panel [formGroup]="$any(ruleCtrl)" [expanded]="i === 0">
+                                <mat-expansion-panel-header>
+                                    <mat-panel-title class="panel-title">
+                                        {{ ruleCtrl.get('leaveType')?.value }}
+                                    </mat-panel-title>
+                                    <mat-panel-description>Configure credits, restrictions &
+                                        approvals</mat-panel-description>
+                                </mat-expansion-panel-header>
+
+                                <!-- A. CREDITS -->
+                                <div class="config-section" formGroupName="accrual">
+                                    <h4 class="section-head">Accrual & Credits</h4>
+                                    <div class="grid-3">
+                                        <mat-form-field appearance="outline">
+                                            <mat-label>Frequency</mat-label>
+                                            <mat-select formControlName="frequency">
+                                                <mat-option value="MONTHLY">Monthly</mat-option>
+                                                <mat-option value="QUARTERLY">Quarterly</mat-option>
+                                                <mat-option value="YEARLY">Yearly</mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
+                                        <mat-form-field appearance="outline">
+                                            <mat-label>Credit Amount</mat-label>
+                                            <input matInput type="number" formControlName="credit_amount">
+                                        </mat-form-field>
+                                        <mat-form-field appearance="outline">
+                                            <mat-label>Max Balance</mat-label>
+                                            <input matInput type="number" formControlName="max_balance">
+                                        </mat-form-field>
+                                    </div>
+                                </div>
+
+                                <!-- B. RESTRICTIONS -->
+                                <div class="config-section" formGroupName="restrictions">
+                                    <h4 class="section-head">Restrictions</h4>
+                                    <div class="grid-3">
+                                        <mat-form-field appearance="outline">
+                                            <mat-label>Max Per Month</mat-label>
+                                            <input matInput type="number" formControlName="max_per_month">
+                                        </mat-form-field>
+                                        <div class="toggle-box">
+                                            <span>Allow Half Day</span>
+                                            <mat-slide-toggle formControlName="allow_half_day"></mat-slide-toggle>
+                                        </div>
+                                        <div class="toggle-box">
+                                            <span>Allow Negative Balance</span>
+                                            <mat-slide-toggle
+                                                formControlName="allow_negative_balance"></mat-slide-toggle>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- C. APPROVALS -->
+                                <div class="config-section" formGroupName="approval">
+                                    <h4 class="section-head">Approval Workflow</h4>
+                                    <div class="grid-3">
+                                        <div class="toggle-box">
+                                            <span>Require Approval</span>
+                                            <mat-slide-toggle formControlName="require_approval"></mat-slide-toggle>
+                                        </div>
+                                        <div class="toggle-box">
+                                            <span>Auto Approve</span>
+                                            <mat-slide-toggle formControlName="auto_approve"></mat-slide-toggle>
+                                        </div>
+                                        <div class="toggle-box">
+                                            <span>Document Required</span>
+                                            <mat-slide-toggle formControlName="document_required"></mat-slide-toggle>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </mat-expansion-panel>
+                            }
+                        </mat-accordion>
+                    </div>
+                </mat-step>
+
+                <!-- STEP 4: SANDWICH RULES -->
+                <mat-step [stepControl]="policyForm.get('sandwichRule')!" label="Sandwich Rule">
+                    <form [formGroup]="$any(policyForm.get('sandwichRule'))" class="step-content">
+
+                        <div class="sandwich-card">
+                            <div class="card-head">
+                                <mat-slide-toggle formControlName="isApplicable" color="warn">Enable Sandwich
+                                    Rule</mat-slide-toggle>
+                                <p class="desc">If a leave is taken before and after a holiday/weekend, the holiday is
+                                    counted
+                                    as leave.</p>
+                            </div>
+
+                            @if (policyForm.get('sandwichRule.isApplicable')?.value) {
+                            <div class="card-body">
+                                <div class="toggle-item">
+                                    <span>Count Weekly Offs (Sat/Sun) as Leave?</span>
+                                    <mat-button-toggle-group formControlName="countWeeklyOffs">
+                                        <mat-button-toggle [value]="true">Yes</mat-button-toggle>
+                                        <mat-button-toggle [value]="false">No</mat-button-toggle>
+                                    </mat-button-toggle-group>
+                                </div>
+                                <div class="toggle-item">
+                                    <span>Count Public Holidays as Leave?</span>
+                                    <mat-button-toggle-group formControlName="countHolidays">
+                                        <mat-button-toggle [value]="true">Yes</mat-button-toggle>
+                                        <mat-button-toggle [value]="false">No</mat-button-toggle>
+                                    </mat-button-toggle-group>
+                                </div>
+                            </div>
+                            }
+                        </div>
+                    </form>
+                </mat-step>
+
+            </mat-stepper>
+        </div>
+    </div>
+
+    <!-- Fixed Footer with Dynamic Buttons -->
+    <div class="fixed-footer">
+        @if (currentStepIndex() >= 0) {
+            @if (currentStepIndex() > 0) {
+                <button mat-stroked-button (click)="stepper?.previous()" class="footer-btn">Back</button>
+            }
+            @if (currentStepIndex() < 3) {
+                <button mat-flat-button color="primary" (click)="stepper?.next()" class="footer-btn"
+                    [disabled]="currentStepIndex() === 1 && !policyForm.get('selectedLeaves')?.value?.length">
+                    Next
+                </button>
+            } @else {
+                <button mat-flat-button color="primary" (click)="savePolicy()" [disabled]="saving()"
+                    class="footer-btn save-btn">
+                    @if (saving()) {
+                        <mat-spinner diameter="20"></mat-spinner>
+                    }
+                    <mat-icon>save</mat-icon>
+                    <span>{{ saving() ? 'Saving...' : 'Save Policy' }}</span>
+                </button>
+            }
+        }
+    </div>
+</div>

@@ -1,0 +1,122 @@
+<app-page-header title="Holiday Calendar" [breadcrumbs]="['Home', 'Leave & Attendance', 'Holiday Calendar']"
+    [tabs]="pageTabs" [(activeTab)]="currentTab" (onBack)="handleBack()">
+</app-page-header>
+
+<div class="page-wrapper">
+    <!-- Toolbar Section -->
+    <div class="table-card">
+        <div class="table-toolbar">
+            <div class="toolbar-left">
+                <div class="search-box">
+                    <mat-icon>search</mat-icon>
+                    <input type="text" placeholder="Search" (keyup)="applyFilter($event)">
+                </div>
+                
+                <mat-form-field appearance="outline" class="year-selector">
+                    <mat-label>Year</mat-label>
+                    <mat-select [(value)]="selectedYear">
+                        <mat-option [value]="2024">2024</mat-option>
+                        <mat-option [value]="2025">2025</mat-option>
+                        <mat-option [value]="2026">2026</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+
+            <div class="actions">
+                <button mat-icon-button color="primary" class="action-btn" matTooltip="Filter">
+                    <mat-icon>filter_list</mat-icon>
+                </button>
+                <button mat-icon-button class="add-btn" (click)="openDialog()" matTooltip="Add Holiday">
+                    <mat-icon>add_circle_outline</mat-icon>
+                </button>
+                <button mat-icon-button class="action-btn" matTooltip="Refresh">
+                    <mat-icon>refresh</mat-icon>
+                </button>
+                <button mat-icon-button class="action-btn" matTooltip="Bulk Upload">
+                    <mat-icon>upload_file</mat-icon>
+                </button>
+                <button mat-icon-button class="action-btn" matTooltip="Download">
+                    <mat-icon>download</mat-icon>
+                </button>
+            </div>
+        </div>
+
+        <!-- Table Container -->
+        <div class="table-container">
+            <table mat-table [dataSource]="dataSource" class="mat-elevation-z0">
+
+                <!-- Date Column -->
+                <ng-container matColumnDef="date">
+                    <th mat-header-cell *matHeaderCellDef style="width: 100px;"> Date </th>
+                    <td mat-cell *matCellDef="let h">
+                        <div class="date-badge">
+                            <span class="day">{{ h.date | date:'dd' }}</span>
+                            <span class="month">{{ h.date | date:'MMM' }}</span>
+                        </div>
+                    </td>
+                </ng-container>
+
+                <!-- Details Column -->
+                <ng-container matColumnDef="details">
+                    <th mat-header-cell *matHeaderCellDef> Holiday Details </th>
+                    <td mat-cell *matCellDef="let h">
+                        <div class="name-col">
+                            <span class="h-name">{{ h.name }}</span>
+                            <span class="h-day">{{ h.date | date:'EEEE' }}</span>
+                        </div>
+                    </td>
+                </ng-container>
+
+                <!-- Type Column -->
+                <ng-container matColumnDef="type">
+                    <th mat-header-cell *matHeaderCellDef> Type </th>
+                    <td mat-cell *matCellDef="let h">
+                        <span class="type-pill" [class]="h.type.toLowerCase()">{{ h.type }}</span>
+                        @if(h.isOptional) {
+                        <span class="opt-tag">Optional</span>
+                        }
+                    </td>
+                </ng-container>
+
+                <!-- Locations Column -->
+                <ng-container matColumnDef="locations">
+                    <th mat-header-cell *matHeaderCellDef> Applicable Locations </th>
+                    <td mat-cell *matCellDef="let h">
+                        @if(h.locations.includes('All')) {
+                        <span class="loc-text">All Locations</span>
+                        } @else {
+                        <div class="loc-list">
+                            @for(loc of h.locations; track loc) { 
+                            <span class="loc-chip">{{ loc }}</span>
+                            }
+                        </div>
+                        }
+                    </td>
+                </ng-container>
+
+                <!-- Actions Column -->
+                <ng-container matColumnDef="actions">
+                    <th mat-header-cell *matHeaderCellDef style="text-align: right;"> Actions </th>
+                    <td mat-cell *matCellDef="let h" style="text-align: right;">
+                        <button mat-icon-button color="primary" (click)="openDialog(h)" matTooltip="Edit">
+                            <mat-icon>edit</mat-icon>
+                        </button>
+                        <button mat-icon-button color="warn" (click)="deleteHoliday(h)" matTooltip="Delete">
+                            <mat-icon>delete</mat-icon>
+                        </button>
+                    </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+                <!-- Empty State -->
+                <tr class="mat-row" *matNoDataRow>
+                    <td class="mat-cell" colspan="5" style="text-align: center; padding: 20px; color: #777;">
+                        No holidays defined for this year.
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>

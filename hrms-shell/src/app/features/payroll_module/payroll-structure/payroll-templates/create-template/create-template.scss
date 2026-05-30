@@ -1,0 +1,777 @@
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   Create / Edit Template Wizard — Styles
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+$bg-color: #f1f5f9;
+$primary: #2563eb;
+$success: #16a34a;
+$danger: #dc2626;
+$warning: #ea580c;
+$purple: #9333ea;
+$text-dark: #1e293b;
+$text-muted: #64748b;
+$text-light: #94a3b8;
+$border: #e5e7eb;
+$bg-card: #ffffff;
+$radius: 12px;
+$radius-sm: 8px;
+
+:host {
+  display: block;
+  background: $bg-color;
+  height: 100%;
+  overflow-y: auto;
+}
+
+/* ─── Page Container ─── */
+.page-container {
+  background-color: $bg-color;
+  height: 85%;
+  padding: 6px;
+  padding-bottom: 44px;
+  font-family: 'Roboto', sans-serif;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  position: relative;
+}
+
+.content-wrapper {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 60vh;
+  max-height: 63vh;
+  padding: 9px 6px 9px 6px;
+}
+
+.tab-content {
+  min-height: 100%;
+  padding-bottom: 16px;
+}
+
+/* ─── Step Header ─── */
+.step-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+
+  .step-badge {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 800;
+    color: #fff;
+    flex-shrink: 0;
+
+    &.green { background: linear-gradient(135deg, $success, #059669); }
+    &.yellow { background: linear-gradient(135deg, $warning, #d97706); }
+    &.blue { background: linear-gradient(135deg, $primary, #1d4ed8); }
+    &.purple { background: linear-gradient(135deg, $purple, #7c3aed); }
+  }
+
+  .step-info {
+    h2 {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 700;
+      color: $text-dark;
+    }
+
+    p {
+      margin: 2px 0 0;
+      font-size: 13px;
+      color: $text-muted;
+    }
+  }
+}
+
+/* ─── Form Card ─── */
+.form-card {
+  border-radius: $radius !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
+  border: 1px solid $border;
+  margin-bottom: 16px;
+
+  mat-card-header {
+    padding: 16px 20px 8px;
+
+    mat-card-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 15px;
+      font-weight: 700;
+      color: $text-dark;
+
+      mat-icon {
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
+        color: $primary;
+      }
+    }
+  }
+
+  mat-card-content {
+    padding: 16px 20px 20px;
+  }
+}
+
+/* ─── Form Grid ─── */
+.form-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+
+  .full-width {
+    grid-column: 1 / -1;
+  }
+}
+
+/* ─── Alert ─── */
+.alert {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: $radius-sm;
+  margin-bottom: 16px;
+  font-size: 13px;
+  font-weight: 500;
+
+  mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+  }
+
+  &.alert-warning {
+    background: #fffbeb;
+    color: #92400e;
+    border: 1px solid #fde68a;
+
+    mat-icon { color: #f59e0b; }
+  }
+
+  &.alert-error {
+    background: #fef2f2;
+    color: #991b1b;
+    border: 1px solid #fecaca;
+
+    mat-icon { color: $danger; }
+  }
+}
+
+/* ─── Config Layout (Left-Right Panels) ─── */
+.config-layout {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: 16px;
+  min-height: 400px;
+}
+
+.config-panel {
+  background: $bg-card;
+  border-radius: $radius;
+  border: 1px solid $border;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+
+  .panel-header {
+    padding: 14px 16px;
+    border-bottom: 1px solid $border;
+    background: #f8fafc;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+
+    h3 {
+      margin: 0;
+      font-size: 14px;
+      font-weight: 700;
+      color: $text-dark;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+
+      mat-icon {
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
+        color: $text-muted;
+      }
+    }
+
+    .panel-search {
+      width: 180px;
+      min-width: 120px;
+
+      ::ng-deep .mat-mdc-form-field-subscript-wrapper {
+        display: none;
+      }
+    }
+  }
+
+  .panel-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 8px;
+    max-height: 450px;
+  }
+}
+
+/* ─── Component Item (Available List) ─── */
+.component-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  border-radius: $radius-sm;
+  cursor: pointer;
+  transition: background 0.15s;
+  border: 1px solid transparent;
+
+  &:hover {
+    background: #f0f9ff;
+    border-color: #bfdbfe;
+  }
+
+  .comp-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .add-item-btn {
+    color: $text-light;
+    transition: color 0.2s;
+
+    &:hover {
+      color: $primary;
+    }
+
+    mat-icon {
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
+    }
+  }
+}
+
+.comp-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  &.earnings {
+    background: #f0fdf4;
+    color: $success;
+  }
+
+  &.deductions {
+    background: #fef2f2;
+    color: $danger;
+  }
+
+  mat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+  }
+}
+
+.comp-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+
+  .comp-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: $text-dark;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .comp-code {
+    font-size: 11px;
+    color: $text-muted;
+    font-family: 'Fira Code', monospace;
+  }
+}
+
+.basic-tag {
+  background: linear-gradient(135deg, #fbbf24, #f59e0b);
+  color: #fff;
+  font-size: 9px;
+  font-weight: 800;
+  padding: 1px 6px;
+  border-radius: 4px;
+  letter-spacing: 0.5px;
+
+  &.small {
+    font-size: 8px;
+    padding: 1px 5px;
+  }
+}
+
+.statutory-tag {
+  background: #fef2f2;
+  color: $danger;
+  font-size: 9px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+  letter-spacing: 0.3px;
+}
+
+.panel-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  color: $text-muted;
+  gap: 8px;
+
+  mat-icon {
+    font-size: 32px;
+    width: 32px;
+    height: 32px;
+    color: $text-light;
+  }
+
+  span {
+    font-size: 13px;
+  }
+}
+
+/* ─── Selected Component Card ─── */
+.selected-component-card {
+  background: $bg-card;
+  border: 1px solid $border;
+  border-radius: $radius-sm;
+  margin-bottom: 10px;
+  transition: box-shadow 0.2s;
+
+  &:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  }
+
+  .selected-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 12px;
+    border-bottom: 1px solid #f1f5f9;
+    gap: 8px;
+
+    .selected-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .selected-actions {
+      display: flex;
+      align-items: center;
+      gap: 0;
+
+      button {
+        color: $text-light;
+
+        mat-icon {
+          font-size: 18px;
+          width: 18px;
+          height: 18px;
+        }
+
+        &:hover {
+          color: $primary;
+        }
+      }
+
+      .remove-btn:hover {
+        color: $danger;
+      }
+    }
+  }
+
+  .selected-config {
+    padding: 12px;
+    display: flex;
+    align-items: flex-end;
+    gap: 12px;
+    flex-wrap: wrap;
+
+    .config-field {
+      width: 180px;
+      min-width: 140px;
+
+      ::ng-deep .mat-mdc-form-field-subscript-wrapper {
+        display: none;
+      }
+    }
+
+    .config-toggles {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      padding-bottom: 10px;
+
+      mat-slide-toggle {
+        font-size: 12px;
+      }
+    }
+
+    .formula-display {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #f3e8ff;
+      border: 1px solid #d8b4fe;
+      border-radius: 6px;
+      padding: 8px 14px;
+      min-width: 180px;
+      max-width: 320px;
+
+      .formula-icon {
+        color: #7c3aed;
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
+      }
+
+      .formula-text {
+        font-family: 'Roboto Mono', monospace;
+        font-size: 12px;
+        font-weight: 500;
+        color: #5b21b6;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
+  }
+}
+
+.deduction-card {
+  .selected-config {
+    padding: 12px;
+  }
+}
+
+/* ─── Step 4: CTC Preview ─── */
+.ctc-input-card {
+  .ctc-input-row {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+
+    .ctc-toggle {
+      border-radius: $radius-sm;
+      height: 42px;
+
+      .mat-button-toggle {
+        font-size: 13px;
+        font-weight: 600;
+      }
+    }
+
+    .ctc-field {
+      width: 300px;
+
+      ::ng-deep .mat-mdc-form-field-subscript-wrapper {
+        display: none;
+      }
+    }
+  }
+}
+
+.preview-summary-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin-bottom: 20px;
+
+  .preview-summary-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px;
+    background: $bg-card;
+    border-radius: $radius;
+    border: 1px solid $border;
+
+    > mat-icon {
+      font-size: 28px;
+      width: 28px;
+      height: 28px;
+    }
+
+    &.earnings-summary {
+      border-left: 4px solid $success;
+      mat-icon { color: $success; }
+    }
+
+    &.deductions-summary {
+      border-left: 4px solid $danger;
+      mat-icon { color: $danger; }
+    }
+
+    &.net-summary {
+      border-left: 4px solid $primary;
+      mat-icon { color: $primary; }
+    }
+
+    &.annual-summary {
+      border-left: 4px solid $purple;
+      mat-icon { color: $purple; }
+    }
+
+    .summary-info {
+      display: flex;
+      flex-direction: column;
+
+      .summary-label {
+        font-size: 11px;
+        color: $text-muted;
+        font-weight: 500;
+      }
+
+      .summary-value {
+        font-size: 18px;
+        font-weight: 800;
+        color: $text-dark;
+      }
+    }
+  }
+}
+
+.preview-table-card {
+  .preview-table {
+    width: 100%;
+
+    th.mat-mdc-header-cell {
+      background: #f8fafc;
+      font-size: 12px;
+      font-weight: 700;
+      color: $text-muted;
+      text-transform: uppercase;
+      padding: 12px 16px;
+    }
+
+    td.mat-mdc-cell {
+      padding: 10px 16px;
+      font-size: 13px;
+      color: $text-dark;
+    }
+
+    .amount-col {
+      text-align: right;
+      font-weight: 600;
+      font-family: 'Fira Code', monospace;
+    }
+  }
+
+  .preview-total-row {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    padding: 12px 16px;
+    font-weight: 800;
+    font-size: 13px;
+    border-top: 2px solid $border;
+
+    span:nth-child(2),
+    span:nth-child(3) {
+      text-align: right;
+      min-width: 120px;
+      font-family: 'Fira Code', monospace;
+    }
+
+    &.earnings-total {
+      background: #f0fdf4;
+      color: $success;
+    }
+
+    &.deductions-total {
+      background: #fef2f2;
+      color: $danger;
+    }
+  }
+
+  .preview-empty {
+    padding: 30px;
+    text-align: center;
+    color: $text-muted;
+    font-size: 13px;
+  }
+}
+
+.preview-comp-name {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 500;
+}
+
+/* ─── Step 5: Controls ─── */
+.controls-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.control-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 0;
+
+  .control-info {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    flex: 1;
+
+    .control-icon {
+      font-size: 24px;
+      width: 24px;
+      height: 24px;
+      color: $primary;
+      margin-top: 2px;
+    }
+
+    h4 {
+      margin: 0;
+      font-size: 14px;
+      font-weight: 700;
+      color: $text-dark;
+    }
+
+    p {
+      margin: 4px 0 0;
+      font-size: 12px;
+      color: $text-muted;
+      max-width: 500px;
+    }
+  }
+}
+
+.summary-card {
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+
+    .summary-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      padding: 12px;
+      background: #f8fafc;
+      border-radius: $radius-sm;
+
+      .summary-label {
+        font-size: 11px;
+        color: $text-muted;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+      }
+
+      .summary-value {
+        font-size: 15px;
+        font-weight: 700;
+        color: $text-dark;
+      }
+    }
+  }
+}
+
+/* ─── Fixed Footer ─── */
+.fixed-footer {
+  position: sticky;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 24px;
+  background: $bg-card;
+  border-top: 1px solid $border;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.06);
+  z-index: 10;
+
+  .footer-left,
+  .footer-right {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+
+  button {
+    border-radius: $radius-sm !important;
+    font-weight: 600;
+    height: 38px;
+    padding: 0 20px;
+
+    mat-icon {
+      font-size: 18px;
+      margin-right: 4px;
+    }
+  }
+
+  .save-btn {
+    min-width: 180px;
+  }
+}
+
+/* ─── Responsive ─── */
+@media (max-width: 1024px) {
+  .config-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .preview-summary-row {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .form-grid-2 {
+    grid-template-columns: 1fr;
+  }
+
+  .summary-card .summary-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .preview-summary-row {
+    grid-template-columns: 1fr;
+  }
+
+  .summary-card .summary-grid {
+    grid-template-columns: 1fr;
+  }
+}

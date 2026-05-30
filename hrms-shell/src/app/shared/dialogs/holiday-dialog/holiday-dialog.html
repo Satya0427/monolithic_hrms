@@ -1,0 +1,225 @@
+<div class="dialog-header">
+    <h2 mat-dialog-title>{{ data.holiday ? 'Edit Holiday' : 'Create Holiday' }}</h2>
+    <button mat-icon-button (click)="cancel()"><mat-icon>close</mat-icon></button>
+</div>
+
+<form [formGroup]="holidayForm" (ngSubmit)="save()">
+    <mat-dialog-content class="dialog-content">
+
+        <!-- =============== SECTION 1: HOLIDAY DETAILS =============== -->
+        <div class="section">
+            <h3 class="section-title">Holiday Details</h3>
+            
+            <div class="row-2">
+                <!-- Holiday Name -->
+                <mat-form-field appearance="outline">
+                    <mat-label>Holiday Name *</mat-label>
+                    <input matInput formControlName="name" placeholder="e.g. Republic Day">
+                    @if(holidayForm.get('name')?.hasError('required') && holidayForm.get('name')?.touched) {
+                    <mat-error>Holiday name is required</mat-error>
+                    }
+                </mat-form-field>
+
+                <!-- Holiday Date -->
+                <mat-form-field appearance="outline">
+                    <mat-label>Holiday Date *</mat-label>
+                    <input matInput [matDatepicker]="datePicker" formControlName="date">
+                    <mat-datepicker-toggle matIconSuffix [for]="datePicker"></mat-datepicker-toggle>
+                    <mat-datepicker #datePicker></mat-datepicker>
+                    @if(holidayForm.get('date')?.hasError('required') && holidayForm.get('date')?.touched) {
+                    <mat-error>Date is required</mat-error>
+                    }
+                </mat-form-field>
+            </div>
+
+            <div class="row-2">
+                <!-- Day (Auto) -->
+                <mat-form-field appearance="outline">
+                    <mat-label>Day (Auto)</mat-label>
+                    <input matInput formControlName="day" readonly>
+                    <mat-icon matIconPrefix>calendar_today</mat-icon>
+                </mat-form-field>
+
+                <!-- Year (Auto) -->
+                <mat-form-field appearance="outline">
+                    <mat-label>Year (Auto)</mat-label>
+                    <input matInput formControlName="year" readonly>
+                    <mat-icon matIconPrefix>event</mat-icon>
+                </mat-form-field>
+            </div>
+
+            <!-- Description -->
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Description (Optional)</mat-label>
+                <textarea matInput formControlName="description" rows="2" 
+                    placeholder="Internal note about this holiday"></textarea>
+            </mat-form-field>
+        </div>
+
+        <!-- =============== SECTION 2: HOLIDAY CLASSIFICATION =============== -->
+        <div class="section">
+            <h3 class="section-title">Holiday Classification</h3>
+            
+            <div class="row-2">
+                <!-- Holiday Type -->
+                <mat-form-field appearance="outline">
+                    <mat-label>Holiday Type *</mat-label>
+                    <mat-select formControlName="type">
+                        @for(type of holidayTypes; track type) {
+                        <mat-option [value]="type">{{ type }}</mat-option>
+                        }
+                    </mat-select>
+                    @if(holidayForm.get('type')?.hasError('required') && holidayForm.get('type')?.touched) {
+                    <mat-error>Holiday type is required</mat-error>
+                    }
+                </mat-form-field>
+
+                <!-- Color Picker -->
+                <div class="color-picker-wrapper">
+                    <label>Holiday Color</label>
+                    <div class="picker-container">
+                        <input type="color" formControlName="colorCode" id="colorInput">
+                        <span class="hex-value">{{ holidayForm.get('colorCode')?.value }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Toggles Row -->
+            <div class="toggles-row">
+                <mat-slide-toggle formControlName="isOptional" color="primary">
+                    <span class="toggle-label">Optional Holiday</span>
+                    <span class="toggle-hint">Links with Optional Leave Type</span>
+                </mat-slide-toggle>
+
+                <mat-slide-toggle formControlName="isPaid" color="primary">
+                    <span class="toggle-label">Paid Holiday</span>
+                    <span class="toggle-hint">Usually enabled</span>
+                </mat-slide-toggle>
+            </div>
+        </div>
+
+        <!-- =============== SECTION 3: APPLICABILITY =============== -->
+        <div class="section">
+            <h3 class="section-title">Applicability</h3>
+            
+            <!-- Applicable To -->
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Applicable To *</mat-label>
+                <mat-select formControlName="applicableTo">
+                    <mat-option value="All">All Locations</mat-option>
+                    <mat-option value="Specific">Specific Locations</mat-option>
+                </mat-select>
+            </mat-form-field>
+
+            <!-- Locations (Conditional) -->
+            @if(showLocationSelect) {
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Select Locations *</mat-label>
+                <mat-select formControlName="locations" multiple>
+                    @for(location of availableLocations; track location) {
+                    <mat-option [value]="location">{{ location }}</mat-option>
+                    }
+                </mat-select>
+                @if(holidayForm.get('locations')?.hasError('required') && holidayForm.get('locations')?.touched) {
+                <mat-error>Please select at least one location</mat-error>
+                }
+            </mat-form-field>
+            }
+
+            <!-- Advanced Applicability (Optional) -->
+            <div class="advanced-section">
+                <button type="button" mat-button color="primary" class="expand-btn"
+                    (click)="showAdvanced = !showAdvanced">
+                    <mat-icon>{{ showAdvanced ? 'expand_less' : 'expand_more' }}</mat-icon>
+                    Advanced Filters (Optional)
+                </button>
+
+                @if(showAdvanced) {
+                <div class="advanced-content">
+                    <!-- Departments -->
+                    <mat-form-field appearance="outline" class="full-width">
+                        <mat-label>Departments (Optional)</mat-label>
+                        <mat-select formControlName="departments" multiple>
+                            @for(dept of availableDepartments; track dept) {
+                            <mat-option [value]="dept">{{ dept }}</mat-option>
+                            }
+                        </mat-select>
+                    </mat-form-field>
+
+                    <!-- Employee Types -->
+                    <mat-form-field appearance="outline" class="full-width">
+                        <mat-label>Employee Types (Optional)</mat-label>
+                        <mat-select formControlName="employeeTypes" multiple>
+                            @for(type of availableEmployeeTypes; track type) {
+                            <mat-option [value]="type">{{ type }}</mat-option>
+                            }
+                        </mat-select>
+                    </mat-form-field>
+
+                    <!-- Gender -->
+                    <mat-form-field appearance="outline" class="full-width">
+                        <mat-label>Gender (Optional)</mat-label>
+                        <mat-select formControlName="gender" multiple>
+                            @for(g of availableGenders; track g) {
+                            <mat-option [value]="g">{{ g }}</mat-option>
+                            }
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+                }
+            </div>
+        </div>
+
+        <!-- =============== SECTION 4: OPTIONAL HOLIDAY RULES (CONDITIONAL) =============== -->
+        @if(isOptionalHoliday) {
+        <div class="section optional-section">
+            <h3 class="section-title">
+                <mat-icon class="section-icon">rule</mat-icon>
+                Optional Holiday Rules
+            </h3>
+            
+            <div class="row-2">
+                <!-- Max Optional Leaves -->
+                <mat-form-field appearance="outline">
+                    <mat-label>Max Optional Leaves</mat-label>
+                    <input matInput type="number" formControlName="maxOptionalLeaves" min="0" max="10">
+                    <mat-hint>Per year (0 = unlimited)</mat-hint>
+                </mat-form-field>
+
+                <div></div>
+            </div>
+
+            <!-- Optional Toggles -->
+            <div class="toggles-col">
+                <mat-slide-toggle formControlName="requiresApproval" color="accent">
+                    Requires Manager Approval
+                </mat-slide-toggle>
+
+                <mat-slide-toggle formControlName="autoCreditLeave" color="accent">
+                    Auto-Credit Leave (Advanced)
+                </mat-slide-toggle>
+
+                <mat-slide-toggle formControlName="allowCarryForward" color="accent">
+                    Allow Carry Forward
+                </mat-slide-toggle>
+            </div>
+        </div>
+        }
+
+    </mat-dialog-content>
+
+    <mat-dialog-actions align="end">
+        <button mat-stroked-button type="button" (click)="cancel()" [disabled]="isSaving">Cancel</button>
+        <button mat-flat-button color="primary" type="submit" [disabled]="isSaving">
+            @if(isSaving) {
+                <mat-spinner diameter="20" style="display: inline-block; margin-right: 8px;"></mat-spinner>
+                Saving...
+            } @else {
+                <ng-container>
+                    <mat-icon>{{ data.holiday ? 'save' : 'add' }}</mat-icon>
+                    {{ data.holiday ? 'Update Holiday' : 'Create Holiday' }}
+                </ng-container>
+            }
+        </button>
+    </mat-dialog-actions>
+</form>

@@ -1,0 +1,165 @@
+/* header.component.scss */
+
+// Variables from your layout.scss
+$primary-blue: #2563eb;
+$glass-bg: #ffffff;
+$glass-border: rgba(255, 255, 255, 0.4);
+$text-dark: #1f2937;
+$text-light: #64748b;
+
+:host {
+    display: block;
+    margin-bottom: 1vh; // Spacing between header and page content
+}
+
+.global-glass-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 24px;
+    border-radius: 20px; // Matching your page-content radius
+
+    // Glass Effect matching your Sidebar
+    background: $glass-bg;
+    backdrop-filter: blur(15px);
+    border: 1px solid $glass-border;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    .glass-icon-box {
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.6);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: $primary-blue;
+    }
+
+    .text-group {
+        display: flex;
+        flex-direction: column;
+
+        .app-name {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 700;
+            color: $text-dark;
+        }
+
+        .sub-text {
+            font-size: 11px;
+            color: $text-light;
+            font-weight: 500;
+        }
+    }
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+
+    .search-pill {
+        display: flex;
+        align-items: center;
+        background: rgba(255, 255, 255, 0.6);
+        padding: 8px 16px;
+        border-radius: 30px;
+        border: 1px solid rgba(255, 255, 255, 0.8);
+        width: 240px;
+        transition: all 0.2s;
+
+        &:focus-within {
+            background: #ffffff;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1);
+            width: 280px;
+        }
+
+        mat-icon {
+            font-size: 18px;
+            width: 18px;
+            height: 18px;
+            color: $text-light;
+            margin-right: 8px;
+        }
+
+        input {
+            border: none;
+            background: transparent;
+            outline: none;
+            font-size: 13px;
+            color: $text-dark;
+            flex: 1;
+
+            &::placeholder {
+                color: lighten($text-light, 10%);
+            }
+        }
+
+        .shortcut {
+            font-size: 10px;
+            background: rgba(0, 0, 0, 0.05);
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: $text-light;
+        }
+    }
+
+    .glass-circle-btn {
+        background: rgba(255, 255, 255, 0.6);
+        color: $text-light;
+        position: relative;
+
+        &:hover {
+            background: #ffffff;
+            color: $primary-blue;
+        }
+
+        .dot {
+            position: absolute;
+            top: 8px;
+            right: 10px;
+            width: 6px;
+            height: 6px;
+            background: #ef4444;
+            border-radius: 50%;
+            border: 1px solid white;
+        }
+    }
+
+    .profile-trigger {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        cursor: pointer;
+
+        .avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, $primary-blue, lighten($primary-blue, 20%));
+            color: white;
+            font-size: 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid white;
+            box-shadow: 0 2px 8px rgba(37, 99, 235, 0.2);
+        }
+
+        .chevron {
+            font-size: 18px;
+            width: 18px;
+            height: 18px;
+            color: $text-light;
+        }
+    }
+}

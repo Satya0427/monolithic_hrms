@@ -1,0 +1,199 @@
+    <app-page-header title="My Leave" [breadcrumbs]="['Home', 'Leave & Attendance', 'My Leave']"></app-page-header>
+
+    <div class="page-container">
+        <div class="content-wrapper">
+            <!-- Summary Header -->
+            <div class="section-header">
+                <h3>Leave Balance Summary</h3>
+                <button mat-flat-button color="primary" (click)="openApplyLeaveDialog()">
+                    <mat-icon>add</mat-icon>
+                    Apply Leave
+                </button>
+            </div>
+
+            <!-- User Info (minimal) -->
+            @if(user(); as u) {
+                <mat-card class="employee-info-card">
+                    <div class="employee-header">
+                        <mat-icon>badge</mat-icon>
+                        <div>
+                            <h4>{{ (u?.name || u?.full_name || 'Employee') }}</h4>
+                            <p>{{ u?.employee_id || u?.employee_uuid || '-' }}</p>
+                        </div>
+                    </div>
+                    <div class="employee-grid">
+                        <div class="employee-item">
+                            <span class="label">Email</span>
+                            <span class="value">{{ u?.email || u?.work_email || '-' }}</span>
+                        </div>
+                        <div class="employee-item">
+                            <span class="label">Department</span>
+                            <span class="value">{{ u?.department || '-' }}</span>
+                        </div>
+                        <div class="employee-item">
+                            <span class="label">Designation</span>
+                            <span class="value">{{ u?.designation || '-' }}</span>
+                        </div>
+                        <div class="employee-item">
+                            <span class="label">Work Mode</span>
+                            <span class="value">{{ u?.work_mode || '-' }}</span>
+                        </div>
+                    </div>
+                </mat-card>
+            }
+
+            <!-- Stats Overview -->
+            <div class="stats-row">
+                <div class="stat-card total">
+                    <mat-icon>account_balance_wallet</mat-icon>
+                    <div class="stat-content">
+                        <p class="stat-label">Total Balance</p>
+                        <h2 class="stat-value">{{ totalBalance() }}</h2>
+                    </div>
+                </div>
+                <div class="stat-card credit">
+                    <mat-icon>add_circle</mat-icon>
+                    <div class="stat-content">
+                        <p class="stat-label">Total Credits</p>
+                        <h2 class="stat-value">{{ totalCredits() }}</h2>
+                    </div>
+                </div>
+                <div class="stat-card debit">
+                    <mat-icon>remove_circle</mat-icon>
+                    <div class="stat-content">
+                        <p class="stat-label">Total Used</p>
+                        <h2 class="stat-value">{{ totalUsed() }}</h2>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Balance Cards Grid -->
+            <div class="balance-grid">
+                @for(b of balances(); track b.code) {
+                <mat-card class="balance-card" [style.border-left-color]="b.color">
+                    <div class="balance-header">
+                        <div class="leave-type-info">
+                            <h4>{{ b.name }}</h4>
+                            <span class="leave-code">{{ b.code }}</span>
+                        </div>
+                        <div class="balance-badge" [style.background-color]="b.color">
+                            {{ b.available }}
+                        </div>
+                    </div>
+                    <div class="balance-details">
+                        <div class="detail-row">
+                            <span class="label"><mat-icon>add</mat-icon> Credited</span>
+                            <span class="value credit-text">+{{ b.credited }}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="label"><mat-icon>remove</mat-icon> Used</span>
+                            <span class="value debit-text">-{{ b.used }}</span>
+                        </div>
+                        <div class="detail-row balance-row">
+                            <span class="label"><mat-icon>trending_flat</mat-icon> Available</span>
+                            <span class="value balance-text">{{ b.available }}</span>
+                        </div>
+                    </div>
+                </mat-card>
+                }
+            </div>
+
+            <!-- History Filters -->
+            <div class="section-header with-action">
+                <h3>Leave History</h3>
+            </div>
+
+            <mat-card class="filters-card">
+                <div class="filters-row history-filters">
+                    <mat-button-toggle-group [value]="statusFilter" (change)="onStatusChange($event.value)" appearance="legacy">
+                        <mat-button-toggle value="All">All</mat-button-toggle>
+                        <mat-button-toggle value="Pending">Pending</mat-button-toggle>
+                        <mat-button-toggle value="Approved">Approved</mat-button-toggle>
+                        <mat-button-toggle value="Rejected">Rejected</mat-button-toggle>
+                        <mat-button-toggle value="Cancelled">Cancelled</mat-button-toggle>
+                    </mat-button-toggle-group>
+                </div>
+            </mat-card>
+
+            <!-- History Table -->
+            <mat-card class="table-card">
+                <table mat-table [dataSource]="dataSource" class="ledger-table">
+
+                    <!-- Applied On -->
+                    <ng-container matColumnDef="applied_on">
+                        <th mat-header-cell *matHeaderCellDef>Applied On</th>
+                        <td mat-cell *matCellDef="let r">{{ r.applied_on | date: 'dd MMM yyyy' }}</td>
+                    </ng-container>
+
+                    <!-- Period -->
+                    <ng-container matColumnDef="period">
+                        <th mat-header-cell *matHeaderCellDef>Period</th>
+                        <td mat-cell *matCellDef="let r">
+                            {{ r.start_date | date: 'dd MMM' }} - {{ r.end_date | date: 'dd MMM, yyyy' }}
+                        </td>
+                    </ng-container>
+
+                    <!-- Leave Type -->
+                    <ng-container matColumnDef="leave_type">
+                        <th mat-header-cell *matHeaderCellDef>Type</th>
+                        <td mat-cell *matCellDef="let r">
+                            <span class="leave-type-chip">{{ r.leave_type }}</span>
+                        </td>
+                    </ng-container>
+
+                    <!-- Days -->
+                    <ng-container matColumnDef="days">
+                        <th mat-header-cell *matHeaderCellDef>Days</th>
+                        <td mat-cell *matCellDef="let r"><strong>{{ r.days }}</strong></td>
+                    </ng-container>
+
+                    <!-- Status -->
+                    <ng-container matColumnDef="status">
+                        <th mat-header-cell *matHeaderCellDef>Status</th>
+                        <td mat-cell *matCellDef="let r">
+                            <span class="entry-badge" [ngClass]="{
+                                'entry-credit': r.status==='Approved',
+                                'entry-debit': r.status==='Rejected',
+                                'entry-reversal': r.status==='Pending',
+                                'entry-adjustment': r.status==='Cancelled'
+                            }">{{ r.status }}</span>
+                        </td>
+                    </ng-container>
+
+                    <!-- Actions -->
+                    <ng-container matColumnDef="actions">
+                        <th mat-header-cell *matHeaderCellDef>Actions</th>
+                        <td mat-cell *matCellDef="let r">
+                            <button mat-stroked-button color="primary" (click)="cancel(r)" [disabled]="!canCancel(r)">
+                                <mat-icon>cancel</mat-icon>
+                                Cancel
+                            </button>
+                        </td>
+                    </ng-container>
+
+                    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+                    @if(dataSource.data.length === 0) {
+                    <tr class="mat-row no-data-row">
+                        <td class="mat-cell" [attr.colspan]="displayedColumns.length">
+                            <div class="no-data">
+                                <mat-icon>description</mat-icon>
+                                <p>No leave requests for selected filter</p>
+                            </div>
+                        </td>
+                    </tr>
+                    }
+                </table>
+            </mat-card>
+        </div>
+
+        <!-- Fixed Footer -->
+        <div class="fixed-footer">
+            <button mat-stroked-button class="footer-btn">Back</button>
+            <button mat-flat-button color="primary" class="footer-btn">
+                <mat-icon>download</mat-icon>
+                <span>Export</span>
+            </button>
+        </div>
+    </div>

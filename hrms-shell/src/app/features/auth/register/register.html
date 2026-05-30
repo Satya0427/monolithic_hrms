@@ -1,0 +1,70 @@
+<mat-card class="signup-card">
+    <h2 class="title">Create account</h2>
+
+    <form [formGroup]="signupForm" (ngSubmit)="submitRegistration()" novalidate>
+        <!-- Name -->
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Full name</mat-label>
+            <input matInput formControlName="name" autocomplete="name" placeholder="John Doe" />
+            <mat-icon matSuffix>person</mat-icon>
+            @if(name?.hasError('required')){
+            <mat-error>Name is required</mat-error>
+            }@else if(name?.hasError('minlength')){
+            <mat-error>
+                Name must be at least {{ name?.errors?.['minlength'].requiredLength }} characters
+            </mat-error>
+            }@else if (name?.hasError('maxlength')) {
+            <mat-error>
+                Name must be at most {{ name?.errors?.['maxlength'].requiredLength }} characters
+            </mat-error>
+            }
+
+
+        </mat-form-field>
+
+        <!-- Email -->
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Email</mat-label>
+            <input matInput formControlName="email" autocomplete="email" placeholder="you@example.com" />
+            <mat-icon matSuffix>mail</mat-icon>
+
+            <mat-error *ngIf="email?.hasError('required')">Email is required</mat-error>
+            <mat-error *ngIf="email?.hasError('email')">Please enter a valid email address</mat-error>
+        </mat-form-field>
+
+        <!-- Password -->
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Password</mat-label>
+            <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="password"
+                autocomplete="new-password" placeholder="At least 8 characters" />
+            <button mat-icon-button matSuffix type="button" (click)="hidePassword = !hidePassword"
+                [attr.aria-label]="hidePassword ? 'Show password' : 'Hide password'">
+                <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+            </button>
+
+            <mat-hint align="end">Min 8 characters, letters & numbers</mat-hint>
+
+            <mat-error *ngIf="password?.hasError('required')">Password is required</mat-error>
+            <mat-error *ngIf="password?.hasError('minlength')">
+                Password must be at least {{ password?.errors?.['minlength']?.requiredLength }} characters
+            </mat-error>
+            <mat-error *ngIf="password?.hasError('pattern')">
+                Password must include letters and numbers
+            </mat-error>
+        </mat-form-field>
+
+        <!-- Submit -->
+        <div class="actions">
+            <button mat-flat-button color="primary" type="submit" [disabled]="signupForm.invalid">
+                <mat-progress-spinner diameter="18" mode="indeterminate" strokeWidth="3"
+                    class="spinner"></mat-progress-spinner>
+                <span>Sign Up</span>
+            </button>
+        </div>
+    </form>
+
+    <p class="foot">
+        Already have an account?
+        <a class="link" routerLink="/login">Sign in</a>
+    </p>
+</mat-card>

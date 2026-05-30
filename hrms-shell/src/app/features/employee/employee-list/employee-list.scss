@@ -1,0 +1,286 @@
+/* Variables for colors */
+$primary-bg: #f4f6f9;
+$card-bg: #ffffff;
+$text-dark: #333;
+$text-light: #666;
+$border-color: #e0e0e0;
+
+/* Icon Colors */
+$icon-phone: #28a745;
+$icon-date: #8d6e63;
+$icon-email: #dc3545;
+$icon-loc: #007bff;
+
+/* Gender Badge Colors */
+$male-bg: #e8f5e9;
+$male-text: #2e7d32;
+$female-bg: #f3e5f5;
+$female-text: #7b1fa2;
+
+/* Main wrapper for the entire page */
+.page-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 0;
+}
+
+/* The reusable `app-page-header` is used instead of the local header.
+   Keep the table card flexible so content can scroll beneath the header/tabs. */
+
+/* Table Card Container */
+.table-card {
+    background: $card-bg;
+    border-radius: 8px;
+    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+}
+
+/* Toolbar Style */
+.table-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 16px;
+    background: #e8ecf3;
+    flex-shrink: 0;
+    /* Light blueish gray header */
+
+    .search-box {
+        display: flex;
+        align-items: center;
+        background: #fff;
+        border-radius: 4px;
+        padding: 0 10px;
+        height: 40px;
+        width: 250px;
+
+        mat-icon {
+            color: $text-light;
+            margin-right: 8px;
+        }
+
+        input {
+            border: none;
+            outline: none;
+            width: 100%;
+            font-size: 14px;
+        }
+    }
+
+    .actions {
+        display: flex;
+        gap: 10px;
+
+        .add-btn {
+            color: #28a745;
+        }
+
+        .action-btn {
+            color: #555;
+        }
+    }
+}
+
+/* Virtual Scroll Table Styling */
+.table-container {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+    background: $card-bg;
+}
+
+.table-header {
+    display: flex;
+    align-items: center;
+    background: #ffffff;
+    border-bottom: 2px solid $border-color;
+    padding: 10px 8px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    font-weight: 600;
+    font-size: 14px;
+    color: $text-dark;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.header-cell {
+    padding: 0 8px;
+    flex: 1;
+    min-width: 0;
+
+    &.checkbox-col {
+        flex: 0 0 50px;
+        max-width: 50px;
+    }
+
+    &.name-col {
+        flex: 0 0 180px;
+        max-width: 180px;
+    }
+
+    &.email-col {
+        flex: 0 0 200px;
+        max-width: 200px;
+    }
+
+    &.address-col {
+        flex: 0 0 200px;
+        max-width: 200px;
+    }
+}
+
+cdk-virtual-scroll-viewport.table-viewport {
+    display: block;
+    height: calc(100vh - 320px);
+    min-height: 400px;
+    width: 100%;
+}
+
+.empty-state {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    color: $text-light;
+    font-size: 16px;
+}
+
+.table-row {
+    display: flex;
+    align-items: center;
+    padding: 4px;
+    // height: 60px;
+    // min-height: 60px;
+    border-bottom: 1px solid $border-color;
+    cursor: pointer;
+    transition: background-color 0.2s;
+
+    &:hover {
+        background-color: #f8fafc;
+    }
+
+    &:active {
+        background-color: #f1f5f9;
+    }
+}
+
+.table-cell {
+    padding: 0 8px;
+    flex: 1;
+    min-width: 0;
+    font-size: 14px;
+    color: $text-light;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+
+    &.checkbox-col {
+        flex: 0 0 50px;
+        max-width: 50px;
+    }
+
+    &.name-col {
+        flex: 0 0 180px;
+        max-width: 180px;
+    }
+
+    &.email-col {
+        flex: 0 0 200px;
+        max-width: 200px;
+    }
+
+    &.address-col {
+        flex: 0 0 200px;
+        max-width: 200px;
+    }
+}
+
+/* Column Specific Styling */
+.name-cell {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: $text-dark;
+    font-weight: 500;
+    overflow: hidden;
+
+    span {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        object-fit: cover;
+        flex-shrink: 0;
+    }
+}
+
+.icon-text {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    overflow: hidden;
+    width: 100%;
+
+    mat-icon {
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
+        flex-shrink: 0;
+    }
+
+    .icon-phone {
+        color: $icon-phone;
+    }
+
+    .icon-date {
+        color: $icon-date;
+    }
+
+    .icon-email {
+        color: $icon-email;
+    }
+
+    .icon-loc {
+        color: $icon-loc;
+    }
+
+    .email-text,
+    .address-text {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        flex: 1;
+        min-width: 0;
+    }
+}
+
+/* Gender Badges */
+.gender-badge {
+    padding: 4px 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+
+    &.male {
+        background-color: $male-bg;
+        color: $male-text;
+    }
+
+    &.female {
+        background-color: $female-bg;
+        color: $female-text;
+    }
+}

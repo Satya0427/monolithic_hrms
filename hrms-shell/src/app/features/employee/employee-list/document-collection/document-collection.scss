@@ -1,0 +1,256 @@
+$primary: #3f51b5;
+$text-dark: #1e293b;
+$text-gray: #64748b;
+$bg-color: #f3f4f6;
+$border-color: #e2e8f0;
+
+.page-container {
+    padding: 12px;
+    background-color: $bg-color;
+    // min-height: 100%;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+
+    h3 {
+        margin: 0;
+        font-size: 18px;
+        color: $text-dark;
+        font-weight: 500;
+    }
+
+    .header-actions {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+
+        .doc-type-select {
+            width: 220px;
+
+            // Material overrides for compact look
+            ::ng-deep .mat-mdc-form-field-subscript-wrapper {
+                display: none;
+            }
+
+            ::ng-deep .mat-mdc-text-field-wrapper {
+                height: 40px;
+                padding: 0;
+            }
+
+            ::ng-deep .mat-mdc-form-field-flex {
+                height: 40px;
+                align-items: center;
+                padding: 0 12px;
+            }
+
+            ::ng-deep .mat-mdc-form-field-infix {
+                padding: 0 !important;
+                min-height: 0;
+                border-top: 0;
+            }
+        }
+
+        button {
+            height: 40px;
+        }
+    }
+}
+
+// --- LAYOUT ---
+.grid-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr; // 2 Cards per row
+    gap: 24px;
+
+    @media (max-width: 1000px) {
+        grid-template-columns: 1fr; // 1 Card per row on smaller screens
+    }
+}
+
+// --- CARD STYLES ---
+.doc-card {
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid $border-color;
+    background: white;
+    transition: box-shadow 0.2s;
+    min-height: 160px; // Slightly taller for more fields
+
+    &:hover {
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+
+        .visual-side img {
+            transform: scale(1.05);
+        }
+    }
+}
+
+.card-content-row {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    align-items: stretch; // Ensures Left and Right are same height
+}
+
+// --- LEFT SIDE: VISUAL ---
+.visual-side {
+    width: 211px;
+    background-color: #f8fafc;
+    border-right: 1px solid $border-color;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0; // Prevents shrinking if right side content grows
+    cursor: pointer;
+    overflow: hidden;
+
+    img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+    }
+
+    .pdf-placeholder,
+    .no-file-placeholder {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        color: $text-gray;
+        font-size: 12px;
+        gap: 4px;
+
+        mat-icon {
+            font-size: 32px;
+            width: 32px;
+            height: 32px;
+        }
+    }
+
+    .no-file-placeholder {
+        color: #94a3b8;
+
+        mat-icon {
+            color: #cbd5e1;
+        }
+    }
+
+    .pdf-icon {
+        color: #ef4444;
+    }
+}
+
+// --- RIGHT SIDE: DETAILS ---
+.details-side {
+    flex: 1;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    position: relative; // For absolute positioning of badge if needed
+
+    .header-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 12px;
+        padding-bottom: 8px;
+        border-bottom: 1px dashed #f1f5f9;
+
+        .doc-title {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 600;
+            color: $text-dark;
+
+            .req-star {
+                color: #ef4444;
+            }
+        }
+
+        button {
+            width: 32px;
+            height: 32px;
+            line-height: 32px;
+            color: $text-gray;
+
+            &:hover {
+                color: $primary;
+                background: #eef2ff;
+            }
+        }
+    }
+
+    // --- FLEXIBLE INFO GRID ---
+    .info-grid {
+        display: grid;
+        // Logic: Create columns that are at least 130px wide. 
+        // They will fill the row, then wrap to the next line automatically.
+        grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+        gap: 12px 16px; // Row Gap 12px, Column Gap 16px
+        margin-bottom: 24px; // Space for status badge
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+
+            .label {
+                font-size: 11px;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                color: $text-gray;
+                font-weight: 600;
+                margin-bottom: 4px;
+            }
+
+            .value {
+                font-size: 14px;
+                color: $text-dark;
+                font-weight: 500;
+                word-break: break-word; // Prevent overflow
+
+                &.expired {
+                    color: #ef4444;
+                }
+
+                &.filename {
+                    color: $primary;
+                    font-size: 13px;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    display: block;
+                }
+            }
+        }
+    }
+
+    // Footer Badge
+    .status-badge {
+        margin-top: auto; // Pushes badge to the bottom
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 12px;
+        font-weight: 600;
+        color: #10b981; // Success Green
+        background: #ecfdf5;
+        padding: 4px 8px;
+        border-radius: 4px;
+        align-self: flex-start;
+
+        mat-icon {
+            font-size: 16px;
+            width: 16px;
+            height: 16px;
+        }
+
+        &.pending {
+            color: #f59e0b; // Amber
+            background: #fffbeb;
+        }
+    }
+}

@@ -1,0 +1,53 @@
+<div class="page-context-wrapper">
+
+    <!-- Title & Breadcrumbs -->
+    <div class="title-row">
+        <div class="left">
+            <nav class="breadcrumbs">
+                @for (crumb of breadcrumbs(); track crumb; let last = $last) {
+                <span [class.active]="last">{{ crumb }}</span>
+                @if (!last) { <mat-icon>chevron_right</mat-icon> }
+                }
+            </nav>
+            <h1>{{ title() }}</h1>
+        </div>
+
+        <div class="right">
+            <button mat-stroked-button class="back-btn" (click)="goBack()">
+                <mat-icon>arrow_back</mat-icon> Back
+            </button>
+            <ng-content select="[header-actions]"></ng-content>
+        </div>
+    </div>
+
+    <!-- Tabs (Designed to look integrated with the white card) -->
+    @if (tabs().length > 0) {
+    <div class="tabs-line">
+        @for (tab of tabs(); track getTabId(tab)) {
+        @if (tab.route) {
+        <!-- Tab with routing -->
+        <a class="tab-btn" 
+           [class.active]="activeTab() === getTabId(tab)" 
+           [routerLink]="tab.route"
+           routerLinkActive="active"
+           (click)="selectTab(tab)">
+            {{ tab.label }}
+            @if(activeTab() === getTabId(tab)) {
+            <div class="active-indicator" layoutId="indicator"></div>
+            }
+        </a>
+        } @else {
+        <!-- Tab without routing (legacy support) -->
+        <button class="tab-btn" 
+                [class.active]="activeTab() === getTabId(tab)" 
+                (click)="selectTab(tab)">
+            {{ tab.label }}
+            @if(activeTab() === getTabId(tab)) {
+            <div class="active-indicator" layoutId="indicator"></div>
+            }
+        </button>
+        }
+        }
+    </div>
+    }
+</div>

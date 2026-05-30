@@ -1,0 +1,71 @@
+<div class="dialog-header">
+    <h2 mat-dialog-title>{{ data ? 'Edit Leave Type' : 'Create Leave Type' }}</h2>
+    <button mat-icon-button mat-dialog-close><mat-icon>close</mat-icon></button>
+</div>
+
+<form [formGroup]="leaveForm" (ngSubmit)="save()">
+    <mat-dialog-content class="dialog-content">
+
+        <div class="row-2">
+            <!-- Leave Name -->
+            <mat-form-field appearance="outline">
+                <mat-label>Leave Name</mat-label>
+                <input matInput formControlName="name" placeholder="e.g. Casual Leave">
+                @if(leaveForm.get('name')?.hasError('required')) { <mat-error>Name is required</mat-error> }
+            </mat-form-field>
+
+            <!-- Leave Code -->
+            <mat-form-field appearance="outline">
+                <mat-label>Leave Code</mat-label>
+                <input matInput formControlName="code" placeholder="e.g. CL" style="text-transform: uppercase;">
+                @if(leaveForm.get('code')?.hasError('required')) { <mat-error>Code is required</mat-error> }
+            </mat-form-field>
+        </div>
+
+        <div class="row-2">
+            <!-- Category -->
+            <mat-form-field appearance="outline">
+                <mat-label>Category</mat-label>
+                <mat-select formControlName="category">
+                    <mat-option value="Paid">Paid Leave</mat-option>
+                    <mat-option value="Unpaid">Unpaid (LOP)</mat-option>
+                </mat-select>
+            </mat-form-field>
+
+            <!-- Color Picker -->
+            <div class="color-picker-wrapper">
+                <label>Calendar Color</label>
+                <div class="picker-container">
+                    <input type="color" formControlName="colorCode" id="colorInput">
+                    <span class="hex-value">{{ leaveForm.get('colorCode')?.value }}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Description -->
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Description (Optional)</mat-label>
+            <textarea matInput formControlName="description" rows="3"></textarea>
+        </mat-form-field>
+
+        <!-- System & Status Flags -->
+        <div class="toggles-row">
+            <mat-slide-toggle formControlName="isActive" color="primary">
+                Active Status
+            </mat-slide-toggle>
+
+            <mat-slide-toggle formControlName="isSystem" color="warn"
+                matTooltip="System leaves cannot be fully deleted">
+                System Level Leave
+            </mat-slide-toggle>
+        </div>
+
+    </mat-dialog-content>
+
+    <mat-dialog-actions align="end">
+        <button mat-stroked-button type="button" mat-dialog-close>Cancel</button>
+        <button mat-flat-button color="primary" type="submit" [disabled]="leaveForm.invalid">
+            {{ data ? 'Update' : 'Create' }}
+        </button>
+    </mat-dialog-actions>
+</form>

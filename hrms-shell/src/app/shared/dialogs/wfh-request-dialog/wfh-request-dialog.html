@@ -1,0 +1,66 @@
+<div class="dialog-header">
+  <h2>WFH Request</h2>
+  <button mat-icon-button (click)="close()">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+
+<form [formGroup]="form" class="dialog-content">
+  <div class="date-row">
+    <mat-form-field appearance="outline">
+      <mat-label>Date</mat-label>
+      <input matInput [matDatepicker]="requestPicker" formControlName="requestDate" />
+      <mat-datepicker-toggle matIconSuffix [for]="requestPicker"></mat-datepicker-toggle>
+      <mat-datepicker #requestPicker></mat-datepicker>
+      <mat-error>Date is required</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Request Type</mat-label>
+      <mat-select formControlName="requestType">
+        <mat-option value="FULL_DAY">Full Day</mat-option>
+        <mat-option value="HALF_DAY">Half Day</mat-option>
+      </mat-select>
+      <mat-error>Request type is required</mat-error>
+    </mat-form-field>
+  </div>
+
+  <mat-form-field appearance="outline" class="full-width" *ngIf="form.get('requestType')?.value === 'HALF_DAY'">
+    <mat-label>Half Day Slot</mat-label>
+    <mat-select formControlName="halfDayType">
+      <mat-option value="FIRST_HALF">First Half</mat-option>
+      <mat-option value="SECOND_HALF">Second Half</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <div class="date-row">
+    <mat-form-field appearance="outline">
+      <mat-label>Work Location</mat-label>
+      <mat-select formControlName="workLocation">
+        <mat-option value="HOME">Home</mat-option>
+        <mat-option value="REMOTE">Remote</mat-option>
+        <mat-option value="CLIENT_SITE">Client Site</mat-option>
+      </mat-select>
+      <mat-error>Location is required</mat-error>
+    </mat-form-field>
+  </div>
+
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Work Plan</mat-label>
+    <textarea matInput rows="3" formControlName="workPlan" placeholder="Key deliverables for the day"></textarea>
+    <mat-error>Work plan is required</mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Reason</mat-label>
+    <textarea matInput rows="3" formControlName="reason" placeholder="Reason for WFH"></textarea>
+    <mat-error>Reason is required</mat-error>
+  </mat-form-field>
+</form>
+
+<div class="dialog-footer">
+  <button mat-stroked-button (click)="close()" [disabled]="isSubmitting">Cancel</button>
+  <button mat-flat-button color="primary" (click)="submit()" [disabled]="isSubmitting">
+    {{ isSubmitting ? 'Submitting...' : 'Submit Request' }}
+  </button>
+</div>

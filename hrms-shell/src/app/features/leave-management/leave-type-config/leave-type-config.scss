@@ -1,0 +1,210 @@
+// Variables matching your theme
+$primary: #3f51b5;
+$primary-bg: #f4f6f9;
+$card-bg: #ffffff;
+$text-dark: #333;
+$text-light: #666;
+$text-gray: #64748b;
+$border-color: #e0e0e0;
+
+/* Main wrapper for the entire page */
+.page-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 0;
+}
+
+/* Table Card Container */
+.table-card {
+    background: $card-bg;
+    border-radius: 8px;
+    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+}
+
+/* Toolbar Style */
+.table-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 16px;
+    background: #e8ecf3;
+    flex-shrink: 0;
+
+    .search-box {
+        display: flex;
+        align-items: center;
+        background: #fff;
+        border-radius: 4px;
+        padding: 0 10px;
+        height: 40px;
+        width: 250px;
+
+        mat-icon {
+            color: $text-light;
+            margin-right: 8px;
+        }
+
+        input {
+            border: none;
+            outline: none;
+            width: 100%;
+            font-size: 14px;
+        }
+    }
+
+    .actions {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+
+        .add-btn {
+            height: 40px;
+            border-radius: 6px;
+            font-weight: 500;
+            
+            mat-icon {
+                margin-right: 4px;
+            }
+        }
+
+        .action-btn {
+            color: #555;
+        }
+    }
+}
+
+.table-container {
+    width: 100%;
+    overflow-x: auto;
+    flex: 1;
+    min-height: 0;
+
+    table {
+        width: 100%;
+
+        th.mat-header-cell {
+            background: #f8fafc;
+            color: $text-gray;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 16px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        td.mat-cell {
+            padding: 16px;
+            border-bottom: 1px solid #f1f5f9;
+            color: $text-dark;
+        }
+
+        tr:hover td {
+            background-color: #fcfcfc;
+        }
+    }
+}
+
+// --- COLUMN STYLES ---
+
+// 1. Color Dot
+.color-dot {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 2px solid white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+// 2. Identity (Code + Name)
+.identity-cell {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    .code-badge {
+        background: #eef2ff;
+        color: $primary;
+        font-weight: 700;
+        padding: 6px 10px;
+        border-radius: 6px;
+        font-size: 13px;
+        min-width: 40px;
+        text-align: center;
+    }
+
+    .name-desc {
+        display: flex;
+        flex-direction: column;
+
+        .name {
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .desc {
+            font-size: 12px;
+            color: #94a3b8;
+            max-width: 250px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    }
+}
+
+// 3. Category Pill
+.category-pill {
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+    background: #ecfdf5; // Green-ish bg
+    color: #059669; // Green text
+    border: 1px solid #a7f3d0;
+
+    &.unpaid {
+        background: #fff1f2;
+        color: #e11d48;
+        border-color: #fecdd3;
+    }
+}
+
+// 4. Status Badge
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    font-size: 12px;
+    font-weight: 500;
+
+    &::before {
+        content: '';
+        display: inline-block;
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        margin-right: 6px;
+    }
+
+    &.active {
+        color: #10b981;
+
+        &::before {
+            background-color: #10b981;
+        }
+    }
+
+    &.inactive {
+        color: #94a3b8;
+
+        &::before {
+            background-color: #94a3b8;
+        }
+    }
+}

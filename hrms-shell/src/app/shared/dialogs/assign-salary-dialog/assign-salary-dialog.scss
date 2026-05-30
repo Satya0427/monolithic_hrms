@@ -1,0 +1,572 @@
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   Assign Salary Dialog — Styles
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+$primary: #2563eb;
+$success: #16a34a;
+$danger: #dc2626;
+$warning: #ea580c;
+$purple: #9333ea;
+$text-dark: #1f2937;
+$text-muted: #64748b;
+$text-light: #94a3b8;
+$border: #e5e7eb;
+$bg-page: #f8fafc;
+$bg-card: #ffffff;
+$radius: 12px;
+$radius-sm: 8px;
+
+/* ─── Dialog Header ─── */
+.dialog-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px 16px;
+    border-bottom: 1px solid $border;
+
+    .header-left {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+
+        .header-icon {
+            width: 42px;
+            height: 42px;
+            font-size: 24px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: lighten($primary, 34%);
+            color: $primary;
+        }
+
+        .header-text {
+            h2 {
+                margin: 0;
+                font-size: 18px;
+                font-weight: 700;
+                color: $text-dark;
+            }
+
+            p {
+                margin: 2px 0 0;
+                font-size: 12px;
+                color: $text-muted;
+            }
+        }
+    }
+
+    .close-btn {
+        color: $text-muted;
+
+        &:hover {
+            color: $danger;
+        }
+    }
+}
+
+/* ─── Step Indicators ─── */
+.step-indicators {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px 24px;
+    gap: 0;
+    border-bottom: 1px solid $border;
+    background: $bg-page;
+
+    .step-indicator {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 6px;
+        cursor: pointer;
+        min-width: 80px;
+
+        .step-circle {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid $border;
+            background: $bg-card;
+            transition: all 0.2s;
+
+            mat-icon {
+                font-size: 18px;
+                width: 18px;
+                height: 18px;
+                color: $text-light;
+            }
+        }
+
+        .step-label {
+            font-size: 11px;
+            font-weight: 500;
+            color: $text-muted;
+            white-space: nowrap;
+        }
+
+        &.active .step-circle {
+            border-color: $primary;
+            background: $primary;
+
+            mat-icon {
+                color: #fff;
+            }
+        }
+
+        &.active .step-label {
+            color: $primary;
+            font-weight: 600;
+        }
+
+        &.completed .step-circle {
+            border-color: $success;
+            background: $success;
+
+            mat-icon {
+                color: #fff;
+            }
+        }
+
+        &.completed .step-label {
+            color: $success;
+        }
+    }
+
+    .step-connector {
+        width: 40px;
+        height: 2px;
+        background: $border;
+        margin: 0 4px;
+        margin-bottom: 22px;
+        transition: background 0.2s;
+
+        &.completed {
+            background: $success;
+        }
+    }
+}
+
+/* ─── Dialog Body ─── */
+.dialog-body {
+    padding: 20px 24px !important;
+    max-height: 65vh;
+    overflow-y: auto;
+    background: $bg-page;
+}
+
+.step-content {
+    min-height: 200px;
+}
+
+.step-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 18px;
+    font-size: 15px;
+    font-weight: 600;
+    color: $text-dark;
+
+    mat-icon {
+        color: $primary;
+        font-size: 22px;
+    }
+}
+
+/* ─── Form Styles ─── */
+.form-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+
+    .full-width {
+        width: 100%;
+    }
+
+    .form-row-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+    }
+
+    mat-hint {
+        font-size: 11px;
+        color: $text-light;
+    }
+}
+
+.revision-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    background: lighten($warning, 34%);
+    border: 1px solid lighten($warning, 20%);
+    border-radius: $radius-sm;
+    font-size: 13px;
+    color: darken($warning, 10%);
+
+    mat-icon {
+        font-size: 20px;
+        color: $warning;
+    }
+}
+
+/* ─── Empty Step ─── */
+.empty-step {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 24px;
+    background: lighten($primary, 36%);
+    border: 1px dashed lighten($primary, 20%);
+    border-radius: $radius;
+    color: $primary;
+    font-size: 13px;
+
+    mat-icon {
+        font-size: 22px;
+    }
+}
+
+/* ─── Breakdown Tables ─── */
+.earnings-table-wrapper,
+.deductions-table-wrapper {
+    background: $bg-card;
+    border-radius: $radius;
+    border: 1px solid $border;
+    overflow: hidden;
+}
+
+.breakdown-table {
+    width: 100%;
+
+    th {
+        font-size: 12px;
+        font-weight: 600;
+        color: $text-muted;
+        background: $bg-page;
+        padding: 10px 16px !important;
+    }
+
+    td {
+        padding: 12px 16px !important;
+        font-size: 13px;
+        border-bottom: 1px solid #f1f5f9;
+    }
+
+    .component-cell {
+        display: flex;
+        flex-direction: column;
+
+        .comp-name {
+            font-weight: 600;
+            color: $text-dark;
+            font-size: 13px;
+        }
+
+        .comp-code {
+            font-size: 11px;
+            color: $text-light;
+            font-family: 'Roboto Mono', monospace;
+        }
+    }
+
+    .type-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 3px 10px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 600;
+
+        &.fixed {
+            background: #eff6ff;
+            color: $primary;
+        }
+
+        &.percentage {
+            background: #faf5ff;
+            color: $purple;
+        }
+
+        &.formula {
+            background: #fff7ed;
+            color: $warning;
+        }
+
+        .formula-icon-sm {
+            font-size: 14px;
+            width: 14px;
+            height: 14px;
+        }
+    }
+
+    .currency-value {
+        font-weight: 600;
+        color: $text-dark;
+    }
+
+    .inline-field {
+        width: 130px;
+
+        ::ng-deep .mat-mdc-form-field-subscript-wrapper {
+            display: none;
+        }
+
+        input {
+            font-size: 13px;
+        }
+    }
+}
+
+.table-footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 16px;
+    padding: 12px 16px;
+    background: $bg-page;
+    border-top: 2px solid $border;
+
+    .footer-label {
+        font-size: 13px;
+        font-weight: 700;
+        color: $text-dark;
+        margin-right: auto;
+    }
+
+    .footer-value {
+        font-size: 14px;
+        font-weight: 700;
+        color: $text-dark;
+
+        &.primary {
+            color: $primary;
+        }
+
+        &.danger {
+            color: $danger;
+        }
+    }
+
+    &.deductions {
+        border-top-color: lighten($danger, 30%);
+    }
+}
+
+/* ─── Preview / Summary ─── */
+.summary-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin-bottom: 20px;
+
+    .summary-card {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 16px;
+        border-radius: $radius;
+        border: 1px solid $border;
+        background: $bg-card;
+
+        .summary-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            mat-icon {
+                font-size: 22px;
+                width: 22px;
+                height: 22px;
+            }
+        }
+
+        .summary-info {
+            display: flex;
+            flex-direction: column;
+
+            .summary-label {
+                font-size: 11px;
+                color: $text-muted;
+                font-weight: 500;
+            }
+
+            .summary-value {
+                font-size: 18px;
+                font-weight: 800;
+                color: $text-dark;
+            }
+
+            .summary-sub {
+                font-size: 11px;
+                color: $text-light;
+            }
+        }
+
+        &.gross .summary-icon {
+            background: lighten($success, 42%);
+
+            mat-icon {
+                color: $success;
+            }
+        }
+
+        &.deductions .summary-icon {
+            background: lighten($danger, 34%);
+
+            mat-icon {
+                color: $danger;
+            }
+        }
+
+        &.net .summary-icon {
+            background: lighten($primary, 34%);
+
+            mat-icon {
+                color: $primary;
+            }
+        }
+    }
+}
+
+.preview-section {
+    margin-bottom: 16px;
+
+    h4 {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin: 0 0 10px;
+        font-size: 14px;
+        font-weight: 600;
+        color: $text-dark;
+
+        mat-icon {
+            font-size: 18px;
+            width: 18px;
+            height: 18px;
+            color: $primary;
+        }
+    }
+}
+
+.preview-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: $bg-card;
+    border-radius: $radius-sm;
+    overflow: hidden;
+    border: 1px solid $border;
+
+    th {
+        background: $bg-page;
+        padding: 8px 14px;
+        font-size: 12px;
+        font-weight: 600;
+        color: $text-muted;
+        text-align: left;
+    }
+
+    td {
+        padding: 8px 14px;
+        font-size: 13px;
+        color: $text-dark;
+        border-top: 1px solid #f1f5f9;
+    }
+
+    tfoot td {
+        background: $bg-page;
+        border-top: 2px solid $border;
+    }
+}
+
+/* ─── Final Row ─── */
+.final-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    padding: 18px;
+    margin-top: 12px;
+    background: $bg-card;
+    border-radius: $radius;
+    border: 2px solid $border;
+
+    .final-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+
+        span:first-child {
+            font-size: 11px;
+            color: $text-muted;
+            font-weight: 500;
+        }
+
+        span:last-child {
+            font-size: 18px;
+            font-weight: 800;
+            color: $text-dark;
+
+            &.success {
+                color: $success;
+            }
+
+            &.danger {
+                color: $danger;
+            }
+        }
+
+        &.highlight {
+            padding: 8px 20px;
+            border-radius: $radius-sm;
+            background: lighten($primary, 36%);
+            border: 1px solid lighten($primary, 24%);
+
+            span:last-child {
+                color: $primary;
+            }
+        }
+    }
+
+    .final-separator {
+        font-size: 22px;
+        font-weight: 300;
+        color: $text-light;
+    }
+}
+
+/* ─── Dialog Footer ─── */
+.dialog-footer {
+    padding: 14px 24px !important;
+    border-top: 1px solid $border;
+    gap: 8px;
+
+    button {
+        border-radius: $radius-sm !important;
+        font-weight: 600;
+        min-height: 38px;
+
+        mat-icon {
+            font-size: 18px;
+            margin-right: 4px;
+        }
+
+        mat-spinner {
+            margin-right: 8px;
+        }
+    }
+}

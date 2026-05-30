@@ -1,0 +1,643 @@
+<!-- ═══════════════════════════════════════════════════════════
+     CREATE / EDIT SALARY TEMPLATE — Full Page Wizard
+     ═══════════════════════════════════════════════════════════ -->
+
+<app-page-header
+  [title]="isEditMode() ? 'Edit Salary Template' : 'Create Salary Template'"
+  [breadcrumbs]="['HRMS', 'Payroll', 'Templates', isEditMode() ? 'Edit' : 'Create']"
+  [tabs]="pageTabs"
+  [(activeTab)]="currentTab"
+  (onBack)="handleBack()">
+</app-page-header>
+
+<div class="page-container">
+  <div class="content-wrapper">
+
+    <!-- ═══════════════════════════════════════════════════════
+         STEP 1 — Basic Information
+         ═══════════════════════════════════════════════════════ -->
+    @if (currentTab === 'BASIC_INFO') {
+      <div class="tab-content">
+        <div class="step-header">
+          <div class="step-badge green">1</div>
+          <div class="step-info">
+            <h2>Basic Information</h2>
+            <p>Define the template identity and configuration basics</p>
+          </div>
+        </div>
+
+        <mat-card class="form-card" [formGroup]="basicInfoForm">
+          <mat-card-content>
+            <div class="form-grid-2">
+              <mat-form-field appearance="outline">
+                <mat-label>Template Name</mat-label>
+                <input matInput formControlName="template_name" placeholder="e.g., Standard CTC Template">
+                @if (basicInfoForm.get('template_name')?.hasError('required') && basicInfoForm.get('template_name')?.touched) {
+                  <mat-error>Template name is required</mat-error>
+                }
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Template Code</mat-label>
+                <input matInput formControlName="template_code" placeholder="e.g., TPL-STD-001" style="text-transform: uppercase;">
+                @if (basicInfoForm.get('template_code')?.hasError('required') && basicInfoForm.get('template_code')?.touched) {
+                  <mat-error>Template code is required</mat-error>
+                }
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Description</mat-label>
+                <textarea matInput formControlName="description" rows="3"
+                          placeholder="Describe the purpose and scope of this template..."></textarea>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Effective From</mat-label>
+                <input matInput [matDatepicker]="effectivePicker" formControlName="effective_from">
+                <mat-datepicker-toggle matSuffix [for]="effectivePicker"></mat-datepicker-toggle>
+                <mat-datepicker #effectivePicker></mat-datepicker>
+                @if (basicInfoForm.get('effective_from')?.hasError('required') && basicInfoForm.get('effective_from')?.touched) {
+                  <mat-error>Effective date is required</mat-error>
+                }
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Status</mat-label>
+                <mat-select formControlName="status">
+                  <mat-option value="ACTIVE">Active</mat-option>
+                  <mat-option value="INACTIVE">Inactive</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    }
+
+    <!-- ═══════════════════════════════════════════════════════
+         STEP 2 — Earnings Configuration
+         ═══════════════════════════════════════════════════════ -->
+    @if (currentTab === 'EARNINGS_CONFIG') {
+      <div class="tab-content">
+        <div class="step-header">
+          <div class="step-badge green">2</div>
+          <div class="step-info">
+            <h2>Earnings Configuration</h2>
+            <p>Select and configure earning components for this template</p>
+          </div>
+        </div>
+
+        <!-- Validation Alert -->
+        @if (!hasBasicComponent()) {
+          <div class="alert alert-warning">
+            <mat-icon>warning</mat-icon>
+            <span>A <strong>BASIC</strong> salary component is mandatory. Please add one from the available list.</span>
+          </div>
+        }
+
+        @if (totalEarningsPercentage() > 100) {
+          <div class="alert alert-error">
+            <mat-icon>error</mat-icon>
+            <span>Total percentage-based earnings exceed 100% (currently {{ totalEarningsPercentage() }}%). Please adjust.</span>
+          </div>
+        }
+
+        <div class="config-layout">
+          <!-- LEFT: Available Earnings -->
+          <div class="config-panel available-panel">
+            <div class="panel-header">
+              <h3><mat-icon>inventory_2</mat-icon> Available Earnings</h3>
+              <mat-form-field appearance="outline" class="panel-search">
+                <mat-icon matPrefix>search</mat-icon>
+                <input matInput placeholder="Search..."
+                       [ngModel]="earningsSearchQuery()" (ngModelChange)="earningsSearchQuery.set($event)">
+              </mat-form-field>
+            </div>
+            <div class="panel-list">
+              @for (comp of filteredAvailableEarnings(); track comp._id) {
+                <div class="component-item" (click)="addEarning(comp)">
+                  <div class="comp-info">
+                    <div class="comp-icon earnings">
+                      <mat-icon>{{ comp.is_basic ? 'star' : 'payments' }}</mat-icon>
+                    </div>
+                    <div class="comp-text">
+                      <span class="comp-name">{{ comp.component_name }}</span>
+                      <span class="comp-code">{{ comp.component_code }}</span>
+                    </div>
+                    @if (comp.is_basic) {
+                      <span class="basic-tag">BASIC</span>
+                    }
+                  </div>
+                  <button mat-icon-button class="add-item-btn" matTooltip="Add to template">
+                    <mat-icon>add_circle</mat-icon>
+                  </button>
+                </div>
+              }
+              @if (filteredAvailableEarnings().length === 0) {
+                <div class="panel-empty">
+                  <mat-icon>check_circle</mat-icon>
+                  <span>All earnings components added</span>
+                </div>
+              }
+            </div>
+          </div>
+
+          <!-- RIGHT: Selected Earnings -->
+          <div class="config-panel selected-panel">
+            <div class="panel-header">
+              <h3><mat-icon>checklist</mat-icon> Selected Earnings ({{ selectedEarnings().length }})</h3>
+            </div>
+            <div class="panel-list">
+              @for (earning of selectedEarnings(); track earning.component_id; let i = $index) {
+                <div class="selected-component-card">
+                  <div class="selected-header">
+                    <div class="selected-info">
+                      <div class="comp-icon earnings">
+                        <mat-icon>{{ earning.is_basic ? 'star' : 'payments' }}</mat-icon>
+                      </div>
+                      <div class="comp-text">
+                        <span class="comp-name">
+                          {{ earning.component_name }}
+                          @if (earning.is_basic) { <span class="basic-tag">BASIC</span> }
+                        </span>
+                        <span class="comp-code">{{ earning.component_code }} | Order: {{ earning.calculation_order }}</span>
+                      </div>
+                    </div>
+                    <div class="selected-actions">
+                      <button mat-icon-button matTooltip="Move Up" (click)="moveEarningUp(i)" [disabled]="i === 0">
+                        <mat-icon>arrow_upward</mat-icon>
+                      </button>
+                      <button mat-icon-button matTooltip="Move Down" (click)="moveEarningDown(i)"
+                              [disabled]="i === selectedEarnings().length - 1">
+                        <mat-icon>arrow_downward</mat-icon>
+                      </button>
+                      <button mat-icon-button matTooltip="Remove" class="remove-btn"
+                              (click)="removeEarning(i)" [disabled]="earning.is_basic">
+                        <mat-icon>close</mat-icon>
+                      </button>
+                    </div>
+                  </div>
+
+                  <div class="selected-config">
+                    <mat-form-field appearance="outline" class="config-field">
+                      <mat-label>Value Type</mat-label>
+                      <mat-select [value]="earning.value_type"
+                                  (selectionChange)="updateEarning(i, 'value_type', $event.value)"
+                                  [disabled]="earning.calculation_type === 'formula'">
+                        <mat-option value="fixed">Fixed Amount</mat-option>
+                        <mat-option value="percentage">Percentage of Basic</mat-option>
+                        <mat-option value="formula">Formula</mat-option>
+                      </mat-select>
+                    </mat-form-field>
+
+                    @if (earning.value_type === 'fixed') {
+                      <mat-form-field appearance="outline" class="config-field">
+                        <mat-label>Fixed Amount (Monthly)</mat-label>
+                        <input matInput type="number" [value]="earning.fixed_amount"
+                               (input)="updateEarning(i, 'fixed_amount', +$any($event.target).value)">
+                        <span matPrefix>&#8377;&nbsp;</span>
+                      </mat-form-field>
+                    }
+
+                    @if (earning.value_type === 'percentage') {
+                      <mat-form-field appearance="outline" class="config-field">
+                        <mat-label>Percentage (%)</mat-label>
+                        <input matInput type="number" [value]="earning.percentage"
+                               (input)="updateEarning(i, 'percentage', +$any($event.target).value)">
+                        <span matSuffix>%</span>
+                      </mat-form-field>
+                    }
+
+                    @if (earning.value_type === 'formula') {
+                      <div class="formula-display">
+                        <mat-icon class="formula-icon">functions</mat-icon>
+                        <span class="formula-text">{{ earning.formula || 'No formula defined' }}</span>
+                      </div>
+                    }
+
+                    <div class="config-toggles">
+                      <mat-slide-toggle [checked]="earning.override_allowed"
+                                        (change)="updateEarning(i, 'override_allowed', $event.checked)">
+                        Override Allowed
+                      </mat-slide-toggle>
+                      <mat-slide-toggle [checked]="earning.is_mandatory"
+                                        (change)="updateEarning(i, 'is_mandatory', $event.checked)"
+                                        [disabled]="earning.is_basic">
+                        Mandatory
+                      </mat-slide-toggle>
+                    </div>
+                  </div>
+                </div>
+              }
+              @if (selectedEarnings().length === 0) {
+                <div class="panel-empty">
+                  <mat-icon>add_circle_outline</mat-icon>
+                  <span>No earnings selected. Add from the left panel.</span>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- ═══════════════════════════════════════════════════════
+         STEP 3 — Deductions Configuration
+         ═══════════════════════════════════════════════════════ -->
+    @if (currentTab === 'DEDUCTIONS_CONFIG') {
+      <div class="tab-content">
+        <div class="step-header">
+          <div class="step-badge yellow">3</div>
+          <div class="step-info">
+            <h2>Deductions Configuration</h2>
+            <p>Configure deduction components for this template</p>
+          </div>
+        </div>
+
+        <div class="config-layout">
+          <!-- LEFT: Available Deductions -->
+          <div class="config-panel available-panel">
+            <div class="panel-header">
+              <h3><mat-icon>inventory_2</mat-icon> Available Deductions</h3>
+              <mat-form-field appearance="outline" class="panel-search">
+                <mat-icon matPrefix>search</mat-icon>
+                <input matInput placeholder="Search..."
+                       [ngModel]="deductionsSearchQuery()" (ngModelChange)="deductionsSearchQuery.set($event)">
+              </mat-form-field>
+            </div>
+            <div class="panel-list">
+              @for (comp of filteredAvailableDeductions(); track comp._id) {
+                <div class="component-item" (click)="addDeduction(comp)">
+                  <div class="comp-info">
+                    <div class="comp-icon deductions">
+                      <mat-icon>{{ comp.deduction_nature === 'statutory' ? 'gavel' : 'remove_circle_outline' }}</mat-icon>
+                    </div>
+                    <div class="comp-text">
+                      <span class="comp-name">{{ comp.component_name }}</span>
+                      <span class="comp-code">{{ comp.component_code }}</span>
+                    </div>
+                    @if (comp.deduction_nature === 'statutory') {
+                      <span class="statutory-tag">STATUTORY</span>
+                    }
+                  </div>
+                  <button mat-icon-button class="add-item-btn" matTooltip="Add to template">
+                    <mat-icon>add_circle</mat-icon>
+                  </button>
+                </div>
+              }
+              @if (filteredAvailableDeductions().length === 0) {
+                <div class="panel-empty">
+                  <mat-icon>check_circle</mat-icon>
+                  <span>All deduction components added</span>
+                </div>
+              }
+            </div>
+          </div>
+
+          <!-- RIGHT: Selected Deductions -->
+          <div class="config-panel selected-panel">
+            <div class="panel-header">
+              <h3><mat-icon>checklist</mat-icon> Selected Deductions ({{ selectedDeductions().length }})</h3>
+            </div>
+            <div class="panel-list">
+              @for (deduction of selectedDeductions(); track deduction.component_id; let i = $index) {
+                <div class="selected-component-card deduction-card">
+                  <div class="selected-header">
+                    <div class="selected-info">
+                      <div class="comp-icon deductions">
+                        <mat-icon>{{ deduction.deduction_nature === 'statutory' ? 'gavel' : 'remove_circle_outline' }}</mat-icon>
+                      </div>
+                      <div class="comp-text">
+                        <span class="comp-name">
+                          {{ deduction.component_name }}
+                          @if (deduction.deduction_nature === 'statutory') {
+                            <span class="statutory-tag">STATUTORY</span>
+                          }
+                        </span>
+                        <span class="comp-code">{{ deduction.component_code }}</span>
+                      </div>
+                    </div>
+                    <div class="selected-actions">
+                      <button mat-icon-button matTooltip="Remove" class="remove-btn"
+                              (click)="removeDeduction(i)"
+                              [disabled]="deduction.deduction_nature === 'statutory'">
+                        <mat-icon>close</mat-icon>
+                      </button>
+                    </div>
+                  </div>
+
+                  <div class="selected-config">
+                    @if (deduction.calculation_type === 'fixed') {
+                      <mat-form-field appearance="outline" class="config-field">
+                        <mat-label>Fixed Amount (Monthly)</mat-label>
+                        <input matInput type="number" [value]="deduction.fixed_amount"
+                               (input)="updateDeduction(i, 'fixed_amount', +$any($event.target).value)">
+                        <span matPrefix>&#8377;&nbsp;</span>
+                      </mat-form-field>
+                    }
+
+                    @if (deduction.calculation_type === 'percentage_of_basic' || deduction.calculation_type === 'percentage') {
+                      <mat-form-field appearance="outline" class="config-field">
+                        <mat-label>Percentage of Basic (%)</mat-label>
+                        <input matInput type="number" [value]="deduction.percentage"
+                               (input)="updateDeduction(i, 'percentage', +$any($event.target).value)">
+                        <span matSuffix>%</span>
+                      </mat-form-field>
+                    }
+
+                    @if (deduction.calculation_type === 'formula') {
+                      <div class="formula-display">
+                        <mat-icon class="formula-icon">functions</mat-icon>
+                        <span class="formula-text">{{ deduction.formula || 'No formula defined' }}</span>
+                      </div>
+                    }
+
+                    <div class="config-toggles">
+                      <mat-slide-toggle [checked]="deduction.override_allowed"
+                                        (change)="updateDeduction(i, 'override_allowed', $event.checked)"
+                                        [disabled]="deduction.deduction_nature === 'statutory'">
+                        Override Allowed
+                      </mat-slide-toggle>
+                    </div>
+                  </div>
+                </div>
+              }
+              @if (selectedDeductions().length === 0) {
+                <div class="panel-empty">
+                  <mat-icon>add_circle_outline</mat-icon>
+                  <span>No deductions selected. Add from the left panel.</span>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- ═══════════════════════════════════════════════════════
+         STEP 4 — CTC Distribution & Preview
+         ═══════════════════════════════════════════════════════ -->
+    @if (currentTab === 'CTC_PREVIEW') {
+      <div class="tab-content">
+        <div class="step-header">
+          <div class="step-badge blue">4</div>
+          <div class="step-info">
+            <h2>CTC Distribution & Preview</h2>
+            <p>Enter CTC amount and preview the salary breakdown</p>
+          </div>
+        </div>
+
+        <!-- CTC Input -->
+        <mat-card class="form-card ctc-input-card">
+          <mat-card-content>
+            <div class="ctc-input-row">
+              <mat-button-toggle-group [value]="ctcInputType()"
+                                        (change)="ctcInputType.set($event.value)"
+                                        class="ctc-toggle">
+                <mat-button-toggle value="annual">Annual CTC</mat-button-toggle>
+                <mat-button-toggle value="monthly">Monthly Gross</mat-button-toggle>
+              </mat-button-toggle-group>
+
+              <mat-form-field appearance="outline" class="ctc-field">
+                <mat-label>{{ ctcInputType() === 'annual' ? 'Annual CTC' : 'Monthly Gross' }}</mat-label>
+                <input matInput type="number"
+                       [value]="ctcInputType() === 'annual' ? annualCtc() : monthlyGross()"
+                       (input)="onCtcInputChange(+$any($event.target).value)">
+                <span matPrefix>&#8377;&nbsp;</span>
+              </mat-form-field>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Summary Cards -->
+        <div class="preview-summary-row">
+          <div class="preview-summary-card earnings-summary">
+            <mat-icon>trending_up</mat-icon>
+            <div class="summary-info">
+              <span class="summary-label">Total Monthly Earnings</span>
+              <span class="summary-value">{{ formatCurrency(totalMonthlyEarnings()) }}</span>
+            </div>
+          </div>
+          <div class="preview-summary-card deductions-summary">
+            <mat-icon>trending_down</mat-icon>
+            <div class="summary-info">
+              <span class="summary-label">Total Monthly Deductions</span>
+              <span class="summary-value">{{ formatCurrency(totalMonthlyDeductions()) }}</span>
+            </div>
+          </div>
+          <div class="preview-summary-card net-summary">
+            <mat-icon>account_balance_wallet</mat-icon>
+            <div class="summary-info">
+              <span class="summary-label">Net Monthly Salary</span>
+              <span class="summary-value">{{ formatCurrency(netMonthlySalary()) }}</span>
+            </div>
+          </div>
+          <div class="preview-summary-card annual-summary">
+            <mat-icon>calendar_month</mat-icon>
+            <div class="summary-info">
+              <span class="summary-label">Net Annual Salary</span>
+              <span class="summary-value">{{ formatCurrency(netAnnualSalary()) }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Earnings Preview Table -->
+        <mat-card class="form-card preview-table-card">
+          <mat-card-header>
+            <mat-card-title>
+              <mat-icon>trending_up</mat-icon> Earnings Summary
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            @if (earningsPreview().length > 0) {
+              <table mat-table [dataSource]="earningsPreview()" class="preview-table">
+                <ng-container matColumnDef="component">
+                  <th mat-header-cell *matHeaderCellDef>Component</th>
+                  <td mat-cell *matCellDef="let row">
+                    <span class="preview-comp-name">
+                      {{ row.component_name }}
+                      @if (row.is_basic) { <span class="basic-tag small">BASIC</span> }
+                    </span>
+                  </td>
+                </ng-container>
+                <ng-container matColumnDef="monthly">
+                  <th mat-header-cell *matHeaderCellDef class="amount-col">Monthly</th>
+                  <td mat-cell *matCellDef="let row" class="amount-col">{{ formatCurrency(row.monthly) }}</td>
+                </ng-container>
+                <ng-container matColumnDef="annual">
+                  <th mat-header-cell *matHeaderCellDef class="amount-col">Annual</th>
+                  <td mat-cell *matCellDef="let row" class="amount-col">{{ formatCurrency(row.annual) }}</td>
+                </ng-container>
+                <tr mat-header-row *matHeaderRowDef="['component', 'monthly', 'annual']"></tr>
+                <tr mat-row *matRowDef="let row; columns: ['component', 'monthly', 'annual'];"></tr>
+              </table>
+              <div class="preview-total-row earnings-total">
+                <span>Total Earnings</span>
+                <span>{{ formatCurrency(totalMonthlyEarnings()) }}</span>
+                <span>{{ formatCurrency(totalAnnualEarnings()) }}</span>
+              </div>
+            } @else {
+              <div class="preview-empty">No earnings configured.</div>
+            }
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Deductions Preview Table -->
+        <mat-card class="form-card preview-table-card">
+          <mat-card-header>
+            <mat-card-title>
+              <mat-icon>trending_down</mat-icon> Deductions Summary
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            @if (deductionsPreview().length > 0) {
+              <table mat-table [dataSource]="deductionsPreview()" class="preview-table">
+                <ng-container matColumnDef="component">
+                  <th mat-header-cell *matHeaderCellDef>Component</th>
+                  <td mat-cell *matCellDef="let row">{{ row.component_name }}</td>
+                </ng-container>
+                <ng-container matColumnDef="monthly">
+                  <th mat-header-cell *matHeaderCellDef class="amount-col">Monthly</th>
+                  <td mat-cell *matCellDef="let row" class="amount-col">{{ formatCurrency(row.monthly) }}</td>
+                </ng-container>
+                <ng-container matColumnDef="annual">
+                  <th mat-header-cell *matHeaderCellDef class="amount-col">Annual</th>
+                  <td mat-cell *matCellDef="let row" class="amount-col">{{ formatCurrency(row.annual) }}</td>
+                </ng-container>
+                <tr mat-header-row *matHeaderRowDef="['component', 'monthly', 'annual']"></tr>
+                <tr mat-row *matRowDef="let row; columns: ['component', 'monthly', 'annual'];"></tr>
+              </table>
+              <div class="preview-total-row deductions-total">
+                <span>Total Deductions</span>
+                <span>{{ formatCurrency(totalMonthlyDeductions()) }}</span>
+                <span>{{ formatCurrency(totalAnnualDeductions()) }}</span>
+              </div>
+            } @else {
+              <div class="preview-empty">No deductions configured.</div>
+            }
+          </mat-card-content>
+        </mat-card>
+      </div>
+    }
+
+    <!-- ═══════════════════════════════════════════════════════
+         STEP 5 — Display & Controls
+         ═══════════════════════════════════════════════════════ -->
+    @if (currentTab === 'DISPLAY_CONTROLS') {
+      <div class="tab-content">
+        <div class="step-header">
+          <div class="step-badge purple">5</div>
+          <div class="step-info">
+            <h2>Display & Controls</h2>
+            <p>Configure override rules and version control settings</p>
+          </div>
+        </div>
+
+        <mat-card class="form-card" [formGroup]="displayControlsForm">
+          <mat-card-content>
+            <div class="controls-list">
+
+              <div class="control-item">
+                <div class="control-info">
+                  <mat-icon class="control-icon">edit_note</mat-icon>
+                  <div>
+                    <h4>Allow Manual Override at Payroll</h4>
+                    <p>When enabled, payroll managers can manually override template values during payroll processing</p>
+                  </div>
+                </div>
+                <mat-slide-toggle formControlName="allow_manual_override"></mat-slide-toggle>
+              </div>
+
+              <mat-divider></mat-divider>
+
+              <div class="control-item">
+                <div class="control-info">
+                  <mat-icon class="control-icon">lock</mat-icon>
+                  <div>
+                    <h4>Lock Template After Assignment</h4>
+                    <p>When enabled, template cannot be edited once assigned to any employee</p>
+                  </div>
+                </div>
+                <mat-slide-toggle formControlName="lock_after_assignment"></mat-slide-toggle>
+              </div>
+
+              <mat-divider></mat-divider>
+
+              <div class="control-item">
+                <div class="control-info">
+                  <mat-icon class="control-icon">history</mat-icon>
+                  <div>
+                    <h4>Version Control Enabled</h4>
+                    <p>When enabled, editing an assigned template creates a new version. Old payroll history remains intact.</p>
+                  </div>
+                </div>
+                <mat-slide-toggle formControlName="version_control_enabled"></mat-slide-toggle>
+              </div>
+
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Template Summary -->
+        <mat-card class="form-card summary-card">
+          <mat-card-header>
+            <mat-card-title><mat-icon>summarize</mat-icon> Template Summary</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="summary-grid">
+              <div class="summary-item">
+                <span class="summary-label">Template Name</span>
+                <span class="summary-value">{{ basicInfoForm.get('template_name')?.value || '--' }}</span>
+              </div>
+              <div class="summary-item">
+                <span class="summary-label">Template Code</span>
+                <span class="summary-value">{{ basicInfoForm.get('template_code')?.value || '--' }}</span>
+              </div>
+              <div class="summary-item">
+                <span class="summary-label">Status</span>
+                <span class="summary-value">{{ basicInfoForm.get('status')?.value || '--' }}</span>
+              </div>
+              <div class="summary-item">
+                <span class="summary-label">Total Earnings</span>
+                <span class="summary-value">{{ selectedEarnings().length }} component(s)</span>
+              </div>
+              <div class="summary-item">
+                <span class="summary-label">Total Deductions</span>
+                <span class="summary-value">{{ selectedDeductions().length }} component(s)</span>
+              </div>
+              <div class="summary-item">
+                <span class="summary-label">Net Monthly Salary</span>
+                <span class="summary-value">{{ formatCurrency(netMonthlySalary()) }}</span>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    }
+
+  </div>
+
+  <!-- ─── Fixed Footer with Navigation ─── -->
+  <div class="fixed-footer">
+    <div class="footer-left">
+      @if (!isFirstStep()) {
+        <button mat-stroked-button (click)="goToPreviousTab()">
+          <mat-icon>arrow_back</mat-icon> Previous
+        </button>
+      }
+    </div>
+    <div class="footer-right">
+      @if (!isLastStep()) {
+        <button mat-flat-button color="primary" (click)="goToNextTab()">
+          Next <mat-icon>arrow_forward</mat-icon>
+        </button>
+      }
+      @if (isLastStep()) {
+        <button mat-flat-button color="primary" class="save-btn" (click)="onSubmit()">
+          <mat-icon>save</mat-icon>
+          {{ isEditMode() ? 'Update Template' : 'Create Template' }}
+        </button>
+      }
+    </div>
+  </div>
+</div>

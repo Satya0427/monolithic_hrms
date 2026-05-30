@@ -1,0 +1,185 @@
+$primary: #3f51b5;
+$bg: #f3f4f6;
+
+.page-container {
+    background-color: $bg;
+    height: 74%;
+    padding: 6px;
+    padding-bottom: 68px; // Space for fixed footer
+    font-family: 'Roboto', sans-serif;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    position: relative; // For footer positioning
+}
+
+// Content wrapper for scrollable content
+.content-wrapper {
+    flex: 1;
+    overflow-y: auto;
+    min-height: 60vh;
+    max-height: calc(100vh - 338px);
+    padding: 12px;
+}
+
+.layout-grid {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 16px;
+    margin-bottom: 16px; // Add spacing before footer
+}
+
+.config-card {
+    padding: 20px;
+    height: fit-content;
+    border-radius: 12px;
+
+    h3 {
+        margin-top: 0;
+        margin-bottom: 20px;
+        color: #333;
+        font-size: 16px;
+    }
+
+    .form-col {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+}
+
+.matrix-card {
+    padding: 20px;
+    border-radius: 12px;
+
+    .matrix-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+
+        h3 {
+            margin: 0;
+            font-size: 16px;
+        }
+
+        .hint {
+            font-size: 13px;
+            color: #666;
+        }
+    }
+}
+
+// THE MATRIX GRID
+.wo-grid {
+    display: grid;
+    grid-template-columns: 80px repeat(7, 1fr);
+    gap: 8px;
+}
+
+.grid-header {
+    font-weight: 600;
+    text-align: center;
+    color: #64748b;
+    font-size: 13px;
+    padding-bottom: 8px;
+    text-transform: uppercase;
+}
+
+.week-label {
+    font-weight: 500;
+    color: #334155;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+}
+
+.all-label {
+    color: $primary;
+    font-weight: 600;
+}
+
+.grid-cell {
+    height: 40px;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: white;
+
+    &:hover {
+        background: #f8fafc;
+        border-color: #cbd5e1;
+    }
+
+    &.selected {
+        background: #eef2ff;
+        border-color: $primary;
+        color: $primary;
+
+        mat-icon {
+            font-size: 20px;
+            font-weight: bold;
+        }
+    }
+}
+
+.grid-footer-btn {
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: $primary;
+    cursor: pointer;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    transition: all 0.2s;
+
+    &:hover {
+        background: #eef2ff;
+        border-color: $primary;
+    }
+
+    mat-icon {
+        font-size: 18px;
+    }
+}
+
+// Fixed Footer Styles
+.fixed-footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: white;
+    padding: 13px 18px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.05);
+    border-top: 1px solid #e2e8f0;
+    z-index: 100;
+    height: 45px;
+
+    .footer-btn {
+        height: 44px;
+        padding: 0 24px;
+        border-radius: 8px;
+        font-weight: 500;
+        font-size: 14px;
+        min-width: 100px;
+    }
+
+    .save-btn {
+        min-width: 150px;
+
+        mat-icon {
+            margin-right: 8px;
+        }
+    }
+}

@@ -1,0 +1,849 @@
+/* ═══════════════════════════════════════════════════
+   My Attendance — Modern Dashboard Design
+   ═══════════════════════════════════════════════════ */
+
+// ── Palette ──
+$emerald: #10b981;
+$red: #ef4444;
+$blue: #3b82f6;
+$amber: #f59e0b;
+$purple: #8b5cf6;
+$teal: #14b8a6;
+$indigo: #6366f1;
+$gray: #94a3b8;
+$text: #1e293b;
+$muted: #64748b;
+$surface: #ffffff;
+$bg: #f1f5f9;
+
+:host {
+    display: block;
+    height: 100%;
+    overflow: auto;
+    background: $bg;
+}
+
+.att {
+    --ring-color: #{$indigo};
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 28px 32px;
+    max-width: 1440px;
+    margin: 0 auto;
+}
+
+/* ─── Top Bar ─── */
+.att__topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.att__employee {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.emp__avatar {
+    width: 46px;
+    height: 46px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, $blue, $indigo);
+    color: #fff;
+    font-size: 20px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.emp__info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.emp__name {
+    font-size: 18px;
+    font-weight: 700;
+    color: $text;
+    margin: 0;
+    line-height: 1.2;
+}
+
+.emp__meta {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.emp__detail {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    color: $muted;
+
+    mat-icon {
+        font-size: 15px;
+        width: 15px;
+        height: 15px;
+    }
+}
+
+.att__actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+
+    button {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 13px;
+        border-radius: 10px;
+    }
+}
+
+.btn-clock-in {
+    background: #10b981 !important;
+    color: #fff !important;
+
+    mat-icon {
+        color: #fff;
+    }
+
+    &:disabled {
+        background: rgba(#10b981, 0.4) !important;
+        color: rgba(#fff, 0.7) !important;
+    }
+}
+
+.btn-clock-out {
+    background: #ef4444 !important;
+    color: #fff !important;
+    border: none !important;
+
+    mat-icon {
+        color: #fff;
+    }
+
+    &:disabled {
+        background: rgba(#ef4444, 0.35) !important;
+        color: rgba(#fff, 0.7) !important;
+    }
+}
+
+.btn-wfh-clockin {
+    background: #6366f1 !important;
+    color: #fff !important;
+
+    mat-icon {
+        color: #fff;
+    }
+
+    &:disabled {
+        background: rgba(#6366f1, 0.4) !important;
+        color: rgba(#fff, 0.7) !important;
+    }
+}
+
+/* ─── Today Strip ─── */
+.att__today {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    padding: 24px 28px;
+    border-radius: 16px;
+    background: $surface;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 0, 0, 0.03);
+    border-left: 4px solid $gray;
+    transition: border-color 300ms ease;
+
+    &.today--checked-in {
+        border-left-color: $emerald;
+    }
+
+    &.today--checked-out {
+        border-left-color: $red;
+    }
+
+    &.today--not-checked {
+        border-left-color: $gray;
+    }
+}
+
+.today__ring {
+    flex-shrink: 0;
+}
+
+.ring {
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    transition: background 400ms ease;
+}
+
+.ring__inner {
+    width: 88px;
+    height: 88px;
+    border-radius: 50%;
+    background: $surface;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.04);
+}
+
+.ring__value {
+    font-size: 20px;
+    font-weight: 700;
+    color: $text;
+    line-height: 1;
+}
+
+.ring__label {
+    font-size: 11px;
+    color: $muted;
+    margin-top: 2px;
+}
+
+.today__info {
+    flex: 1;
+    min-width: 0;
+}
+
+.today__status {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: $gray;
+    margin-bottom: 12px;
+
+    &.status--checked-in {
+        color: $emerald;
+    }
+
+    &.status--checked-out {
+        color: $red;
+    }
+
+    &.status--not-checked {
+        color: $gray;
+    }
+}
+
+.dot--checked-out {
+    background: $red;
+}
+
+.dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+    flex-shrink: 0;
+}
+
+.dot--present {
+    background: $emerald;
+}
+
+.dot--absent {
+    background: $red;
+}
+
+.dot--late {
+    background: $amber;
+}
+
+.dot--half-day {
+    background: $amber;
+}
+
+.dot--on-leave {
+    background: $purple;
+}
+
+.dot--work-from-home,
+.dot--wfh {
+    background: $teal;
+}
+
+.dot--holiday {
+    background: $blue;
+}
+
+.dot--weekly-off {
+    background: $gray;
+}
+
+.today__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+}
+
+.meta {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.meta__label {
+    font-size: 11px;
+    color: $muted;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.meta__value {
+    font-size: 14px;
+    font-weight: 600;
+    color: $text;
+}
+
+.late-badge {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    color: $red;
+    background: rgba($red, 0.08);
+    padding: 2px 8px;
+    border-radius: 12px;
+    margin-left: 6px;
+    letter-spacing: 0.3px;
+}
+
+.today__actions {
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    button {
+        border-radius: 10px;
+        font-size: 13px;
+    }
+}
+
+/* ─── Stats Strip ─── */
+.att__stats {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 14px;
+}
+
+.stat {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px;
+    border-radius: 14px;
+    background: $surface;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    transition: transform 200ms ease, box-shadow 200ms ease;
+
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.07);
+    }
+}
+
+.stat__icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: grid;
+    place-items: center;
+
+    mat-icon {
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
+    }
+}
+
+.stat--emerald .stat__icon {
+    background: rgba($emerald, 0.12);
+    color: $emerald;
+}
+
+.stat--red .stat__icon {
+    background: rgba($red, 0.12);
+    color: $red;
+}
+
+.stat--amber .stat__icon {
+    background: rgba($amber, 0.12);
+    color: $amber;
+}
+
+.stat--orange .stat__icon {
+    background: rgba(#f97316, 0.12);
+    color: #f97316;
+}
+
+.stat--teal .stat__icon {
+    background: rgba($teal, 0.12);
+    color: $teal;
+}
+
+.stat--indigo .stat__icon {
+    background: rgba($indigo, 0.12);
+    color: $indigo;
+}
+
+.stat__body {
+    display: flex;
+    flex-direction: column;
+}
+
+.stat__value {
+    font-size: 18px;
+    font-weight: 700;
+    color: $text;
+    line-height: 1.2;
+}
+
+.stat__label {
+    font-size: 11px;
+    color: $muted;
+}
+
+/* ─── Main Two-Column ─── */
+.att__main {
+    display: grid;
+    grid-template-columns: 380px 1fr;
+    gap: 20px;
+    align-items: stretch;
+}
+
+.att__right {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.att__left {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.card {
+    border-radius: 14px !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 0, 0, 0.03) !important;
+    padding: 20px !important;
+}
+
+.card__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+
+    h3 {
+        font-size: 15px;
+        font-weight: 600;
+        color: $text;
+        margin: 0;
+    }
+}
+
+/* ── Calendar ── */
+.calendar-wrap {
+    position: relative;
+}
+
+::ng-deep .card--calendar {
+    .mat-calendar {
+        width: 100%;
+    }
+
+    .mat-calendar-header {
+        padding: 4px 8px;
+    }
+
+    .mat-calendar-body-cell-content {
+        border-radius: 8px;
+        font-size: 12px;
+        width: 36px;
+        height: 36px;
+        line-height: 36px;
+    }
+
+    .mat-calendar-table-header th {
+        font-size: 11px;
+        color: $muted;
+    }
+}
+
+// calendar status colors
+:host {
+    @each $name, $color in (present, $emerald), (absent, $red), (holiday, $blue), (weekly-off, $gray), (half-day, $amber), (on-leave, $purple), (wfh, $teal), (late, $amber) {
+        ::ng-deep .mat-calendar-body-cell.#{$name} .mat-calendar-body-cell-content {
+            background: rgba($color, 0.15) !important;
+            color: darken($color, 8%) !important;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+    }
+}
+
+// Hover tooltip
+.hover-tip {
+    position: absolute;
+    min-width: 180px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    background: $surface;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    font-size: 12px;
+    color: $text;
+    opacity: 0;
+    transform: translateY(6px);
+    transition: opacity 120ms ease, transform 120ms ease;
+    pointer-events: none;
+    z-index: 10;
+
+    &.visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.hover-tip__head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+    font-weight: 600;
+}
+
+.hover-tip__badge {
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 6px;
+    background: rgba($emerald, 0.12);
+    color: $emerald;
+
+    &.absent {
+        background: rgba($red, 0.12);
+        color: $red;
+    }
+
+    &.late,
+    &.half-day {
+        background: rgba($amber, 0.12);
+        color: $amber;
+    }
+
+    &.on-leave {
+        background: rgba($purple, 0.12);
+        color: $purple;
+    }
+
+    &.wfh,
+    &.work-from-home {
+        background: rgba($teal, 0.12);
+        color: $teal;
+    }
+
+    &.holiday {
+        background: rgba($blue, 0.12);
+        color: $blue;
+    }
+
+    &.weekly-off {
+        background: rgba($gray, 0.12);
+        color: darken($gray, 10%);
+    }
+}
+
+.hover-tip__row {
+    display: flex;
+    justify-content: space-between;
+    padding: 3px 0;
+    color: $muted;
+
+    strong {
+        color: $text;
+    }
+}
+
+// Legend
+.legend {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 12px;
+    margin-top: 14px;
+    font-size: 11px;
+    color: $muted;
+}
+
+.legend__dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 3px;
+    display: inline-block;
+
+    &.present {
+        background: $emerald;
+    }
+
+    &.absent {
+        background: $red;
+    }
+
+    &.holiday {
+        background: $blue;
+    }
+
+    &.weekly-off {
+        background: $gray;
+    }
+
+    &.half-day {
+        background: $amber;
+    }
+
+    &.on-leave {
+        background: $purple;
+    }
+
+    &.wfh {
+        background: $teal;
+    }
+}
+
+/* ── Insights ── */
+.card--insights {
+    h3 {
+        font-size: 15px;
+        font-weight: 600;
+        color: $text;
+        margin: 0 0 14px;
+    }
+}
+
+.insights {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.insight {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.insight__icon {
+    width: 36px;
+    height: 36px;
+    font-size: 18px;
+    border-radius: 8px;
+    display: grid;
+    place-items: center;
+    background: rgba($indigo, 0.08);
+    color: $indigo;
+}
+
+.insight__label {
+    display: block;
+    font-size: 11px;
+    color: $muted;
+}
+
+.insight__value {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: $text;
+}
+
+/* ── Logs Table ── */
+.card--logs {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.logs-filters {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.filter-sm {
+    width: 140px;
+
+    ::ng-deep .mat-mdc-form-field-infix {
+        padding-top: 8px !important;
+        padding-bottom: 8px !important;
+        min-height: 36px !important;
+    }
+
+    ::ng-deep .mat-mdc-text-field-wrapper {
+        padding: 0 12px;
+    }
+
+    ::ng-deep .mat-mdc-floating-label {
+        top: 18px;
+    }
+}
+
+.table-scroll {
+    flex: 1;
+    overflow: auto;
+    min-height: 0;
+    max-height: 391px;
+}
+
+.logs-table {
+    width: 100%;
+
+    th.mat-mdc-header-cell {
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+        color: $muted;
+        border-bottom-color: rgba(0, 0, 0, 0.06);
+    }
+
+    td.mat-mdc-cell {
+        font-size: 13px;
+        color: $text;
+        border-bottom-color: rgba(0, 0, 0, 0.04);
+        padding: 10px 16px;
+    }
+
+    tr.mat-mdc-row:hover {
+        background: rgba($indigo, 0.03);
+    }
+}
+
+.hours-cell {
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+}
+
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 6px;
+    background: rgba($emerald, 0.1);
+    color: $emerald;
+
+    &.absent {
+        background: rgba($red, 0.1);
+        color: $red;
+    }
+
+    &.late,
+    &.half-day {
+        background: rgba($amber, 0.1);
+        color: darken($amber, 5%);
+    }
+
+    &.on-leave {
+        background: rgba($purple, 0.1);
+        color: $purple;
+    }
+
+    &.work-from-home {
+        background: rgba($teal, 0.1);
+        color: $teal;
+    }
+
+    &.holiday {
+        background: rgba($blue, 0.1);
+        color: $blue;
+    }
+
+    &.weekly-off {
+        background: rgba($gray, 0.1);
+        color: darken($gray, 10%);
+    }
+}
+
+.action-icon {
+    font-size: 18px;
+    color: $muted;
+    transition: color 150ms;
+
+    &:hover {
+        color: $indigo;
+    }
+}
+
+/* ═══ Responsive ═══ */
+@media (max-width: 1100px) {
+    .att__main {
+        grid-template-columns: 340px 1fr;
+    }
+
+    .att__stats {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 900px) {
+    .att {
+        padding: 20px 16px;
+    }
+
+    .att__topbar {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .att__today {
+        flex-wrap: wrap;
+    }
+
+    .att__stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .att__main {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 600px) {
+    .att__today {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .today__actions {
+        flex-direction: row;
+    }
+
+    .att__stats {
+        grid-template-columns: 1fr 1fr;
+    }
+}

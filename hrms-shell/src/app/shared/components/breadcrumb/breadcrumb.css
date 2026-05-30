@@ -1,0 +1,64 @@
+ :host { display:block; }
+
+    /* outer container - subtle rounded pill look */
+    .bc-wrap {
+      padding: 8px 12px;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 0 0 1px rgba(0,0,0,0.04);
+      max-width: 100%;
+      overflow: hidden;
+    }
+
+    /* breadcrumb list - inline */
+    .bc-list {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    .bc-item {
+      display: inline-flex;
+      align-items: center;
+      color: #6c757d; /* muted */
+    }
+
+    /* link style */
+    .bc-link {
+      text-decoration: none;
+      color: #6c757d;
+      padding: 6px 10px;
+      border-radius: 6px;
+      display: inline-block;
+    }
+
+    .bc-link:hover {
+      background: rgba(0,0,0,0.03);
+      color: #495057;
+    }
+
+    /* text for active/last item */
+    .bc-item.active .bc-text,
+    .bc-item.active .bc-link {
+      color: #2b2b2b;
+      font-weight: 600;
+    }
+
+    /* chevron glyph look */
+    .bc-chevron {
+      margin-left: 6px;
+      margin-right: 6px;
+      color: #b1b5b9;
+      font-size: 12px;
+    }
+
+    /* small-screen adjustment */
+    @media (max-width: 480px) {
+      .bc-list { gap: 6px; font-size: 12px; }
+      .bc-link { padding: 4px 8px; }
+    }

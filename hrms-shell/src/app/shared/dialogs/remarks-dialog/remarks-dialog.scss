@@ -1,0 +1,64 @@
+$border: #e0e0e0;
+$text: #333;
+$primary: #3f51b5;
+$danger: #f44336;
+
+.dialog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid $border;
+
+  &.approve {
+    border-left: 4px solid $primary;
+  }
+
+  &.reject {
+    border-left: 4px solid $danger;
+  }
+
+  h2 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: $text;
+  }
+
+  button {
+    color: #666;
+  }
+}
+
+.dialog-content {
+  padding: 20px;
+
+  .confirm-text {
+    margin: 0 0 16px;
+    font-size: 14px;
+    color: #4b5563;
+    line-height: 1.5;
+
+    strong {
+      color: $text;
+    }
+  }
+
+  .full-width {
+    width: 100%;
+  }
+}
+
+.dialog-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 12px 20px;
+  border-top: 1px solid $border;
+
+  button {
+    min-width: 100px;
+    font-weight: 600;
+    border-radius: 8px;
+  }
+}

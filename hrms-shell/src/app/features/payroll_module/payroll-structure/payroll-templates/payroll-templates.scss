@@ -1,0 +1,469 @@
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   Payroll Templates List — Styles
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+$primary: #2563eb;
+$success: #16a34a;
+$danger: #dc2626;
+$warning: #ea580c;
+$purple: #9333ea;
+$text-dark: #1f2937;
+$text-muted: #64748b;
+$text-light: #94a3b8;
+$border: #e5e7eb;
+$bg-page: #f1f5f9;
+$bg-card: #ffffff;
+$radius: 12px;
+$radius-sm: 8px;
+
+:host {
+  display: block;
+  background: $bg-page;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.page-content {
+  padding: 20px 24px 40px;
+  overflow-x: auto;
+  max-height: 530px;
+}
+
+.add-btn {
+  border-radius: $radius-sm !important;
+  font-weight: 600;
+  padding: 0 20px;
+  height: 38px;
+
+  mat-icon {
+    font-size: 20px;
+    margin-right: 4px;
+  }
+}
+
+/* ─── Stats Row ─── */
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 20px;
+
+  .stat-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 18px 20px;
+    background: $bg-card;
+    border-radius: $radius;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    border: 1px solid $border;
+    transition: all 0.2s;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    .stat-icon {
+      width: 46px;
+      height: 46px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--card-bg);
+
+      mat-icon {
+        font-size: 24px;
+        width: 24px;
+        height: 24px;
+        color: var(--card-color);
+      }
+    }
+
+    .stat-info {
+      display: flex;
+      flex-direction: column;
+
+      .stat-value {
+        font-size: 24px;
+        font-weight: 800;
+        color: $text-dark;
+        line-height: 1.2;
+      }
+
+      .stat-label {
+        font-size: 12px;
+        color: $text-muted;
+        font-weight: 500;
+      }
+    }
+  }
+}
+
+/* ─── Toolbar ─── */
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  gap: 16px;
+  flex-wrap: wrap;
+
+  .toolbar-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+
+    .search-field {
+      width: 320px;
+      min-width: 220px;
+
+      .mat-mdc-form-field-subscript-wrapper {
+        display: none;
+      }
+    }
+
+    .status-toggle {
+      border-radius: $radius-sm;
+      height: 40px;
+
+      .mat-button-toggle {
+        font-size: 12px;
+        font-weight: 500;
+      }
+    }
+  }
+
+  .toolbar-right {
+    .result-count {
+      font-size: 13px;
+      color: $text-muted;
+      font-weight: 500;
+    }
+  }
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 4px;
+
+  &.active {
+    background: $success;
+  }
+
+  &.inactive {
+    background: $danger;
+  }
+}
+
+/* ─── Loading State ─── */
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  gap: 16px;
+
+  p {
+    font-size: 14px;
+    color: $text-muted;
+  }
+}
+
+/* ─── Empty State ─── */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  background: $bg-card;
+  border-radius: $radius;
+  border: 2px dashed $border;
+  text-align: center;
+
+  .empty-icon {
+    width: 72px;
+    height: 72px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    background: #eff6ff;
+
+    mat-icon {
+      font-size: 36px;
+      width: 36px;
+      height: 36px;
+      color: $primary;
+    }
+  }
+
+  h3 {
+    margin: 0 0 8px;
+    font-size: 18px;
+    font-weight: 700;
+    color: $text-dark;
+  }
+
+  p {
+    margin: 0 0 20px;
+    font-size: 14px;
+    color: $text-muted;
+    max-width: 400px;
+  }
+}
+
+/* ─── Table Wrapper ─── */
+.table-wrapper {
+  background: $bg-card;
+  border-radius: $radius;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  border: 1px solid $border;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.template-table {
+  width: 100%;
+
+  th.mat-mdc-header-cell {
+    background: #f8fafc;
+    font-size: 12px;
+    font-weight: 700;
+    color: $text-muted;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 14px 16px;
+    border-bottom: 2px solid $border;
+    white-space: nowrap;
+  }
+
+  td.mat-mdc-cell {
+    padding: 12px 16px;
+    font-size: 13px;
+    color: $text-dark;
+    border-bottom: 1px solid #f1f5f9;
+    vertical-align: middle;
+  }
+
+  .table-row {
+    transition: background 0.15s;
+
+    &:hover {
+      background: #f8fafc;
+    }
+
+    &:last-child td {
+      border-bottom: none;
+    }
+  }
+}
+
+/* ─── Name Cell ─── */
+.name-cell {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  .name-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    background: #eff6ff;
+
+    mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+      color: $primary;
+    }
+  }
+
+  .name-text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+
+    .primary-text {
+      font-weight: 600;
+      color: $text-dark;
+      font-size: 13px;
+    }
+
+    .secondary-text {
+      font-size: 11px;
+      color: $text-light;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 220px;
+    }
+  }
+}
+
+/* ─── Code Badge ─── */
+.code-badge {
+  background: #f1f5f9;
+  color: $primary;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  font-family: 'Fira Code', 'Consolas', monospace;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+}
+
+/* ─── Count Chips ─── */
+.count-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+
+  mat-icon {
+    font-size: 14px;
+    width: 14px;
+    height: 14px;
+  }
+
+  &.earnings {
+    background: #f0fdf4;
+    color: $success;
+  }
+
+  &.deductions {
+    background: #fef2f2;
+    color: $danger;
+  }
+}
+
+/* ─── Currency Value ─── */
+.currency-val {
+  font-weight: 600;
+  color: $text-dark;
+  font-size: 13px;
+}
+
+/* ─── Used By Chip ─── */
+.used-by-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: $text-muted;
+  font-weight: 500;
+
+  mat-icon {
+    font-size: 14px;
+    width: 14px;
+    height: 14px;
+    color: $purple;
+  }
+}
+
+/* ─── Status Badge ─── */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+
+  .status-dot-sm {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+  }
+
+  &.active {
+    background: #f0fdf4;
+    color: $success;
+
+    .status-dot-sm {
+      background: $success;
+    }
+  }
+
+  &.inactive {
+    background: #fef2f2;
+    color: $danger;
+
+    .status-dot-sm {
+      background: $danger;
+    }
+  }
+}
+
+/* ─── Actions Cell ─── */
+.actions-header {
+  text-align: center;
+}
+
+.actions-cell {
+  white-space: nowrap;
+
+  button {
+    color: $text-light;
+    transition: color 0.2s;
+
+    &:hover {
+      color: $primary;
+    }
+
+    mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+    }
+  }
+
+  .delete-btn:hover {
+    color: $danger;
+  }
+}
+
+/* ─── Responsive ─── */
+@media (max-width: 1024px) {
+  .stats-row {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .toolbar .toolbar-left {
+    flex-direction: column;
+    align-items: flex-start;
+
+    .search-field {
+      width: 100%;
+    }
+  }
+}
+
+@media (max-width: 640px) {
+  .page-content {
+    padding: 12px 16px;
+  }
+
+  .stats-row {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,12 @@
+@if((service.breadcrumbs | async)?.length){
+<nav aria-label="breadcrumb" class="bc-wrap">
+    <ol class="bc-list">
+        <li class="bc-item" *ngFor="let item of (service.breadcrumbs | async); let last = last"
+            [class.active]="item.active || last">
+            <a [routerLink]="item.link" class="bc-link">
+                {{ item.label }}
+            </a>
+        </li>
+    </ol>
+</nav>
+}

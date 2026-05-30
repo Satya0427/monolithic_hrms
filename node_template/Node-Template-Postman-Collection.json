@@ -1,0 +1,68 @@
+{
+  "info": {
+    "_postman_id": "generated-collection-id",
+    "name": "Node-Template API Collection",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Organization",
+      "item": [
+        {
+          "name": "Create Organization",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"organization_name\": \"Acme Corp\",\n  \"organization_code\": \"ACME\",\n  \"domain\": \"acme.com\",\n  \"industry\": \"Software\",\n  \"country\": \"USA\",\n  \"company_size\": 100,\n  \"address\": \"123 Main St, City\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:3000/api/organization/create",
+              "host": ["http://localhost:3000"],
+              "path": ["api", "organization", "create"]
+            }
+          }
+        },
+        {
+          "name": "Get Organization By ID",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"organizationId\": \"5f8d0d55b54764421b7156c1\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:3000/api/organization/org_dtls_by_id",
+              "host": ["http://localhost:3000"],
+              "path": ["api", "organization", "org_dtls_by_id"]
+            }
+          }
+        },
+        {
+          "name": "List Organizations",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"page\": 1,\n  \"limit\": 10,\n  \"search_key\": \"Acme\",\n  \"is_active\": true\n}"
+            },
+            "url": {
+              "raw": "http://localhost:3000/api/organization/orginization_list",
+              "host": ["http://localhost:3000"],
+              "path": ["api", "organization", "orginization_list"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

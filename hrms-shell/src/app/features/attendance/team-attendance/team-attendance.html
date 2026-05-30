@@ -1,0 +1,50 @@
+<app-page-header title="Employee List" [breadcrumbs]="['Leave Balance', 'Employee List']"></app-page-header>
+<mat-card class="search-card">
+    <div class="search-header">
+        <div class="header-left">
+            <mat-icon class="search-icon">person_search</mat-icon>
+            <h3>Select Employee</h3>
+        </div>
+    </div>
+
+    <!-- Search Bar -->
+    <div class="search-bar">
+        <mat-form-field appearance="outline" class="search-field">
+            <mat-label>Search Employee</mat-label>
+            <input matInput [(ngModel)]="searchKey" (keyup.enter)="onSearch()" placeholder="Name, ID, Email...">
+            <mat-icon matIconPrefix>search</mat-icon>
+            <button mat-icon-button matIconSuffix (click)="onSearch()" *ngIf="searchKey">
+                <mat-icon>send</mat-icon>
+            </button>
+        </mat-form-field>
+    </div>
+
+    <!-- Employee Grid -->
+    <div class="employee-grid">
+        @for(emp of employees(); track emp._id) {
+        <div class="employee-card" [routerLink]="['/home/attendance-module/my-attendance', emp._id]">
+            <div class="emp-avatar">
+                <img [src]="emp?.avatar || 'https://ui-avatars.com/api/?name=Emp&background=random'" [alt]="emp?.name"
+                    class="avatar-img" />
+            </div>
+            <div class="emp-details">
+                <h4>{{ emp.name }}</h4>
+                <p class="emp-id">{{ emp.emp_id }}</p>
+                <p class="emp-role">{{ emp.role }}</p>
+                <p class="emp-doj">
+                    <mat-icon>calendar_today</mat-icon>
+                    DOJ: {{ emp.joiningDate | date: 'dd MMM yyyy' }}
+                </p>
+            </div>
+        </div>
+        }
+
+        <!-- No Employees State -->
+        @if(employees().length === 0) {
+        <div class="no-employees">
+            <mat-icon>people_outline</mat-icon>
+            <p>No employees found</p>
+        </div>
+        }
+    </div>
+</mat-card>

@@ -1,0 +1,38 @@
+<header class="global-glass-bar">
+    <!-- Left: Welcome / Context -->
+    <div class="header-left">
+        <div class="glass-icon-box">
+            <mat-icon class="primary-icon">dashboard</mat-icon>
+        </div>
+        <div class="text-group">
+            <h2 class="app-name">HRMS Portal</h2>
+            <span class="sub-text">Welcome back, Satya</span>
+        </div>
+    </div>
+
+    <!-- Right: Global Actions -->
+    <div class="header-right">
+        <!-- Search Pill -->
+        <div class="search-pill">
+            <mat-icon>search</mat-icon>
+            <input type="text" placeholder="Search employees, leaves..." />
+            <span class="shortcut">⌘K</span>
+        </div>
+
+        <!-- Action Buttons -->
+        <button mat-icon-button class="glass-circle-btn">
+            <mat-icon>notifications_none</mat-icon>
+            <span class="dot"></span>
+        </button>
+
+        <button mat-icon-button class="glass-circle-btn">
+            <mat-icon>settings</mat-icon>
+        </button>
+
+        <!-- Profile -->
+        <div class="profile-trigger" (click)="logout()">
+            <div class="avatar">SM</div>
+            <mat-icon class="chevron">expand_more</mat-icon>
+        </div>
+    </div>
+</header>

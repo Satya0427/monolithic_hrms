@@ -1,0 +1,92 @@
+<app-page-header title="Work From Home Requests"
+  [breadcrumbs]="['Home', 'Requests', 'Work From Home']" (onBack)="handleBack()">
+</app-page-header>
+
+<div class="page-container">
+  <div class="page-header">
+    <div class="pending-chip">
+      {{ wfhRequests().length }} {{ selectedStatus() }}
+    </div>
+
+    <mat-form-field appearance="outline" class="status-filter">
+      <mat-label>Filter by Status</mat-label>
+      <mat-select [value]="selectedStatus()" (selectionChange)="onFilterChange($event.value)">
+        @for (status of statusOptions; track status) {
+          <mat-option [value]="status.key">{{ status.name }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  @if (wfhRequests().length > 0) {
+  <div class="request-list">
+    @for (request of wfhRequests(); track request._id) {
+    <div class="request-card">
+      <div class="request-main">
+        <div class="avatar">{{ (request.employee_name || 'U').charAt(0) }}</div>
+
+        <div class="request-content">
+          <div class="top-row">
+            <div class="employee-meta">
+              <h4>{{ request.employee_name || 'Employee' }}</h4>
+              <p>{{ request.request_date }}</p>
+            </div>
+
+            <span class="wfh-type" [ngClass]="{
+              'type-full': request.request_type === 'FULL_DAY',
+              'type-half': request.request_type === 'HALF_DAY',
+              'type-recurring': request.request_type === 'RECURRING'
+            }">
+              {{ request.request_type === 'FULL_DAY' ? 'Full Day' : request.request_type === 'HALF_DAY' ? 'Half Day' : 'Recurring' }}
+            </span>
+          </div>
+
+          <div class="wfh-details">
+            <div class="detail-block">
+              <mat-icon>calendar_today</mat-icon>
+              <div>
+                <span class="label">Request Date</span>
+                <span class="value">{{ request.request_date }}</span>
+              </div>
+            </div>
+            <div class="detail-block">
+              <mat-icon>schedule</mat-icon>
+              <div>
+                <span class="label">Request Type</span>
+                <span class="value">{{ request.request_type === 'FULL_DAY' ? 'Full Day' : request.request_type === 'HALF_DAY' ? 'Half Day' : 'Recurring' }}</span>
+              </div>
+            </div>
+            <div class="detail-block">
+              <mat-icon>info_outline</mat-icon>
+              <div>
+                <span class="label">Status</span>
+                <span class="value">{{ request.status }}</span>
+              </div>
+            </div>
+          </div>
+
+          <p class="reason">{{ request.reason || 'No reason provided.' }}</p>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button mat-stroked-button color="primary" class="approve"
+          (click)="updateRequestStatus(request._id, 'APPROVED')">
+          Approve
+        </button>
+        <button mat-stroked-button color="warn" class="reject"
+          (click)="updateRequestStatus(request._id, 'REJECTED')">
+          Reject
+        </button>
+      </div>
+    </div>
+    }
+  </div>
+  } @else {
+  <div class="empty-state">
+    <mat-icon class="empty-icon">home_work</mat-icon>
+    <h3>No {{ selectedStatus().toLowerCase() }} WFH requests</h3>
+    <p>No work from home requests found with status "{{ selectedStatus() }}".</p>
+  </div>
+  }
+</div>

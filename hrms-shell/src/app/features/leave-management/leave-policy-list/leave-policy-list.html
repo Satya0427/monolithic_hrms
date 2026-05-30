@@ -1,0 +1,86 @@
+<app-page-header title="Leave Policies" [breadcrumbs]="['Home', 'Leave & Attendance', 'Leave Policies']"
+    [tabs]="pageTabs" [(activeTab)]="currentTab" (onBack)="handleBack()">
+</app-page-header>
+
+<div class="page-wrapper">
+    <!-- Toolbar Section -->
+    <div class="table-card">
+        <div class="table-toolbar">
+            <div class="search-box">
+                <mat-icon>search</mat-icon>
+                <input type="text" placeholder="Search" (keyup)="applyFilter($event)">
+            </div>
+
+            <div class="actions">
+                <button mat-icon-button color="primary" class="action-btn">
+                    <mat-icon>filter_list</mat-icon>
+                </button>
+                <button mat-icon-button class="add-btn" [routerLink]="['/home/leave-management-module/leave-policy/create']">
+                    <mat-icon>add_circle_outline</mat-icon>
+                </button>
+                <button mat-icon-button class="action-btn">
+                    <mat-icon>refresh</mat-icon>
+                </button>
+                <button mat-icon-button class="action-btn">
+                    <mat-icon>download</mat-icon>
+                </button>
+            </div>
+        </div>
+
+        <!-- Table Container -->
+        <div class="table-container">
+            <table mat-table [dataSource]="dataSource" class="mat-elevation-z0">
+
+                <!-- Name Column -->
+                <ng-container matColumnDef="name">
+                    <th mat-header-cell *matHeaderCellDef> Policy Name </th>
+                    <td mat-cell *matCellDef="let p">
+                        <span class="fw-500">{{ p.basicInfo.policyName }}</span> <br>
+                        <span class="sub-text">{{ p.basicInfo.effectiveFrom | date }}</span>
+                    </td>
+                </ng-container>
+
+                <!-- Applicability -->
+                <ng-container matColumnDef="applicability">
+                    <th mat-header-cell *matHeaderCellDef> Applies To </th>
+                    <td mat-cell *matCellDef="let p"> {{ p.applicability.employeeType }} Employees </td>
+                </ng-container>
+
+                <!-- Leave Types -->
+                <ng-container matColumnDef="types">
+                    <th mat-header-cell *matHeaderCellDef> Leaves Included </th>
+                    <td mat-cell *matCellDef="let p">
+                        @if (p.leaveRules && p.leaveRules.length > 0) {
+                            <span class="count-badge">{{ p.leaveRules.length }} Leave Type(s)</span>
+                        } @else {
+                            <span class="sub-text">No leave types</span>
+                        }
+                    </td>
+                </ng-container>
+
+                <!-- Status -->
+                <ng-container matColumnDef="status">
+                    <th mat-header-cell *matHeaderCellDef> Status </th>
+                    <td mat-cell *matCellDef="let p">
+                        <span class="status-badge" [class.active]="p.basicInfo.status === 'Active'">
+                            {{ p.basicInfo.status }}
+                        </span>
+                    </td>
+                </ng-container>
+
+                <!-- Actions -->
+                <ng-container matColumnDef="actions">
+                    <th mat-header-cell *matHeaderCellDef> Action </th>
+                    <td mat-cell *matCellDef="let p">
+                        <button mat-icon-button color="primary"
+                            [routerLink]="['/home/leave-management-module/leave-policy/edit', p.id]"><mat-icon>edit</mat-icon></button>
+                        <button mat-icon-button color="warn" (click)="deletePolicy(p)"><mat-icon>delete</mat-icon></button>
+                    </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+            </table>
+        </div>
+    </div>
+</div>

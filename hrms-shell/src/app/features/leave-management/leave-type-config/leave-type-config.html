@@ -1,0 +1,116 @@
+<!-- Reusable Page Header -->
+<app-page-header title="Leave Types" [breadcrumbs]="['Home', 'Leave & Attendance', 'Leave Types']" [tabs]="pageTabs"
+    [(activeTab)]="currentTab" (onBack)="handleBack()">
+</app-page-header>
+
+<div class="page-wrapper">
+    <!-- Toolbar Section -->
+    <div class="table-card">
+        <div class="table-toolbar">
+            <div class="search-box">
+                <mat-icon>search</mat-icon>
+                <input type="text" placeholder="Search" (keyup)="applyFilter($event)">
+            </div>
+
+            <div class="actions">
+                <button mat-icon-button color="primary" class="action-btn">
+                    <mat-icon>filter_list</mat-icon>
+                </button>
+                <button mat-icon-button class="add-btn" (click)="openDialog()">
+                    <mat-icon>add_circle_outline</mat-icon>
+                </button>
+                <button mat-icon-button class="action-btn">
+                    <mat-icon>refresh</mat-icon>
+                </button>
+                <button mat-icon-button class="action-btn">
+                    <mat-icon>download</mat-icon>
+                </button>
+            </div>
+        </div>
+
+        <!-- Table Container -->
+        <div class="table-container">
+            <table mat-table [dataSource]="dataSource" class="mat-elevation-z0">
+                <!-- Color Column -->
+                <ng-container matColumnDef="color">
+                    <th mat-header-cell *matHeaderCellDef style="width: 60px;"> Color </th>
+                    <td mat-cell *matCellDef="let element">
+                        <div class="color-dot" [style.background-color]="element.colorCode"
+                            [matTooltip]="element.colorCode"></div>
+                    </td>
+                </ng-container>
+
+                <!-- Identity Column (Code + Name) -->
+                <ng-container matColumnDef="identity">
+                    <th mat-header-cell *matHeaderCellDef> Leave Type </th>
+                    <td mat-cell *matCellDef="let element">
+                        <div class="identity-cell">
+                            <span class="code-badge">{{ element.code }}</span>
+                            <div class="name-desc">
+                                <span class="name">{{ element.name }}</span>
+                                <span class="desc">{{ element.description || '-' }}</span>
+                            </div>
+                        </div>
+                    </td>
+                </ng-container>
+
+                <!-- Category Column -->
+                <ng-container matColumnDef="category">
+                    <th mat-header-cell *matHeaderCellDef> Category </th>
+                    <td mat-cell *matCellDef="let element">
+                        <span class="category-pill" [class.unpaid]="element.category === 'Unpaid'">
+                            {{ element.category }}
+                        </span>
+                    </td>
+                </ng-container>
+
+                <!-- Status Column -->
+                <ng-container matColumnDef="status">
+                    <th mat-header-cell *matHeaderCellDef> Status </th>
+                    <td mat-cell *matCellDef="let element">
+                        <span class="status-badge" [class.active]="element.isActive"
+                            [class.inactive]="!element.isActive">
+                            {{ element.isActive ? 'Active' : 'Inactive' }}
+                        </span>
+                    </td>
+                </ng-container>
+
+                <!-- Actions Column -->
+                <ng-container matColumnDef="actions">
+                    <th mat-header-cell *matHeaderCellDef style="text-align: right;"> Actions </th>
+                    <td mat-cell *matCellDef="let element" style="text-align: right;">
+
+                        <!-- Edit -->
+                        <button mat-icon-button color="primary" (click)="openDialog(element)" matTooltip="Edit">
+                            <mat-icon>edit</mat-icon>
+                        </button>
+
+                        <!-- Disable (Hide for System leaves usually, or warn) -->
+                        @if (!element.isSystem) {
+                        <button mat-icon-button [color]="element.isActive ? 'warn' : 'accent'"
+                            (click)="toggleStatus(element)" [matTooltip]="element.isActive ? 'Disable' : 'Enable'">
+                            <mat-icon>{{ element.isActive ? 'block' : 'check_circle' }}</mat-icon>
+                        </button>
+                        } @else {
+                        <button mat-icon-button disabled matTooltip="System Leave cannot be disabled">
+                            <mat-icon style="opacity: 0.3">lock</mat-icon>
+                        </button>
+                        }
+
+                    </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+                <!-- Empty Data State -->
+                <tr class="mat-row" *matNoDataRow>
+                    <td class="mat-cell" colspan="5" style="text-align: center; padding: 20px; color: #777;">
+                        No leave types defined. Click "Add Leave Type" to start.
+                    </td>
+                </tr>
+            </table>
+
+        </div>
+    </div>
+</div>

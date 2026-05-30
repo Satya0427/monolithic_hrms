@@ -1,0 +1,53 @@
+<div class="login-wrapper">
+    <mat-card class="login-card">
+        <mat-card-header>
+            <mat-card-title>
+                <mat-icon>lock</mat-icon>
+                Login to Application
+            </mat-card-title>
+        </mat-card-header>
+
+        <mat-card-content>
+            <!-- A form is necessary for handling the login submit -->
+            <form class="login-form" [formGroup]="loginForm">
+
+                <!-- Email/Username Field -->
+                <mat-form-field class="full-width-input">
+                    <mat-label>Email or Username</mat-label>
+                    <input matInput placeholder="Ex. pat@example.com" name="email" formControlName="email">
+                    <mat-icon matPrefix>person</mat-icon>
+                    <mat-error>
+                        Email/Username is **required**.
+                    </mat-error>
+                </mat-form-field>
+
+                <!-- Password Field -->
+                <mat-form-field class="full-width-input">
+                    <mat-label>Password</mat-label>
+                    <input matInput type="password" name="password" formControlName="password" placeholder="Enter your password">
+                    <mat-icon matPrefix>vpn_key</mat-icon>
+                    <mat-error>
+                        Password is **required**.
+                    </mat-error>
+                </mat-form-field>
+
+                <!-- Submit Button -->
+                <button mat-raised-button color="primary" type="submit" [disabled]="loginForm.invalid"
+                    class="full-width-button" (click)="clickLogin()">
+                    LOG IN
+                </button>
+                <button mat-raised-button color="secondary" type="button"
+                    class="full-width-button" (click)="navigateToRegestration()">
+                    Regestration
+                </button>
+
+                <p class="forgot-password">
+                    <a href="#">Forgot Password?</a>
+                </p>
+
+            </form>
+        </mat-card-content>
+    </mat-card>
+</div>
+
+

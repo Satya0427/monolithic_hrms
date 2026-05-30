@@ -1,0 +1,352 @@
+:host {
+    display: block;
+    height: 100%;
+}
+
+.glass-sidebar {
+    position: relative;
+    width: 260px;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(15px);
+    border-right: 1px solid rgba(255, 255, 255, 0.3);
+    display: flex;
+    flex-direction: column;
+    padding: 30px 20px;
+    transition: width 0.3s ease;
+    box-sizing: border-box;
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    &.collapsed {
+        width: 80px;
+        padding: 30px 15px;
+
+        .nav-item {
+            justify-content: center;
+        }
+
+        .nav-icon {
+            margin-right: 0;
+        }
+
+        .profile-section {
+            margin-bottom: 40px;
+        }
+
+        .sub-menu-container {
+            display: none;
+        }
+    }
+}
+
+.window-controls {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 30px;
+    padding-left: 10px;
+
+    .dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+    }
+
+    .red {
+        background: #ff5f57;
+    }
+
+    .yellow {
+        background: #febc2e;
+    }
+
+    .green {
+        background: #28c840;
+    }
+}
+
+.profile-section {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 40px;
+
+    .avatar img {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        border: 2px solid rgba(255, 255, 255, 0.4);
+    }
+
+    .profile-info {
+        display: flex;
+        flex-direction: column;
+        white-space: nowrap;
+        overflow: hidden;
+    }
+
+    .role {
+        font-size: 10px;
+        color: #666;
+        font-weight: 700;
+    }
+
+    .name {
+        font-size: 14px;
+        color: #3f3d3d;
+        font-weight: 600;
+    }
+}
+
+.nav-menu {
+    flex: 1;
+}
+
+.menu-label {
+    font-size: 11px;
+    color: #666;
+    font-weight: 600;
+    margin-bottom: 10px;
+    padding-left: 10px;
+    display: block;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 12px;
+    background: transparent;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    color: #3f3d3d;
+    transition: 0.2s;
+    margin-bottom: 5px;
+
+    &:hover {
+        background: rgba(255, 255, 255, 0.2);
+    }
+
+    &.active {
+        background: rgba(0, 0, 0, 0.05);
+    }
+
+    .nav-icon {
+        margin-right: 12px;
+    }
+
+    .nav-label {
+        font-size: 14px;
+        font-weight: 500;
+        flex: 1;
+        text-align: left;
+    }
+
+    .chevron {
+        font-size: 20px;
+        transition: transform 0.3s;
+
+        &.rotated {
+            transform: rotate(180deg);
+        }
+    }
+}
+
+.sub-menu-container {
+    position: relative;
+    padding-left: 24px;
+    overflow: hidden;
+    /* Remove height: 0; it's now controlled by animation */
+}
+
+.tree-line {
+    position: absolute;
+    left: 28px;
+    top: 0;
+    bottom: 15px;
+    width: 2px;
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.sub-item {
+    position: relative;
+    display: flex;
+    align-items: center;
+    padding: 8px 10px 8px 25px;
+    cursor: pointer;
+    color: #666;
+    font-size: 13px;
+    text-decoration: none;
+
+    &:hover {
+        color: #3f3d3d;
+    }
+
+    &.active-sub {
+        color: #3f3d3d;
+        font-weight: 600;
+        background: rgba(0, 0, 0, 0.06);
+        border-radius: 8px;
+    }
+
+    &.has-children {
+        justify-content: space-between;
+    }
+
+    .tree-curve {
+        position: absolute;
+        left: 4px;
+        top: 50%;
+        width: 15px;
+        height: 20px;
+        border-left: 2px solid rgba(0, 0, 0, 0.1);
+        border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+        border-bottom-left-radius: 10px;
+        transform: translateY(-50%);
+    }
+
+    .sub-label {
+        flex: 1;
+    }
+
+    .sub-chevron {
+        font-size: 16px;
+        width: 16px;
+        height: 16px;
+        transition: transform 0.3s;
+        
+        &.rotated {
+            transform: rotate(90deg);
+        }
+    }
+}
+
+.sub-item-wrapper {
+    position: relative;
+}
+
+/* Sub-features (third level) styling */
+.sub-feature-container {
+    position: relative;
+    padding-left: 20px;
+    overflow: hidden;
+    margin-left: 15px;
+}
+
+.sub-tree-line {
+    position: absolute;
+    left: 13px;
+    top: 0;
+    bottom: 10px;
+    width: 2px;
+    background: rgba(0, 0, 0, 0.08);
+}
+
+.sub-feature-item {
+    position: relative;
+    display: flex;
+    align-items: center;
+    padding: 9px 10px 9px 20px;
+    cursor: pointer;
+    color: #888;
+    font-size: 13px;
+    text-decoration: none;
+    margin-left: 5px;
+
+    &:hover {
+        color: #3f3d3d;
+        background: rgba(0, 0, 0, 0.02);
+        border-radius: 6px;
+    }
+
+    &.active-sub-feature {
+        color: #3f3d3d;
+        font-weight: 600;
+        background: rgba(0, 0, 0, 0.06);
+        border-radius: 6px;
+        margin-top: 6px;
+    }
+
+    .sub-tree-curve {
+        position: absolute;
+        left: -7px;
+        top: 50%;
+        width: 12px;
+        height: 15px;
+        border-left: 2px solid rgba(0, 0, 0, 0.08);
+        border-bottom: 2px solid rgba(0, 0, 0, 0.08);
+        border-bottom-left-radius: 8px;
+        transform: translateY(-50%);
+    }
+
+    .sub-feature-label {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+}
+
+.toggle-btn {
+    position: absolute;
+    top: 37px;
+    right: 2px;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(5px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+
+    &:hover {
+        transform: scale(1.1);
+        background: #fff;
+    }
+
+    mat-icon {
+        font-size: 18px;
+        height: 18px;
+        width: 18px;
+    }
+}
+
+.fade-in {
+    animation: fadeIn 0.3s ease-in forwards;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+::ng-deep .glass-menu {
+    background: rgba(255, 255, 255, 0.65) !important;
+    backdrop-filter: blur(15px) !important;
+    border-radius: 12px !important;
+    min-width: 150px !important;
+    padding: 5px !important;
+
+    .mat-mdc-menu-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .menu-chevron {
+        font-size: 16px;
+        width: 16px;
+        height: 16px;
+        margin-left: auto;
+    }
+}

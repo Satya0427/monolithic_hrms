@@ -1,0 +1,29 @@
+<div class="dialog-header" [ngClass]="data.action === 'REJECTED' ? 'reject' : 'approve'">
+  <h2>{{ data.action === 'REJECTED' ? 'Reject' : 'Approve' }} WFH Request</h2>
+  <button mat-icon-button (click)="close()">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+
+<div class="dialog-content">
+  <p class="confirm-text">
+    Are you sure you want to <strong>{{ data.action === 'REJECTED' ? 'reject' : 'approve' }}</strong> this request?
+  </p>
+
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Remarks</mat-label>
+    <textarea matInput rows="3" [(ngModel)]="remarks"
+      [placeholder]="data.action === 'REJECTED' ? 'Please provide a reason for rejection...' : 'Add any comments (optional)...'">
+    </textarea>
+    @if (data.action === 'REJECTED' && submitted && !remarks.trim()) {
+      <mat-error>Remarks are required when rejecting a request</mat-error>
+    }
+  </mat-form-field>
+</div>
+
+<div class="dialog-footer">
+  <button mat-stroked-button (click)="close()">Cancel</button>
+  <button mat-flat-button [color]="data.action === 'REJECTED' ? 'warn' : 'primary'" (click)="submit()">
+    {{ data.action === 'REJECTED' ? 'Reject' : 'Approve' }}
+  </button>
+</div>

@@ -1,0 +1,17 @@
+<div class="main-container">
+
+    <!-- Sidenav Wrapper -->
+    <aside class="sidenav-area" [class.collapsed]="isSidebarCollapsed()">
+        <app-side-nav (collapsedChange)="onSidebarToggle($event)"></app-side-nav>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="content-area">
+        <app-header></app-header>
+        <!-- Page Content Glass Card -->
+        <div class="page-content">
+            <router-outlet></router-outlet>
+        </div>
+    </main>
+
+</div>

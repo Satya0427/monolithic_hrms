@@ -1,0 +1,10 @@
+@use './styles/_theme.scss' as *;
+@use './styles/material-custom-styles.scss' as *;
+@use 'ngx-toastr/toastr';
+
+.viewport {
+  height: 430px;
+  width: 100%;
+  overflow: auto;
+}
+

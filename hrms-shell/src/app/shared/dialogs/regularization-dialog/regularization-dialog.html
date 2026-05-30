@@ -1,0 +1,58 @@
+<div class="dialog-header">
+  <h2>Request Regularization</h2>
+  <button mat-icon-button (click)="close()">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+
+<form [formGroup]="form" class="dialog-content">
+  <div class="date-row">
+    <mat-form-field appearance="outline">
+      <mat-label>Date</mat-label>
+      <input matInput formControlName="date" />
+      <mat-error>Date is required</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Shift</mat-label>
+      <input matInput formControlName="shift" />
+      <mat-error>Shift is required</mat-error>
+    </mat-form-field>
+  </div>
+
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Correction Type</mat-label>
+    <mat-select formControlName="correctionType">
+      <mat-option value="Missing Punch">Missing Punch</mat-option>
+      <mat-option value="Late">Late Arrival</mat-option>
+      <mat-option value="Early">Early Exit</mat-option>
+      <mat-option value="Absent">Absent Marked</mat-option>
+    </mat-select>
+    <mat-error>Correction type is required</mat-error>
+  </mat-form-field>
+
+  <div class="date-row">
+    <mat-form-field appearance="outline">
+      <mat-label>Check In</mat-label>
+      <input matInput type="time" formControlName="checkIn" />
+      <mat-error>Check in time is required</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Check Out</mat-label>
+      <input matInput type="time" formControlName="checkOut" />
+      <mat-error>Check out time is required</mat-error>
+    </mat-form-field>
+  </div>
+
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Reason</mat-label>
+    <textarea matInput rows="3" formControlName="reason" placeholder="Reason for regularization"></textarea>
+    <mat-error>Reason is required</mat-error>
+  </mat-form-field>
+</form>
+
+<div class="dialog-footer">
+  <button mat-stroked-button (click)="close()">Cancel</button>
+  <button mat-flat-button color="primary" (click)="submit()">Submit Request</button>
+</div>

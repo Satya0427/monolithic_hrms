@@ -1,0 +1,552 @@
+<!-- ═══════════════════════════════════════════════════════════
+     SALARY COMPONENTS MASTER — /home/payroll/components
+     ═══════════════════════════════════════════════════════════ -->
+
+<!-- ─── Page Header with Tabs ─── -->
+<app-page-header
+  title="Salary Components"
+  [breadcrumbs]="breadcrumbs"
+  [tabs]="headerTabs"
+  [(activeTab)]="activeTabKey"
+  (activeTabChange)="onTabChange($event)">
+  <div header-actions>
+    <button mat-flat-button color="primary" class="add-btn" (click)="openAddDialog()">
+      <mat-icon>add</mat-icon>
+      Add {{ activeTab().label === 'Variable Pay' ? 'Variable Pay' : activeTab().label.slice(0, -1) }}
+    </button>
+  </div>
+</app-page-header>
+
+<div class="page-content">
+
+  <!-- ─── Tab Description Banner ─── -->
+  <!-- <div class="tab-banner" [style.border-left-color]="activeTab().color">
+    <div class="banner-icon" [style.background]="activeTab().color + '12'" [style.color]="activeTab().color">
+      <mat-icon>{{ activeTab().icon }}</mat-icon>
+    </div>
+    <div class="banner-text">
+      <strong>{{ activeTab().label }}</strong>
+      <span>{{ activeTab().description }}</span>
+    </div>
+  </div> -->
+
+  <!-- ─── Stats Cards ─── -->
+  <div class="stats-row">
+    @for (stat of stats(); track stat.label) {
+      <div class="stat-card" [style.--card-color]="stat.color" [style.--card-bg]="stat.bgColor">
+        <div class="stat-icon">
+          <mat-icon>{{ stat.icon }}</mat-icon>
+        </div>
+        <div class="stat-info">
+          <span class="stat-value">{{ stat.value }}</span>
+          <span class="stat-label">{{ stat.label }}</span>
+        </div>
+      </div>
+    }
+  </div>
+
+  <!-- ─── Toolbar: Search + Filters ─── -->
+
+  <div class="toolbar toolbar-flex-row">
+    <div class="toolbar-left toolbar-inline-flex">
+      <mat-form-field appearance="outline" class="search-field">
+        <mat-icon matPrefix>search</mat-icon>
+        <input matInput placeholder="Search by name or code..."
+               [ngModel]="searchQuery()" (ngModelChange)="onSearch($event)">
+        @if (searchQuery()) {
+          <button matSuffix mat-icon-button (click)="onSearch('')" aria-label="Clear">
+            <mat-icon>close</mat-icon>
+          </button>
+        }
+      </mat-form-field>
+      <mat-button-toggle-group [value]="statusFilter()" (change)="onStatusFilter($event.value)"
+           class="status-toggle">
+        <mat-button-toggle value="ALL">All</mat-button-toggle>
+        <mat-button-toggle value="ACTIVE">
+          <span class="status-dot active"></span> Active
+        </mat-button-toggle>
+        <mat-button-toggle value="INACTIVE">
+          <span class="status-dot inactive"></span> Inactive
+        </mat-button-toggle>
+      </mat-button-toggle-group>
+    </div>
+    <div class="toolbar-right">
+      <span class="result-count">{{ filteredComponents().length }} component(s)</span>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       DATA TABLES (per tab)
+       ═══════════════════════════════════════════════════════════ -->
+
+  @if (filteredComponents().length === 0) {
+    <!-- ─── Empty State ─── -->
+    <div class="empty-state">
+      <div class="empty-icon" [style.background]="activeTab().color + '10'" [style.color]="activeTab().color">
+        <mat-icon>{{ activeTab().icon }}</mat-icon>
+      </div>
+      <h3>No {{ activeTab().label }} Found</h3>
+      <p>
+        @if (searchQuery() || statusFilter() !== 'ALL') {
+          No components match your search or filter criteria. Try adjusting your filters.
+        } @else {
+          Get started by adding your first {{ activeTab().label.toLowerCase() }} component.
+        }
+      </p>
+      @if (!searchQuery() && statusFilter() === 'ALL') {
+        <button mat-flat-button color="primary" (click)="openAddDialog()">
+          <mat-icon>add</mat-icon> Add {{ activeTab().label.slice(0, -1) }}
+        </button>
+      }
+    </div>
+  } @else {
+
+    <!-- ═══ EARNINGS TABLE ═══ -->
+    @if (activeTabKey() === 'EARNINGS') {
+      <div class="table-wrapper">
+        <table mat-table [dataSource]="filteredComponents()" class="component-table">
+
+          <!-- Component Name -->
+          <ng-container matColumnDef="component_name">
+            <th mat-header-cell *matHeaderCellDef>Component Name</th>
+            <td mat-cell *matCellDef="let row">
+              <div class="name-cell">
+                <div class="name-icon" [style.background]="activeTab().color + '12'" [style.color]="activeTab().color">
+                  <mat-icon>{{ row.is_basic ? 'star' : 'payments' }}</mat-icon>
+                </div>
+                <div class="name-text">
+                  <span class="primary-text">{{ row.component_name }}</span>
+                  <span class="secondary-text">{{ row.description }}</span>
+                </div>
+                @if (row.is_basic) {
+                  <span class="basic-badge">BASIC</span>
+                }
+              </div>
+            </td>
+          </ng-container>
+
+          <!-- Component Code -->
+          <ng-container matColumnDef="component_code">
+            <th mat-header-cell *matHeaderCellDef>Code</th>
+            <td mat-cell *matCellDef="let row">
+              <code class="code-badge">{{ row.component_code }}</code>
+            </td>
+          </ng-container>
+
+          <!-- Category -->
+          <ng-container matColumnDef="component_category">
+            <th mat-header-cell *matHeaderCellDef>Category</th>
+            <td mat-cell *matCellDef="let row">
+              <span class="cat-chip" [class.fixed]="row.component_category === 'fixed'"
+                    [class.variable]="row.component_category === 'variable'">
+                {{ getCategoryLabel(row.component_category) }}
+              </span>
+            </td>
+          </ng-container>
+
+          <!-- Calculation Type -->
+          <ng-container matColumnDef="calculation_type">
+            <th mat-header-cell *matHeaderCellDef>Calculation</th>
+            <td mat-cell *matCellDef="let row">
+              <div class="calc-cell">
+                <span class="calc-type">{{ getCalculationLabel(row.calculation_type) }}</span>
+                @if (row.calculation_type === 'fixed') {
+                  <span class="calc-value">{{ formatCurrency(row.fixed_amount) }}</span>
+                }
+                @if (row.calculation_type === 'percentage_of_basic') {
+                  <span class="calc-value">{{ row.percentage }}%</span>
+                }
+                @if (row.calculation_type === 'formula') {
+                  <span class="calc-value formula-text">{{ row.formula }}</span>
+                }
+              </div>
+            </td>
+          </ng-container>
+
+          <!-- Taxable -->
+          <ng-container matColumnDef="taxable">
+            <th mat-header-cell *matHeaderCellDef>Taxable</th>
+            <td mat-cell *matCellDef="let row">
+              <mat-icon class="bool-icon" [class.yes]="row.taxable" [class.no]="!row.taxable">
+                {{ row.taxable ? 'check_circle' : 'cancel' }}
+              </mat-icon>
+            </td>
+          </ng-container>
+
+          <!-- PF Applicable -->
+          <ng-container matColumnDef="pf_applicable">
+            <th mat-header-cell *matHeaderCellDef>PF</th>
+            <td mat-cell *matCellDef="let row">
+              <mat-icon class="bool-icon" [class.yes]="row.pf_applicable" [class.no]="!row.pf_applicable">
+                {{ row.pf_applicable ? 'check_circle' : 'cancel' }}
+              </mat-icon>
+            </td>
+          </ng-container>
+
+          <!-- Show in Payslip -->
+          <ng-container matColumnDef="show_in_payslip">
+            <th mat-header-cell *matHeaderCellDef>Payslip</th>
+            <td mat-cell *matCellDef="let row">
+              <mat-icon class="bool-icon" [class.yes]="row.show_in_payslip" [class.no]="!row.show_in_payslip">
+                {{ row.show_in_payslip ? 'visibility' : 'visibility_off' }}
+              </mat-icon>
+            </td>
+          </ng-container>
+
+          <!-- Status -->
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef>Status</th>
+            <td mat-cell *matCellDef="let row">
+              <span class="status-badge" [class.active]="row.status === 'ACTIVE'" [class.inactive]="row.status === 'INACTIVE'">
+                <span class="status-dot-sm"></span>
+                {{ row.status === 'ACTIVE' ? 'Active' : 'Inactive' }}
+              </span>
+            </td>
+          </ng-container>
+
+          <!-- Actions -->
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef class="actions-header">Actions</th>
+            <td mat-cell *matCellDef="let row" class="actions-cell">
+              <button mat-icon-button matTooltip="View" (click)="openViewDialog(row)">
+                <mat-icon>visibility</mat-icon>
+              </button>
+              <button mat-icon-button matTooltip="Edit" (click)="openEditDialog(row)">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button [matTooltip]="row.status === 'ACTIVE' ? 'Deactivate' : 'Activate'"
+                      (click)="toggleStatus(row)">
+                <mat-icon>{{ row.status === 'ACTIVE' ? 'toggle_on' : 'toggle_off' }}</mat-icon>
+              </button>
+              <button mat-icon-button matTooltip="Delete" class="delete-btn" (click)="deleteComponent(row)">
+                <mat-icon>delete_outline</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="earningColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: earningColumns;" class="table-row"></tr>
+        </table>
+      </div>
+    }
+
+    <!-- ═══ DEDUCTIONS TABLE ═══ -->
+    @if (activeTabKey() === 'DEDUCTIONS') {
+      <div class="table-wrapper">
+        <table mat-table [dataSource]="filteredComponents()" class="component-table">
+
+          <ng-container matColumnDef="component_name">
+            <th mat-header-cell *matHeaderCellDef>Component Name</th>
+            <td mat-cell *matCellDef="let row">
+              <div class="name-cell">
+                <div class="name-icon" [style.background]="activeTab().color + '12'" [style.color]="activeTab().color">
+                  <mat-icon>{{ row.deduction_nature === 'statutory' ? 'gavel' : 'remove_circle_outline' }}</mat-icon>
+                </div>
+                <div class="name-text">
+                  <span class="primary-text">{{ row.component_name }}</span>
+                  <span class="secondary-text">{{ row.description }}</span>
+                </div>
+              </div>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="component_code">
+            <th mat-header-cell *matHeaderCellDef>Code</th>
+            <td mat-cell *matCellDef="let row">
+              <code class="code-badge">{{ row.component_code }}</code>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="deduction_nature">
+            <th mat-header-cell *matHeaderCellDef>Nature</th>
+            <td mat-cell *matCellDef="let row">
+              <span class="nature-chip" [class.statutory]="row.deduction_nature === 'statutory'"
+                    [class.non-statutory]="row.deduction_nature === 'non_statutory'">
+                {{ row.deduction_nature === 'statutory' ? 'Statutory' : 'Non-Statutory' }}
+              </span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="calculation_type">
+            <th mat-header-cell *matHeaderCellDef>Calculation</th>
+            <td mat-cell *matCellDef="let row">
+              <div class="calc-cell">
+                <span class="calc-type">{{ getCalculationLabel(row.calculation_type) }}</span>
+                @if (row.calculation_type === 'fixed') {
+                  <span class="calc-value">{{ formatCurrency(row.fixed_amount) }}</span>
+                }
+                @if (row.calculation_type === 'percentage_of_basic') {
+                  <span class="calc-value">{{ row.percentage }}%</span>
+                }
+                @if (row.calculation_type === 'formula') {
+                  <span class="calc-value formula-text">{{ row.formula }}</span>
+                }
+              </div>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="employer_contribution">
+            <th mat-header-cell *matHeaderCellDef>Employer</th>
+            <td mat-cell *matCellDef="let row">
+              <mat-icon class="bool-icon" [class.yes]="row.employer_contribution" [class.no]="!row.employer_contribution">
+                {{ row.employer_contribution ? 'check_circle' : 'cancel' }}
+              </mat-icon>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="employee_contribution">
+            <th mat-header-cell *matHeaderCellDef>Employee</th>
+            <td mat-cell *matCellDef="let row">
+              <mat-icon class="bool-icon" [class.yes]="row.employee_contribution" [class.no]="!row.employee_contribution">
+                {{ row.employee_contribution ? 'check_circle' : 'cancel' }}
+              </mat-icon>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="max_cap">
+            <th mat-header-cell *matHeaderCellDef>Max Cap</th>
+            <td mat-cell *matCellDef="let row">
+              <span class="currency-val">{{ formatCurrency(row.max_cap) }}</span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef>Status</th>
+            <td mat-cell *matCellDef="let row">
+              <span class="status-badge" [class.active]="row.status === 'ACTIVE'" [class.inactive]="row.status === 'INACTIVE'">
+                <span class="status-dot-sm"></span>
+                {{ row.status === 'ACTIVE' ? 'Active' : 'Inactive' }}
+              </span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef class="actions-header">Actions</th>
+            <td mat-cell *matCellDef="let row" class="actions-cell">
+              <button mat-icon-button matTooltip="View" (click)="openViewDialog(row)">
+                <mat-icon>visibility</mat-icon>
+              </button>
+              <button mat-icon-button matTooltip="Edit" (click)="openEditDialog(row)">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button [matTooltip]="row.status === 'ACTIVE' ? 'Deactivate' : 'Activate'"
+                      (click)="toggleStatus(row)">
+                <mat-icon>{{ row.status === 'ACTIVE' ? 'toggle_on' : 'toggle_off' }}</mat-icon>
+              </button>
+              <button mat-icon-button matTooltip="Delete" class="delete-btn" (click)="deleteComponent(row)"
+                      [disabled]="row.deduction_nature === 'statutory'">
+                <mat-icon>delete_outline</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="deductionColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: deductionColumns;" class="table-row"></tr>
+        </table>
+      </div>
+    }
+
+    <!-- ═══ REIMBURSEMENTS TABLE ═══ -->
+    @if (activeTabKey() === 'REIMBURSEMENTS') {
+      <div class="table-wrapper">
+        <table mat-table [dataSource]="filteredComponents()" class="component-table">
+
+          <ng-container matColumnDef="component_name">
+            <th mat-header-cell *matHeaderCellDef>Component Name</th>
+            <td mat-cell *matCellDef="let row">
+              <div class="name-cell">
+                <div class="name-icon" [style.background]="activeTab().color + '12'" [style.color]="activeTab().color">
+                  <mat-icon>receipt_long</mat-icon>
+                </div>
+                <div class="name-text">
+                  <span class="primary-text">{{ row.component_name }}</span>
+                  <span class="secondary-text">{{ row.description }}</span>
+                </div>
+              </div>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="component_code">
+            <th mat-header-cell *matHeaderCellDef>Code</th>
+            <td mat-cell *matCellDef="let row">
+              <code class="code-badge">{{ row.component_code }}</code>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="calculation_type">
+            <th mat-header-cell *matHeaderCellDef>Calculation</th>
+            <td mat-cell *matCellDef="let row">
+              <span class="calc-type">{{ getCalculationLabel(row.calculation_type) }}</span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="claim_based">
+            <th mat-header-cell *matHeaderCellDef>Claim Based</th>
+            <td mat-cell *matCellDef="let row">
+              <mat-icon class="bool-icon" [class.yes]="row.claim_based" [class.no]="!row.claim_based">
+                {{ row.claim_based ? 'check_circle' : 'cancel' }}
+              </mat-icon>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="approval_required">
+            <th mat-header-cell *matHeaderCellDef>Approval</th>
+            <td mat-cell *matCellDef="let row">
+              <mat-icon class="bool-icon" [class.yes]="row.approval_required" [class.no]="!row.approval_required">
+                {{ row.approval_required ? 'verified' : 'cancel' }}
+              </mat-icon>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="max_limit_per_month">
+            <th mat-header-cell *matHeaderCellDef>Max / Month</th>
+            <td mat-cell *matCellDef="let row">
+              <span class="currency-val">{{ formatCurrency(row.max_limit_per_month) }}</span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="show_in_payslip">
+            <th mat-header-cell *matHeaderCellDef>Payslip</th>
+            <td mat-cell *matCellDef="let row">
+              <mat-icon class="bool-icon" [class.yes]="row.show_in_payslip" [class.no]="!row.show_in_payslip">
+                {{ row.show_in_payslip ? 'visibility' : 'visibility_off' }}
+              </mat-icon>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef>Status</th>
+            <td mat-cell *matCellDef="let row">
+              <span class="status-badge" [class.active]="row.status === 'ACTIVE'" [class.inactive]="row.status === 'INACTIVE'">
+                <span class="status-dot-sm"></span>
+                {{ row.status === 'ACTIVE' ? 'Active' : 'Inactive' }}
+              </span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef class="actions-header">Actions</th>
+            <td mat-cell *matCellDef="let row" class="actions-cell">
+              <button mat-icon-button matTooltip="View" (click)="openViewDialog(row)">
+                <mat-icon>visibility</mat-icon>
+              </button>
+              <button mat-icon-button matTooltip="Edit" (click)="openEditDialog(row)">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button [matTooltip]="row.status === 'ACTIVE' ? 'Deactivate' : 'Activate'"
+                      (click)="toggleStatus(row)">
+                <mat-icon>{{ row.status === 'ACTIVE' ? 'toggle_on' : 'toggle_off' }}</mat-icon>
+              </button>
+              <button mat-icon-button matTooltip="Delete" class="delete-btn" (click)="deleteComponent(row)">
+                <mat-icon>delete_outline</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="reimbursementColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: reimbursementColumns;" class="table-row"></tr>
+        </table>
+      </div>
+    }
+
+    <!-- ═══ VARIABLE PAY TABLE ═══ -->
+    @if (activeTabKey() === 'VARIABLE_PAY') {
+      <div class="table-wrapper">
+        <table mat-table [dataSource]="filteredComponents()" class="component-table">
+
+          <ng-container matColumnDef="component_name">
+            <th mat-header-cell *matHeaderCellDef>Component Name</th>
+            <td mat-cell *matCellDef="let row">
+              <div class="name-cell">
+                <div class="name-icon" [style.background]="activeTab().color + '12'" [style.color]="activeTab().color">
+                  <mat-icon>stars</mat-icon>
+                </div>
+                <div class="name-text">
+                  <span class="primary-text">{{ row.component_name }}</span>
+                  <span class="secondary-text">{{ row.description }}</span>
+                </div>
+              </div>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="component_code">
+            <th mat-header-cell *matHeaderCellDef>Code</th>
+            <td mat-cell *matCellDef="let row">
+              <code class="code-badge">{{ row.component_code }}</code>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="pay_frequency">
+            <th mat-header-cell *matHeaderCellDef>Frequency</th>
+            <td mat-cell *matCellDef="let row">
+              <span class="freq-chip" [attr.data-freq]="row.pay_frequency">
+                {{ row.pay_frequency | titlecase }}
+              </span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="linked_to_kpi">
+            <th mat-header-cell *matHeaderCellDef>KPI Linked</th>
+            <td mat-cell *matCellDef="let row">
+              <mat-icon class="bool-icon" [class.yes]="row.linked_to_kpi" [class.no]="!row.linked_to_kpi">
+                {{ row.linked_to_kpi ? 'check_circle' : 'cancel' }}
+              </mat-icon>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="auto_calculate">
+            <th mat-header-cell *matHeaderCellDef>Auto Calc</th>
+            <td mat-cell *matCellDef="let row">
+              <mat-icon class="bool-icon" [class.yes]="row.auto_calculate" [class.no]="!row.auto_calculate">
+                {{ row.auto_calculate ? 'check_circle' : 'cancel' }}
+              </mat-icon>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="manual_override">
+            <th mat-header-cell *matHeaderCellDef>Override</th>
+            <td mat-cell *matCellDef="let row">
+              <mat-icon class="bool-icon" [class.yes]="row.manual_override" [class.no]="!row.manual_override">
+                {{ row.manual_override ? 'edit' : 'edit_off' }}
+              </mat-icon>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef>Status</th>
+            <td mat-cell *matCellDef="let row">
+              <span class="status-badge" [class.active]="row.status === 'ACTIVE'" [class.inactive]="row.status === 'INACTIVE'">
+                <span class="status-dot-sm"></span>
+                {{ row.status === 'ACTIVE' ? 'Active' : 'Inactive' }}
+              </span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef class="actions-header">Actions</th>
+            <td mat-cell *matCellDef="let row" class="actions-cell">
+              <button mat-icon-button matTooltip="View" (click)="openViewDialog(row)">
+                <mat-icon>visibility</mat-icon>
+              </button>
+              <button mat-icon-button matTooltip="Edit" (click)="openEditDialog(row)">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button [matTooltip]="row.status === 'ACTIVE' ? 'Deactivate' : 'Activate'"
+                      (click)="toggleStatus(row)">
+                <mat-icon>{{ row.status === 'ACTIVE' ? 'toggle_on' : 'toggle_off' }}</mat-icon>
+              </button>
+              <button mat-icon-button matTooltip="Delete" class="delete-btn" (click)="deleteComponent(row)">
+                <mat-icon>delete_outline</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="variablePayColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: variablePayColumns;" class="table-row"></tr>
+        </table>
+      </div>
+    }
+
+  }
+
+</div>

@@ -1,0 +1,11 @@
+
+// TO DECREASE THE HEIGHT OF THE MAT INPUT AND DROPDOWN TEXT FIELDS
+mat-form-field{
+  --mat-form-field-container-height: 40px;
+  --mat-form-field-container-vertical-padding: 10px;
+}
+
+// mat-form-field {
+//     --mat-form-field-container-height: 44px;
+//     --mat-form-field-container-vertical-padding: 13px;
+// }

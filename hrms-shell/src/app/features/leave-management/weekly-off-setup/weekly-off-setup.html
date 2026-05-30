@@ -1,0 +1,80 @@
+<app-page-header title="Weekly Off Setup" [breadcrumbs]="['Home', 'Leave & Attendance', 'Weekly Off']"
+    [tabs]="pageTabs" [(activeTab)]="currentTab" (onBack)="handleBack()">
+</app-page-header>
+
+<div class="page-container">
+    <div class="content-wrapper">
+        <div class="layout-grid">
+
+            <!-- LEFT: Policy Info -->
+            <mat-card class="config-card">
+                <h3>Policy Definition</h3>
+                <div class="form-col">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Policy Name</mat-label>
+                        <input matInput [(ngModel)]="policyName" placeholder="e.g. Standard 5-Day Week">
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline">
+                        <mat-label>Effective From</mat-label>
+                        <input matInput [matDatepicker]="picker" [(ngModel)]="effectiveDate">
+                        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                        <mat-datepicker #picker></mat-datepicker>
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline">
+                        <mat-label>Applicable Employees</mat-label>
+                        <mat-select value="All">
+                            <mat-option value="All">All Employees</mat-option>
+                            <mat-option value="Hyd">Hyderabad Office</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+            </mat-card>
+
+            <!-- RIGHT: The Matrix -->
+            <mat-card class="matrix-card">
+                <div class="matrix-header">
+                    <h3>Configure Days Off</h3>
+                    <span class="hint">Click cells to toggle Weekly Off status</span>
+                </div>
+
+                <div class="wo-grid">
+                    <!-- Header Row -->
+                    <div class="grid-header"></div> <!-- Empty Corner -->
+                    @for (day of weekDays; track day) {
+                    <div class="grid-header day-col">{{ day }}</div>
+                    }
+
+                    <!-- Rows for Week 1 to 5 -->
+                    @for (week of [1,2,3,4,5]; track week) {
+                    <div class="week-label">Week {{ week }}</div>
+
+                    @for (day of weekDays; track day; let dIndex = $index) {
+                    <div class="grid-cell" [class.selected]="isOff(week, day)" (click)="toggleDay(week, day)">
+                        @if(isOff(week, day)) { <mat-icon>check</mat-icon> }
+                    </div>
+                    }
+                    }
+
+                    <!-- Footer: All Row -->
+                    <div class="week-label all-label">All</div>
+                    @for (day of weekDays; track day) {
+                    <div class="grid-footer-btn" (click)="toggleAllColumn(day)">
+                        <mat-icon>check_box_outline_blank</mat-icon>
+                    </div>
+                    }
+                </div>
+            </mat-card>
+        </div>
+    </div>
+
+    <!-- Fixed Footer with Action Buttons -->
+    <div class="fixed-footer">
+        <button mat-stroked-button (click)="handleBack()" class="footer-btn">Cancel</button>
+        <button mat-flat-button color="primary" (click)="saveWeekOffs()" class="footer-btn save-btn">
+            <mat-icon>save</mat-icon>
+            <span>Save Policy</span>
+        </button>
+    </div>
+</div>

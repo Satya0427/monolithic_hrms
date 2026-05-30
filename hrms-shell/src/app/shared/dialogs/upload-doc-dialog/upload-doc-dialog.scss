@@ -1,0 +1,366 @@
+/* THEME VARIABLES */
+$primary: #2563eb;
+$primary-light: #eff6ff;
+$text-main: #1e293b;
+$text-secondary: #64748b;
+$border-color: #e2e8f0;
+$danger: #ef4444;
+
+/* Host ensures the dialog container doesn't have default padding issues if set to 0 in global */
+/* Host ensures the dialog container doesn't have default padding issues if set to 0 in global */
+:host {
+    display: block;
+    background: #fff;
+    /* border-radius: 12px; */
+    /* Handled by container or removed for full screen */
+    overflow: hidden;
+    position: relative;
+    height: 100%;
+    /* Fill the dialog container */
+    display: flex;
+    flex-direction: column;
+}
+
+/* HEADER */
+.dialog-header {
+    padding: 12px 16px;
+    border-bottom: 1px solid $border-color;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #fff;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+
+    .title {
+        margin: 0;
+        font-size: 18px;
+        font-weight: 600;
+        color: $text-main;
+    }
+
+    .subtitle {
+        margin: 0;
+        font-size: 12px;
+        color: $text-secondary;
+        margin-left: 12px;
+        flex: 1;
+    }
+
+    .close-btn {
+        color: $text-secondary;
+        width: 32px;
+        height: 32px;
+        line-height: 32px;
+
+        mat-icon {
+            font-size: 20px;
+        }
+    }
+}
+
+/* BODY Layout */
+.dialog-body {
+    padding: 24px;
+    overflow-y: auto;
+    flex: 1;
+    display: flex; // Added: Flex container
+    flex-direction: column; // Added: Column direction
+}
+
+.content-split {
+    display: flex;
+    gap: 32px;
+    flex: 1; // Added: Take available height
+    min-height: 0; // Added: Allow shrinking if needed
+
+    @media (max-width: 768px) {
+        flex-direction: column;
+        gap: 24px;
+    }
+}
+
+/* LEFT PANE: UPLOAD */
+.left-pane {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 250px;
+}
+
+.upload-zone {
+    flex: 1; // Changed: Grow to fill space
+    width: 100%; // Added: Fill width
+    min-height: 200px; // Reduced min-height to allow flexibility
+    border: 2px dashed #cbd5e1;
+    border-radius: 8px;
+    background: #f8fafc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+
+    &:hover {
+        border-color: $primary;
+        background: $primary-light;
+    }
+
+    &.has-file {
+        background: #fff;
+        border-style: solid;
+        border-color: $border-color;
+    }
+
+    &.error {
+        border-color: $danger;
+        background: #fef2f2;
+    }
+}
+
+/* Placeholder State */
+.placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    pointer-events: none;
+
+    .icon-circle {
+        width: 48px;
+        height: 48px;
+        background: #fff;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 12px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+
+        mat-icon {
+            color: $primary;
+            font-size: 24px;
+            width: 24px;
+            height: 24px;
+        }
+    }
+
+    .primary-text {
+        font-weight: 500;
+        color: $text-main;
+        margin: 0;
+        font-size: 14px;
+    }
+
+    .sub-text {
+        color: $text-secondary;
+        font-size: 12px;
+        margin: 4px 0 0;
+    }
+}
+
+/* Preview State */
+.preview-wrapper {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+
+    .preview-img {
+        width: 100%; // Fill container width
+        height: 100%; // Fill container height
+        object-fit: contain; // Maintain aspect ratio within the box
+        border-radius: 4px;
+    }
+
+    // ...
+
+    .file-icon-preview {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        color: $danger;
+
+        .pdf-icon {
+            font-size: 48px;
+            width: 48px;
+            height: 48px;
+            margin-bottom: 8px;
+        }
+
+        .fname {
+            font-size: 13px;
+            color: $text-main;
+            max-width: 180px;
+            text-align: center;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+    }
+
+    .overlay {
+        position: absolute;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.5);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        opacity: 0;
+        transition: opacity 0.2s;
+        backdrop-filter: blur(2px);
+
+        mat-icon {
+            margin-bottom: 4px;
+        }
+
+        span {
+            font-size: 12px;
+            font-weight: 500;
+        }
+    }
+
+    &:hover .overlay {
+        opacity: 1;
+    }
+}
+
+.error-msg {
+    margin-top: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: $danger;
+    font-size: 12px;
+    font-weight: 500;
+
+    mat-icon {
+        font-size: 16px;
+        width: 16px;
+        height: 16px;
+    }
+}
+
+/* RIGHT PANE: FORM */
+.right-pane {
+    flex: 1.2;
+}
+
+.fields-container {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.form-field-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.field-label {
+    font-size: 13px;
+    font-weight: 500;
+    color: $text-main;
+
+    .required {
+        color: $danger;
+    }
+}
+
+/* Customize Material Fields */
+::ng-deep .custom-field {
+    .mat-mdc-text-field-wrapper {
+        background-color: #fff;
+        border-radius: 6px;
+        padding: 0;
+        height: 40px;
+    }
+
+    .mat-mdc-form-field-flex {
+        height: 40px;
+        align-items: center;
+        padding: 0 12px;
+    }
+
+    /* Remove outline default padding/gap logic since we don't use label inside */
+    .mat-mdc-notched-outline__leading,
+    .mat-mdc-notched-outline__notch,
+    .mat-mdc-notched-outline__trailing {
+        border-color: #e2e8f0;
+        border-width: 1px;
+    }
+
+    .mat-mdc-form-field-infix {
+        padding: 0 !important;
+        min-height: unset;
+        display: flex;
+        align-items: center;
+    }
+
+    input,
+    select {
+        font-size: 14px;
+        color: $text-main;
+    }
+
+    /* Focus State */
+    &.mat-focused .mat-mdc-notched-outline__leading,
+    &.mat-focused .mat-mdc-notched-outline__notch,
+    &.mat-focused .mat-mdc-notched-outline__trailing {
+        border-color: $primary !important;
+        border-width: 1px;
+    }
+
+    /* Error State */
+    &.mat-form-field-invalid .mat-mdc-notched-outline__leading,
+    &.mat-form-field-invalid .mat-mdc-notched-outline__notch,
+    &.mat-form-field-invalid .mat-mdc-notched-outline__trailing {
+        border-color: $danger !important;
+    }
+}
+
+/* Textarea specific adjustment */
+::ng-deep .custom-field textarea {
+    padding-top: 8px;
+    line-height: normal;
+}
+
+
+/* FOOTER */
+.dialog-actions {
+    padding: 16px 24px;
+    border-top: 1px solid $border-color;
+    background: #f8fafc;
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+
+    button {
+        height: 40px;
+        padding: 0 20px;
+        border-radius: 6px;
+        font-weight: 500;
+    }
+
+    .cancel-btn {
+        color: $text-secondary;
+    }
+
+    .save-btn {
+        background: $primary;
+        color: white;
+
+        mat-icon {
+            margin-right: 6px;
+        }
+    }
+}

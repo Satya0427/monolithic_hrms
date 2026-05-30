@@ -1,0 +1,54 @@
+<app-page-header title="Leave Requests" [breadcrumbs]="['Home', 'Leave & Attendance', 'Leave Requests']"
+  (onBack)="handleBack()">
+</app-page-header>
+
+<div class="page-container">
+  <div class="page-header">
+    <div class="pending-chip">
+      {{ leaveRequests().length }} Pending
+    </div>
+  </div>
+
+  @if (leaveRequests().length > 0) {
+  <div class="request-list">
+    @for (request of leaveRequests(); track request._id) {
+    <div class="request-card">
+      <div class="request-main">
+        <div class="avatar">{{ (request.employee_name || 'U').charAt(0) }}</div>
+
+        <div class="request-content">
+          <div class="top-row">
+            <div class="employee-meta">
+              <h4>{{ request.employee_name }}
+                <p class="duration">{{ request.half_day ? 'Half day' : (request.total_days ? (request.total_days + '
+                  day' + (request.total_days > 1 ? 's' : '')) : '') }}</p>
+              </h4>
+              <p>{{ request.from_date }} - {{ request.to_date }}</p>
+            </div>
+
+            <span class="leave-type">{{ request.leave_type }}</span>
+          </div>
+
+          <p class="reason">{{ request.reason || 'No reason provided.' }}</p>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button mat-stroked-button color="primary" class="approve" (click)="updateLeaveRequestStatus(request._id,'APPROVED')">
+          Approve
+        </button>
+
+        <button mat-stroked-button color="warn" class="reject" (click)="updateLeaveRequestStatus(request._id,'REJECTED')">
+          Reject
+        </button>
+      </div>
+    </div>
+    }
+  </div>
+  } @else {
+  <div class="empty-state">
+    <h3>No pending leave requests</h3>
+    <p>New requests will appear here for review.</p>
+  </div>
+  }
+</div>

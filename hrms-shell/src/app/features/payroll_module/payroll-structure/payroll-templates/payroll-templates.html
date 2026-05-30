@@ -1,0 +1,193 @@
+<!-- ═══════════════════════════════════════════════════════════
+     SALARY TEMPLATES — /home/payroll/templates
+     ═══════════════════════════════════════════════════════════ -->
+
+<!-- ─── Page Header ─── -->
+<app-page-header title="Salary Templates" [breadcrumbs]="breadcrumbs">
+    <div header-actions>
+        <button mat-flat-button color="primary" class="add-btn" (click)="navigateToCreate()">
+            <mat-icon>add</mat-icon> Create Template
+        </button>
+    </div>
+</app-page-header>
+
+<div class="page-content">
+
+    <!-- ─── Stats Cards ─── -->
+    <div class="stats-row">
+        @for (stat of stats(); track stat.label) {
+        <div class="stat-card" [style.--card-color]="stat.color" [style.--card-bg]="stat.bgColor">
+            <div class="stat-icon">
+                <mat-icon>{{ stat.icon }}</mat-icon>
+            </div>
+            <div class="stat-info">
+                <span class="stat-value">{{ stat.value }}</span>
+                <span class="stat-label">{{ stat.label }}</span>
+            </div>
+        </div>
+        }
+    </div>
+
+    <!-- ─── Toolbar: Search + Filters ─── -->
+    <div class="toolbar">
+        <div class="toolbar-left">
+            <mat-form-field appearance="outline" class="search-field">
+                <mat-icon matPrefix>search</mat-icon>
+                <input matInput placeholder="Search by name or code..." [ngModel]="searchQuery()"
+                    (ngModelChange)="onSearch($event)">
+                @if (searchQuery()) {
+                <button matSuffix mat-icon-button (click)="onSearch('')" aria-label="Clear">
+                    <mat-icon>close</mat-icon>
+                </button>
+                }
+            </mat-form-field>
+
+            <mat-button-toggle-group [value]="statusFilter()" (change)="onStatusFilter($event.value)"
+                class="status-toggle">
+                <mat-button-toggle value="ALL">All</mat-button-toggle>
+                <mat-button-toggle value="ACTIVE">
+                    <span class="status-dot active"></span> Active
+                </mat-button-toggle>
+                <mat-button-toggle value="INACTIVE">
+                    <span class="status-dot inactive"></span> Inactive
+                </mat-button-toggle>
+            </mat-button-toggle-group>
+        </div>
+
+        <div class="toolbar-right">
+            <span class="result-count">{{ filteredTemplates().length }} template(s)</span>
+        </div>
+    </div>
+
+    <!-- ═══ Empty State ═══ -->
+    @if (filteredTemplates().length === 0) {
+    <div class="empty-state">
+        <div class="empty-icon">
+            <mat-icon>description</mat-icon>
+        </div>
+        <h3>No Templates Found</h3>
+        <p>
+            @if (searchQuery() || statusFilter() !== 'ALL') {
+            No templates match your search or filter criteria. Try adjusting your filters.
+            } @else {
+            Get started by creating your first salary template.
+            }
+        </p>
+        @if (!searchQuery() && statusFilter() === 'ALL') {
+        <button mat-flat-button color="primary" (click)="navigateToCreate()">
+            <mat-icon>add</mat-icon> Create Template
+        </button>
+        }
+    </div>
+    }
+
+    <!-- ═══ TEMPLATES TABLE ═══ -->
+    @if ( filteredTemplates().length > 0) {
+    <div class="table-wrapper">
+        <table mat-table [dataSource]="filteredTemplates()" class="template-table">
+
+            <!-- Template Name -->
+            <ng-container matColumnDef="template_name">
+                <th mat-header-cell *matHeaderCellDef>Template Name</th>
+                <td mat-cell *matCellDef="let row">
+                    <div class="name-cell">
+                        <div class="name-icon">
+                            <mat-icon>description</mat-icon>
+                        </div>
+                        <div class="name-text">
+                            <span class="primary-text">{{ row.template_name }}</span>
+                            <span class="secondary-text">{{ row.description || 'No description' }}</span>
+                        </div>
+                    </div>
+                </td>
+            </ng-container>
+
+            <!-- Template Code -->
+            <ng-container matColumnDef="template_code">
+                <th mat-header-cell *matHeaderCellDef>Code</th>
+                <td mat-cell *matCellDef="let row">
+                    <code class="code-badge">{{ row.template_code }}</code>
+                </td>
+            </ng-container>
+
+            <!-- Earnings Count -->
+            <ng-container matColumnDef="earnings_count">
+                <th mat-header-cell *matHeaderCellDef>Earnings</th>
+                <td mat-cell *matCellDef="let row">
+                    <span class="count-chip earnings">
+                        <mat-icon>trending_up</mat-icon>
+                        {{ row.earnings?.length || 0 }}
+                    </span>
+                </td>
+            </ng-container>
+
+            <!-- Deductions Count -->
+            <ng-container matColumnDef="deductions_count">
+                <th mat-header-cell *matHeaderCellDef>Deductions</th>
+                <td mat-cell *matCellDef="let row">
+                    <span class="count-chip deductions">
+                        <mat-icon>trending_down</mat-icon>
+                        {{ row.deductions?.length || 0 }}
+                    </span>
+                </td>
+            </ng-container>
+
+            <!-- Monthly CTC -->
+            <ng-container matColumnDef="monthly_ctc">
+                <th mat-header-cell *matHeaderCellDef>Monthly CTC</th>
+                <td mat-cell *matCellDef="let row">
+                    <span class="currency-val">{{ formatCurrency(getMonthlyCtc(row)) }}</span>
+                </td>
+            </ng-container>
+
+            <!-- Status -->
+            <ng-container matColumnDef="status">
+                <th mat-header-cell *matHeaderCellDef>Status</th>
+                <td mat-cell *matCellDef="let row">
+                    <span class="status-badge" [class.active]="row.status === 'ACTIVE'"
+                        [class.inactive]="row.status === 'INACTIVE'">
+                        <span class="status-dot-sm"></span>
+                        {{ row.status === 'ACTIVE' ? 'Active' : 'Inactive' }}
+                    </span>
+                </td>
+            </ng-container>
+
+            <!-- Used By -->
+            <ng-container matColumnDef="used_by">
+                <th mat-header-cell *matHeaderCellDef>Used By</th>
+                <td mat-cell *matCellDef="let row">
+                    <span class="used-by-chip">
+                        <mat-icon>people</mat-icon>
+                        {{ row.used_by_count || 0 }} employee(s)
+                    </span>
+                </td>
+            </ng-container>
+
+            <!-- Actions -->
+            <ng-container matColumnDef="actions">
+                <th mat-header-cell *matHeaderCellDef class="actions-header">Actions</th>
+                <td mat-cell *matCellDef="let row" class="actions-cell">
+                    <button mat-icon-button matTooltip="Edit" (click)="navigateToEdit(row)">
+                        <mat-icon>edit</mat-icon>
+                    </button>
+                    <button mat-icon-button matTooltip="Duplicate" (click)="duplicateTemplate(row)">
+                        <mat-icon>content_copy</mat-icon>
+                    </button>
+                    <button mat-icon-button [matTooltip]="row.status === 'ACTIVE' ? 'Deactivate' : 'Activate'"
+                        (click)="toggleStatus(row)">
+                        <mat-icon>{{ row.status === 'ACTIVE' ? 'toggle_on' : 'toggle_off' }}</mat-icon>
+                    </button>
+                    <button mat-icon-button matTooltip="Delete" class="delete-btn" (click)="deleteTemplate(row)"
+                        [disabled]="row.used_by_count > 0">
+                        <mat-icon>delete_outline</mat-icon>
+                    </button>
+                </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="table-row"></tr>
+        </table>
+    </div>
+    }
+
+</div>

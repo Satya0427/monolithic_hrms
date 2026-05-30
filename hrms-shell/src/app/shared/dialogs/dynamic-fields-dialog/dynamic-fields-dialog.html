@@ -1,0 +1,105 @@
+<div class="dialog-container">
+
+    <!-- Header Section (Matches Design) -->
+    <div class="dialog-header">
+        <div class="title-section">
+            <div class="avatar-circle">
+                <mat-icon>person</mat-icon>
+            </div>
+            <span>{{ data.title }}</span>
+        </div>
+        <button mat-icon-button (click)="close()" class="close-btn">
+            <mat-icon>close</mat-icon>
+        </button>
+    </div>
+
+    <!-- Scrollable Form Body -->
+    <div class="dialog-content">
+        <form [formGroup]="form" class="dynamic-form-grid">
+            @for (field of data.fields; track field.controlName) {
+            <!-- Heading Type -->
+            @if (field.type === 'heading') {
+            <div class="form-heading">
+                <h3>{{ field.label }}</h3>
+                <mat-divider></mat-divider>
+            </div>
+            } @else {
+            <!-- Wrapper handles width: 'half' (default) vs 'full' -->
+            <div class="form-item" [class.full-width]="field.width === 'full'">
+
+                <mat-form-field appearance="outline" class="custom-field">
+                    <mat-label>{{ field.label }}</mat-label>
+
+                    <!-- 1. Text / Email / Number / Password -->
+                    @if (['text', 'email', 'number', 'password'].includes(field.type)) {
+                    <input matInput [type]="field.type" [formControlName]="field.controlName">
+                    }
+
+                    <!-- 2. Select Dropdown -->
+                    @if (field.type === 'select') {
+                    <mat-select [formControlName]="field.controlName">
+                        @for (opt of field.options; track opt?.lookup_key || opt) {
+                        <mat-option [value]="opt?.lookup_key || opt">
+                            {{ opt?.lookup_value || opt }}
+                        </mat-option>
+                        }
+                    </mat-select>
+                    }
+
+                    <!-- 3. Date Picker - Using *ngIf for proper content projection -->
+                    <ng-container *ngIf="field.type === 'date'">
+                        <input matInput [matDatepicker]="picker" [formControlName]="field.controlName" readonly>
+                        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                        <mat-datepicker #picker></mat-datepicker>
+                    </ng-container>
+
+                    <!-- 4. Textarea -->
+                    @if (field.type === 'textarea') {
+                    <textarea matInput rows="3" [formControlName]="field.controlName"></textarea>
+                    }
+
+                    <!-- 5. File Input (Custom Simulation) -->
+                    @if (field.type === 'file') {
+                    <input type="text" matInput readonly [value]="form.get(field.controlName)?.value?.name || ''"
+                        (click)="fileInput.click()" placeholder="Choose a file">
+                    }
+
+                    <!-- Icon Suffix (Displayed if provided and not a date/select) -->
+                    @if (field.icon && field.type !== 'date' && field.type !== 'select') {
+                    <mat-icon matSuffix class="field-icon">
+                        {{ field.icon }}
+                    </mat-icon>
+                    }
+
+                    <!-- Error Handling -->
+                    @if (form.get(field.controlName)?.hasError('required')) {
+                    <mat-error>
+                        {{ field.label }} is required
+                    </mat-error>
+                    }
+                </mat-form-field>
+
+                <!-- Hidden File Input Trigger -->
+                <input #fileInput type="file" style="display: none;" (change)="onFileChange($event, field.controlName)">
+            </div>
+            }
+            }
+
+        </form>
+    </div>
+
+    <!-- Footer Actions -->
+    <div class="dialog-actions">
+        <button mat-button (click)="close()">Cancel</button>
+        <button mat-raised-button color="primary" (click)="onSubmit()" [disabled]="form.invalid || loading()">
+            @if (loading()) {
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <mat-spinner diameter="18"></mat-spinner>
+                <span>Saving...</span>
+            </div>
+            } @else {
+            Submit
+            }
+        </button>
+    </div>
+</div>

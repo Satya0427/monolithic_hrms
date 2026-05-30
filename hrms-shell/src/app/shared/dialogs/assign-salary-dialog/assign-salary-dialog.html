@@ -1,0 +1,459 @@
+<!-- ═══════════════════════════════════════════════════════════
+     ASSIGN / EDIT / REVISE SALARY — 4−Step Dialog
+     ═══════════════════════════════════════════════════════════ -->
+
+<!-- ─── Dialog Header ─── -->
+<div class="dialog-header">
+    <div class="header-left">
+        <mat-icon class="header-icon">assignment</mat-icon>
+        <div class="header-text">
+            <h2>{{ dialogTitle() }}</h2>
+            <p>
+                @if (isCreateMode()) { Link an employee to a salary template }
+                @else if (isReviseMode()) { Create a new salary revision version }
+                @else if (isEditMode()) { Update salary assignment details }
+                @else { View salary assignment details }
+            </p>
+        </div>
+    </div>
+    <button mat-icon-button (click)="close()" class="close-btn">
+        <mat-icon>close</mat-icon>
+    </button>
+</div>
+
+<!-- ─── Step Indicators ─── -->
+<div class="step-indicators">
+    @for (step of steps(); track step.label; let i = $index) {
+    <div class="step-indicator" [class.active]="activeStep() === i" [class.completed]="activeStep() > i"
+        (click)="goToStep(i)">
+        <div class="step-circle">
+            @if (activeStep() > i) {
+            <mat-icon>check</mat-icon>
+            } @else {
+            <mat-icon>{{ step.icon }}</mat-icon>
+            }
+        </div>
+        <span class="step-label">{{ step.label }}</span>
+    </div>
+    @if (i < steps().length - 1) {
+    <div class="step-connector" [class.completed]="activeStep() > i"></div>
+    }
+    }
+</div>
+
+<!-- ─── Dialog Content ─── -->
+<mat-dialog-content class="dialog-body">
+
+    <!-- ═══ STEP 1 — Basic Assignment Info ═══ -->
+    @if (activeStep() === 0) {
+    <div class="step-content" [formGroup]="basicForm">
+        <div class="step-title">
+            <mat-icon>person</mat-icon>
+            <span>{{ isViewMode() ? 'Assignment Information' : 'Basic Assignment Information' }}</span>
+        </div>
+
+        <div class="form-grid">
+            <!-- Employee Select -->
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Employee</mat-label>
+                @if (isViewMode()) {
+                <input matInput [value]="data.assignment?.employee_name || ''" disabled>
+                } @else {
+                <mat-select formControlName="employee_id" (selectionChange)="onEmployeeChange($event.value)">
+                    @for (emp of employees(); track emp.id) {
+                    <mat-option [value]="emp.id">
+                        {{ emp.name }} ({{ emp.employee_id }})
+                    </mat-option>
+                    }
+                </mat-select>
+                @if (basicForm.get('employee_id')?.hasError('required') &&
+                basicForm.get('employee_id')?.touched) {
+                <mat-error>Employee is required</mat-error>
+                }
+                }
+            </mat-form-field>
+
+            <!-- Template Select -->
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Salary Template</mat-label>
+                @if (isViewMode()) {
+                <input matInput [value]="data.assignment?.template_name || ''" disabled>
+                } @else {
+                <mat-select formControlName="template_id" (selectionChange)="onTemplateChange($event.value)">
+                    @for (tpl of templates(); track tpl._id) {
+                    <mat-option [value]="tpl._id">
+                        {{ tpl.template_name }} ({{ tpl.template_code }})
+                    </mat-option>
+                    }
+                </mat-select>
+                @if (basicForm.get('template_id')?.hasError('required') &&
+                basicForm.get('template_id')?.touched) {
+                <mat-error>Template is required</mat-error>
+                }
+                }
+            </mat-form-field>
+
+            <div class="form-row-2">
+                <!-- Annual CTC -->
+                <mat-form-field appearance="outline">
+                    <mat-label>Annual CTC</mat-label>
+                    <span matPrefix>&#8377;&nbsp;</span>
+                    <input matInput type="number" formControlName="annual_ctc" [readonly]="isViewMode()"
+                        (input)="onCtcChange(+$any($event.target).value)">
+                    @if (basicForm.get('annual_ctc')?.hasError('min') && basicForm.get('annual_ctc')?.touched) {
+                    <mat-error>CTC must be greater than 0</mat-error>
+                    }
+                </mat-form-field>
+
+                <!-- Monthly Gross (auto) -->
+                <mat-form-field appearance="outline">
+                    <mat-label>Monthly Gross</mat-label>
+                    <span matPrefix>&#8377;&nbsp;</span>
+                    <input matInput type="number" [value]="monthlyGross()" disabled>
+                    <mat-hint>Auto-calculated</mat-hint>
+                </mat-form-field>
+            </div>
+
+            <div class="form-row-2">
+                <!-- Effective From -->
+                @if (isViewMode()) {
+                <mat-form-field appearance="outline">
+                    <mat-label>Effective From</mat-label>
+                    <input matInput [value]="data.assignment?.effective_from" disabled>
+                </mat-form-field>
+                } @else {
+                <mat-form-field appearance="outline">
+                    <mat-label>Effective From</mat-label>
+                    <input matInput [matDatepicker]="effectivePicker" formControlName="effective_from">
+                    <mat-datepicker-toggle matSuffix [for]="effectivePicker"></mat-datepicker-toggle>
+                    <mat-datepicker #effectivePicker></mat-datepicker>
+                </mat-form-field>
+                }
+
+                <!-- Status -->
+                <mat-form-field appearance="outline">
+                    <mat-label>Status</mat-label>
+                    @if (isViewMode()) {
+                    <input matInput [value]="data.assignment?.status" disabled>
+                    } @else {
+                    <mat-select formControlName="status">
+                        <mat-option value="ACTIVE">Active</mat-option>
+                        <mat-option value="INACTIVE">Inactive</mat-option>
+                    </mat-select>
+                    }
+                </mat-form-field>
+            </div>
+
+            @if (isReviseMode() && data.assignment) {
+            <div class="revision-info">
+                <mat-icon>info</mat-icon>
+                <span>Current version: <strong>v{{ data.assignment.version }}</strong>.
+                    This will create <strong>v{{ data.assignment.version + 1 }}</strong> and deactivate the current
+                    record.</span>
+            </div>
+            }
+        </div>
+    </div>
+    }
+
+    <!-- ═══ STEP 2 — Earnings Breakdown ═══ -->
+    @if (activeStep() === 1) {
+    <div class="step-content">
+        <div class="step-title">
+            <mat-icon>trending_up</mat-icon>
+            <span>Earnings Breakdown</span>
+        </div>
+
+        @if (earningsSnapshot().length === 0) {
+        <div class="empty-step">
+            <mat-icon>info</mat-icon>
+            <span>Select a template and enter CTC in Step 1 to auto-generate earnings.</span>
+        </div>
+        } @else {
+        <div class="earnings-table-wrapper">
+            <table mat-table [dataSource]="earningsSnapshot()" class="breakdown-table">
+                <!-- Component Name -->
+                <ng-container matColumnDef="component_name">
+                    <th mat-header-cell *matHeaderCellDef>Component</th>
+                    <td mat-cell *matCellDef="let row">
+                        <div class="component-cell">
+                            <span class="comp-name">{{ row.component_name }}</span>
+                            <span class="comp-code">{{ row.component_code }}</span>
+                        </div>
+                    </td>
+                </ng-container>
+
+                <!-- Value Type -->
+                <ng-container matColumnDef="value_type">
+                    <th mat-header-cell *matHeaderCellDef>Type</th>
+                    <td mat-cell *matCellDef="let row">
+                        <span class="type-chip" [class]="row.value_type">
+                            @if (row.value_type === 'fixed') { Fixed }
+                            @else if (row.value_type === 'percentage') { {{ row.percentage }}% of Basic }
+                            @else if (row.value_type === 'formula') {
+                            <mat-icon class="formula-icon-sm">functions</mat-icon> Formula
+                            }
+                        </span>
+                    </td>
+                </ng-container>
+
+                <!-- Monthly -->
+                <ng-container matColumnDef="monthly_value">
+                    <th mat-header-cell *matHeaderCellDef>Monthly</th>
+                    <td mat-cell *matCellDef="let row; let i = index">
+                        @if (row.override_allowed && !isViewMode()) {
+                        <mat-form-field appearance="outline" class="inline-field">
+                            <span matPrefix>&#8377;&nbsp;</span>
+                            <input matInput type="number" [value]="row.monthly_value"
+                                (input)="updateEarningOverride(i, 'monthly_value', +$any($event.target).value)">
+                        </mat-form-field>
+                        } @else {
+                        <span class="currency-value">{{ formatCurrency(row.monthly_value) }}</span>
+                        }
+                    </td>
+                </ng-container>
+
+                <!-- Annual -->
+                <ng-container matColumnDef="annual_value">
+                    <th mat-header-cell *matHeaderCellDef>Annual</th>
+                    <td mat-cell *matCellDef="let row">
+                        <span class="currency-value">{{ formatCurrency(row.annual_value) }}</span>
+                    </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="['component_name','value_type','monthly_value','annual_value']">
+                </tr>
+                <tr mat-row
+                    *matRowDef="let row; columns: ['component_name','value_type','monthly_value','annual_value'];">
+                </tr>
+            </table>
+
+            <div class="table-footer">
+                <span class="footer-label">Total Earnings</span>
+                <span class="footer-value">{{ formatCurrency(totalMonthlyEarnings()) }} / mo</span>
+                <span class="footer-value primary">{{ formatCurrency(totalAnnualEarnings()) }} / yr</span>
+            </div>
+        </div>
+        }
+    </div>
+    }
+
+    <!-- ═══ STEP 3 — Deductions ═══ -->
+    @if (activeStep() === 2) {
+    <div class="step-content">
+        <div class="step-title">
+            <mat-icon>trending_down</mat-icon>
+            <span>Deductions Mapping</span>
+        </div>
+
+        @if (deductionsSnapshot().length === 0) {
+        <div class="empty-step">
+            <mat-icon>info</mat-icon>
+            <span>No deductions configured in the selected template.</span>
+        </div>
+        } @else {
+        <div class="deductions-table-wrapper">
+            <table mat-table [dataSource]="deductionsSnapshot()" class="breakdown-table">
+                <!-- Component Name -->
+                <ng-container matColumnDef="component_name">
+                    <th mat-header-cell *matHeaderCellDef>Component</th>
+                    <td mat-cell *matCellDef="let row">
+                        <div class="component-cell">
+                            <span class="comp-name">{{ row.component_name }}</span>
+                            <span class="comp-code">{{ row.component_code }}</span>
+                        </div>
+                    </td>
+                </ng-container>
+
+                <!-- Employer -->
+                <ng-container matColumnDef="employer_contribution">
+                    <th mat-header-cell *matHeaderCellDef>Employer</th>
+                    <td mat-cell *matCellDef="let row">
+                        <span class="currency-value">{{ formatCurrency(row.employer_contribution) }}</span>
+                    </td>
+                </ng-container>
+
+                <!-- Employee -->
+                <ng-container matColumnDef="employee_contribution">
+                    <th mat-header-cell *matHeaderCellDef>Employee</th>
+                    <td mat-cell *matCellDef="let row">
+                        <span class="currency-value">{{ formatCurrency(row.employee_contribution) }}</span>
+                    </td>
+                </ng-container>
+
+                <!-- Monthly -->
+                <ng-container matColumnDef="monthly_value">
+                    <th mat-header-cell *matHeaderCellDef>Monthly</th>
+                    <td mat-cell *matCellDef="let row">
+                        <span class="currency-value">{{ formatCurrency(row.monthly_value) }}</span>
+                    </td>
+                </ng-container>
+
+                <tr mat-header-row
+                    *matHeaderRowDef="['component_name','employer_contribution','employee_contribution','monthly_value']">
+                </tr>
+                <tr mat-row
+                    *matRowDef="let row; columns: ['component_name','employer_contribution','employee_contribution','monthly_value'];">
+                </tr>
+            </table>
+
+            <div class="table-footer deductions">
+                <span class="footer-label">Total Deductions</span>
+                <span class="footer-value danger">{{ formatCurrency(totalMonthlyDeductions()) }} / mo</span>
+            </div>
+        </div>
+        }
+    </div>
+    }
+
+    <!-- ═══ STEP 4 — Preview & Summary ═══ -->
+    @if (activeStep() === 3) {
+    <div class="step-content">
+        <div class="step-title">
+            <mat-icon>preview</mat-icon>
+            <span>{{ isViewMode() ? 'Salary Summary' : 'Preview & Validation' }}</span>
+        </div>
+
+        <!-- Summary Cards -->
+        <div class="summary-cards">
+            <div class="summary-card gross">
+                <div class="summary-icon"><mat-icon>account_balance_wallet</mat-icon></div>
+                <div class="summary-info">
+                    <span class="summary-label">Gross Salary</span>
+                    <span class="summary-value">{{ formatCurrency(totalMonthlyEarnings()) }}</span>
+                    <span class="summary-sub">{{ formatCurrency(totalAnnualEarnings()) }} / year</span>
+                </div>
+            </div>
+            <div class="summary-card deductions">
+                <div class="summary-icon"><mat-icon>remove_circle_outline</mat-icon></div>
+                <div class="summary-info">
+                    <span class="summary-label">Total Deductions</span>
+                    <span class="summary-value">{{ formatCurrency(totalMonthlyDeductions()) }}</span>
+                    <span class="summary-sub">{{ formatCurrency(totalMonthlyDeductions() * 12) }} / year</span>
+                </div>
+            </div>
+            <div class="summary-card net">
+                <div class="summary-icon"><mat-icon>payments</mat-icon></div>
+                <div class="summary-info">
+                    <span class="summary-label">Net Take Home</span>
+                    <span class="summary-value">{{ formatCurrency(netMonthlySalary()) }}</span>
+                    <span class="summary-sub">{{ formatCurrency(netAnnualSalary()) }} / year</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Earnings Detail -->
+        <div class="preview-section">
+            <h4><mat-icon>trending_up</mat-icon> Earnings Summary</h4>
+            <table class="preview-table">
+                <thead>
+                    <tr>
+                        <th>Component</th>
+                        <th>Monthly</th>
+                        <th>Annual</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (e of earningsSnapshot(); track e.component_id) {
+                    <tr>
+                        <td>{{ e.component_name }}</td>
+                        <td>{{ formatCurrency(e.monthly_value) }}</td>
+                        <td>{{ formatCurrency(e.annual_value) }}</td>
+                    </tr>
+                    }
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td><strong>Total Earnings</strong></td>
+                        <td><strong>{{ formatCurrency(totalMonthlyEarnings()) }}</strong></td>
+                        <td><strong>{{ formatCurrency(totalAnnualEarnings()) }}</strong></td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+        <!-- Deductions Detail -->
+        @if (deductionsSnapshot().length > 0) {
+        <div class="preview-section">
+            <h4><mat-icon>trending_down</mat-icon> Deductions Summary</h4>
+            <table class="preview-table">
+                <thead>
+                    <tr>
+                        <th>Component</th>
+                        <th>Monthly</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (d of deductionsSnapshot(); track d.component_id) {
+                    <tr>
+                        <td>{{ d.component_name }}</td>
+                        <td>{{ formatCurrency(d.monthly_value) }}</td>
+                    </tr>
+                    }
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td><strong>Total Deductions</strong></td>
+                        <td><strong>{{ formatCurrency(totalMonthlyDeductions()) }}</strong></td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+        }
+
+        <!-- Final Row -->
+        <div class="final-row">
+            <div class="final-item">
+                <span>Gross</span>
+                <span class="success">{{ formatCurrency(totalMonthlyEarnings()) }}</span>
+            </div>
+            <div class="final-separator">−</div>
+            <div class="final-item">
+                <span>Deductions</span>
+                <span class="danger">{{ formatCurrency(totalMonthlyDeductions()) }}</span>
+            </div>
+            <div class="final-separator">=</div>
+            <div class="final-item highlight">
+                <span>Net Salary</span>
+                <span>{{ formatCurrency(netMonthlySalary()) }}</span>
+            </div>
+        </div>
+    </div>
+    }
+
+</mat-dialog-content>
+
+<!-- ─── Dialog Footer ─── -->
+<mat-dialog-actions class="dialog-footer" align="end">
+    @if (isViewMode()) {
+    <button mat-flat-button (click)="close()">Close</button>
+    } @else {
+    <button mat-stroked-button (click)="close()" [disabled]="loading()">Cancel</button>
+
+    @if (activeStep() > 0) {
+    <button mat-stroked-button (click)="prevStep()" [disabled]="loading()">
+        <mat-icon>arrow_back</mat-icon> Back
+    </button>
+    }
+
+    @if (activeStep() < steps().length - 1) {
+    <button mat-flat-button color="primary" (click)="nextStep()"
+        [disabled]="activeStep() === 0 && !canProceedStep1()">
+        Next <mat-icon>arrow_forward</mat-icon>
+    </button>
+    }
+
+    @if (activeStep() === steps().length - 1) {
+    <button mat-flat-button color="primary" (click)="onSubmit()" [disabled]="loading()">
+        @if (loading()) {
+        <mat-spinner diameter="20"></mat-spinner>
+        } @else {
+        <ng-container>
+            <mat-icon>check</mat-icon>
+            {{ isReviseMode() ? 'Create Revision' : 'Save Assignment' }}
+        </ng-container>
+        }
+    </button>
+    }
+    }
+</mat-dialog-actions>

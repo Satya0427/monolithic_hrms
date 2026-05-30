@@ -1,0 +1,55 @@
+// Import necessary modules explicitly
+@use '@angular/material' as mat; 
+
+
+// --- 1. Rose & Red Theme (Theme A) ---
+$rose-red-config: (
+  color: (
+    primary:mat.$rose-palette,
+    tertiary: mat.$red-palette,
+    color-scheme: light, 
+  )
+);
+
+// --- 2. Azure & Blue Theme (Theme B) ---
+$azure-blue-config: (
+  color: (
+    primary: mat.$azure-palette,
+    tertiary: mat.$blue-palette,
+    color-scheme: light, 
+  )
+);
+
+// --- 3. Magenta & Violet Theme (Theme C) ---
+$magenta-violet-config: (
+  color: (
+    primary: mat.$magenta-palette,
+    tertiary:mat.$violet-palette,
+    color-scheme: light, 
+  )
+);
+
+// --- 4. Cyan & Orange Theme (Theme D - Dark) ---
+$cyan-orange-config: (
+  color: (
+    primary:mat.$cyan-palette,
+    tertiary: mat.$orange-palette,
+    color-scheme: dark, 
+  )
+);
+
+.rose-red-theme {
+  @include mat.theme($rose-red-config);
+}
+
+.azure-blue-theme {
+  @include mat.theme($azure-blue-config);
+}
+
+.magenta-violet-theme {
+  @include mat.theme($magenta-violet-config);
+}
+
+.cyan-orange-theme {
+  @include mat.theme($cyan-orange-config);
+}

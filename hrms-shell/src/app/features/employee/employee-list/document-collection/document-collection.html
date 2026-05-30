@@ -1,0 +1,125 @@
+<div class="page-container">
+    <div class="section-header">
+        <h3>Employee Documents</h3>
+
+        <div class="header-actions">
+            <mat-form-field appearance="outline" class="doc-type-select">
+                <mat-label>Document Type</mat-label>
+                <mat-select [ngModel]="selectedDocType()" (ngModelChange)="selectedDocType.set($event)">
+                    @for (type of docTypes(); track type) {
+                    <mat-option [value]="type.docType">{{ type.docName }}</mat-option>
+                    }
+                </mat-select>
+            </mat-form-field>
+            <button mat-stroked-button color="primary" (click)="addNewDocument()" [disabled]="!selectedDocType()">
+                <mat-icon>add</mat-icon> Add Document
+            </button>
+        </div>
+    </div>
+
+    <div class="grid-layout">
+
+        @for (doc of documents(); track doc.key; let i = $index) {
+
+        <mat-card class="doc-card">
+            <div class="card-content-row">
+
+                <!-- LEFT: Image Preview -->
+                <div class="visual-side" (click)="onCardClick(doc, i)">
+                    @if (doc.uploadedFile) {
+                    <img [src]="doc.previewUrl" alt="Doc Preview">
+                    }
+                    <!-- @else if (doc.uploadedFile) {
+                    <div class="pdf-placeholder">
+                        <mat-icon class="pdf-icon">picture_as_pdf</mat-icon>
+                        <span>PDF</span>
+                    </div>
+                    } -->
+                    @else {
+                    <!-- Fallback if no file uploaded yet, but card exists -->
+                    <div class="no-file-placeholder">
+                        <mat-icon>cloud_upload</mat-icon>
+                        <span>Upload</span>
+                    </div>
+                    }
+                </div>
+
+                <!-- RIGHT: Dynamic Fields -->
+                <div class="details-side">
+
+                    <!-- Header: Title & Actions -->
+                    <div class="header-row">
+                        <h4 class="doc-title">
+                            {{ doc.name }}
+                            @if(doc.required) { <span class="req-star">*</span> }
+                        </h4>
+                        <div class="actions">
+                            <button mat-icon-button color="primary" (click)="onCardClick(doc, i)"
+                                matTooltip="Edit / Upload">
+                                <mat-icon>edit</mat-icon>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- FLEXIBLE FIELD GRID -->
+                    <!-- This grid adapts to however many fields you add inside it -->
+                    <div class="info-grid">
+
+                        <!-- Field 1: Document Number -->
+                        <div class="info-item">
+                            <span class="label">Document ID</span>
+                            <span class="value">{{ doc.docNumber || '-' }}</span>
+                        </div>
+
+                        <!-- Field 2: Date of Birth (Conditional) -->
+                        @if (doc.dob) {
+                        <div class="info-item">
+                            <span class="label">Date of Birth</span>
+                            <span class="value">{{ doc.dob | date:'mediumDate' }}</span>
+                        </div>
+                        }
+
+                        <!-- Field 3: Issue Date (Conditional) -->
+                        @if (doc.issueDate) {
+                        <div class="info-item">
+                            <span class="label">Issued Date</span>
+                            <span class="value">{{ doc.issueDate | date:'mediumDate' }}</span>
+                        </div>
+                        }
+
+                        <!-- Field 4: Expiry Date (Conditional) -->
+                        @if (doc.expiryDate) {
+                        <div class="info-item">
+                            <span class="label">Expiry Date</span>
+                            <span class="value" [class.expired]="isExpired(doc.expiryDate)">
+                                {{ doc.expiryDate | date:'mediumDate' }}
+                            </span>
+                        </div>
+                        }
+
+                        <!-- Field 5: File Name -->
+                        <div class="info-item full-width-mobile">
+                            <span class="label">File Name</span>
+                            <span class="value filename" [matTooltip]="doc.fileName || ''">
+                                {{ doc.fileName || 'No file uploaded' }}
+                            </span>
+                        </div>
+
+                    </div>
+
+                    <!-- Footer Status -->
+                    <div class="status-badge" [class.pending]="!doc.uploadedFile">
+                        @if(doc.uploadedFile) {
+                        <mat-icon>check_circle</mat-icon> Uploaded
+                        } @else {
+                        <mat-icon>pending</mat-icon> Pending
+                        }
+                    </div>
+
+                </div>
+            </div>
+        </mat-card>
+        }
+
+    </div>
+</div>
