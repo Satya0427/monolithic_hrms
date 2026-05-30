@@ -1,0 +1,90 @@
+<div class="page-container">
+
+  <!-- Header -->
+  <div class="page-header">
+    <div>
+      <h1>Usage & Limits</h1>
+      <p class="page-subtitle">
+        Monitor usage for Spryple Technologies
+      </p>
+    </div>
+
+    <!-- Back button (required) -->
+    <button mat-stroked-button class="back-btn" routerLink="/home/paltform-management/orginization/orginization-list">
+      Back
+    </button>
+  </div>
+
+  <!-- Overview Cards -->
+  <div class="overview-grid">
+
+    <mat-card class="card">
+      <h3>Employees</h3>
+      <p class="value">245 / 300</p>
+      <mat-progress-bar
+        mode="determinate"
+        value="82">
+      </mat-progress-bar>
+      <span class="meta">82% used</span>
+    </mat-card>
+
+    <mat-card class="card">
+      <h3>Active Users</h3>
+      <p class="value">198</p>
+      <span class="meta">Currently logged users</span>
+    </mat-card>
+
+    <mat-card class="card">
+      <h3>Storage</h3>
+      <p class="value">18 GB / 50 GB</p>
+      <mat-progress-bar
+        mode="determinate"
+        value="36">
+      </mat-progress-bar>
+      <span class="meta">36% used</span>
+    </mat-card>
+
+    <mat-card class="card">
+      <h3>Subscription</h3>
+      <p class="value">Enterprise</p>
+      <span class="meta">Renews on 30 Apr 2026</span>
+    </mat-card>
+
+  </div>
+
+  <!-- Module Usage -->
+  <mat-card class="card module-usage-card">
+    <h3>Module Usage</h3>
+
+    <table class="usage-table">
+      <thead>
+        <tr>
+          <th>Module</th>
+          <th>Status</th>
+          <th>Usage</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr>
+          <td>Recruitment</td>
+          <td><span class="status-chip active">Enabled</span></td>
+          <td>128 Candidates</td>
+        </tr>
+        <tr>
+          <td>Attendance</td>
+          <td><span class="status-chip active">Enabled</span></td>
+          <td>Daily Tracking</td>
+        </tr>
+        <tr>
+          <td>Payroll</td>
+          <td><span class="status-chip active">Enabled</span></td>
+          <td>Monthly Runs</td>
+        </tr>
+        <tr>
+          <td>Performance</td>
+          <td><span class="status-chip inactive">Disabled</span></td>
+          <td>—</td>
+        </tr>
+      </tbody>
+    </table>

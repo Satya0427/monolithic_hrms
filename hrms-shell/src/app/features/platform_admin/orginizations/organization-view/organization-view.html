@@ -1,0 +1,158 @@
+<div class="page-container">
+
+  <!-- Header -->
+  <div class="page-header">
+    <div class="title-section">
+      <h1>{{ organizationData()?.organization?.name }}</h1>
+
+      <div class="meta-row">
+        <span class="meta-item">
+          <mat-icon>business</mat-icon>
+          {{ organizationData()?.organization?.industry }}
+        </span>
+
+        <span class="meta-item">
+          <mat-icon>public</mat-icon>
+          {{ organizationData()?.organization?.country }}
+        </span>
+
+        <span class="status-chip" [ngClass]="organizationData()?.lifecycle?.status?.toLowerCase()">
+          {{ organizationData()?.lifecycle?.status }}
+        </span>
+      </div>
+    </div>
+
+    <!-- Back button (ONLY when required) -->
+    <button mat-stroked-button class="back-btn" routerLink="/home/paltform-management/orginization/orginization-list">
+      Back to List
+    </button>
+  </div>
+
+  <!-- Main Content -->
+  <div class="content-grid">
+
+    <!-- Left Section -->
+    <div class="left-section">
+
+      <!-- Organization Overview -->
+      <mat-card class="card">
+        <h3>Organization Overview</h3>
+
+        <div class="info-grid">
+          <div>
+            <label>Subscription Plan</label>
+            <p>{{ organizationData()?.subscription?.plan_name }}</p>
+          </div>
+
+          <div>
+            <label>Employee Size</label>
+            <p>{{ organizationData()?.organization?.company_size }} / {{ organizationData()?.subscription?.employee_limit }}</p>
+          </div>
+
+          <div>
+            <label>Trial Status</label>
+            <p>{{ organizationData()?.subscription?.trial_status }}</p>
+          </div>
+
+          <div>
+            <label>Created On</label>
+            <p>{{ organizationData()?.lifecycle?.created_on }}</p>
+          </div>
+        </div>
+
+        <mat-divider></mat-divider>
+
+        <div class="section">
+          <h4>Domain</h4>
+          <p class="muted">
+            {{ organizationData()?.organization?.domain }}
+          </p>
+        </div>
+
+        <div class="section">
+          <h4>Enabled Modules</h4>
+          <div class="chip-group">
+            @for (module of organizationData()?.subscription?.enabled_modules; track $index) {
+              <span class="module-chip">{{ module }}</span>
+            }
+          </div>
+        </div>
+      </mat-card>
+
+      <!-- Global Admin -->
+      <mat-card class="card">
+        <h3>Global Admin</h3>
+
+        <div class="info-grid">
+          <div>
+            <label>Name</label>
+            <p>{{ organizationData()?.global_admin?.name }}</p>
+          </div>
+
+          <div>
+            <label>Email</label>
+            <p>{{ organizationData()?.global_admin?.email }}</p>
+          </div>
+
+          <div>
+            <label>Last Login</label>
+            <p>{{ organizationData()?.global_admin?.last_login }}</p>
+          </div>
+        </div>
+      </mat-card>
+    </div>
+
+    <!-- Right Section -->
+    <div class="right-section">
+
+      <!-- Status Timeline -->
+      <mat-card class="card">
+        <h3>Organization Lifecycle</h3>
+
+        <div class="timeline">
+          <div class="timeline-item completed">
+            <span class="dot"></span>
+            <div>
+              <strong>Created</strong>
+              <p>{{ organizationData()?.lifecycle?.created_on }}</p>
+            </div>
+          </div>
+
+          <div class="timeline-item completed">
+            <span class="dot"></span>
+            <div>
+              <strong>Trial Started</strong>
+              <p>{{ organizationData()?.lifecycle?.trial_started_on }}</p>
+            </div>
+          </div>
+
+          <div class="timeline-item active">
+            <span class="dot"></span>
+            <div>
+              <strong>{{ organizationData()?.lifecycle?.status }}</strong>
+              <p>Subscription Enabled</p>
+            </div>
+          </div>
+        </div>
+      </mat-card>
+
+      <!-- Actions -->
+      <mat-card class="card actions-card">
+        <h3>Actions</h3>
+        
+        <button mat-stroked-button color="warn" routerLink="/home/paltform-management/orginization/orginization-usage">
+          View Usage & Limits
+        </button>
+
+        <button mat-stroked-button [routerLink]="['/home/paltform-management/orginization/orginization-create',orgId]">
+          Edit Orginization
+        </button>
+
+        <button mat-stroked-button color="warn" (click)="openSuspendDialog()">
+          Suspend Organization
+        </button>
+      </mat-card>
+    </div>
+
+  </div>
+</div>

@@ -1,0 +1,32 @@
+<div class="dashboard-container">
+
+    <!-- Page Header -->
+    <div class="dashboard-header">
+        <div>
+            <h1>Platform Dashboard</h1>
+            <p class="subtitle">
+                Overview of platform performance and system health
+            </p>
+        </div>
+    </div>
+
+    <!-- KPI CARDS -->
+    <app-platform-kpi-cards></app-platform-kpi-cards>
+
+    <!-- MAIN DASHBOARD SECTIONS -->
+    <div class="section-grid">
+
+        <!-- LEFT COLUMN -->
+        <div class="left-column">
+            <app-platform-usage-overview></app-platform-usage-overview>
+            <app-platform-revenue-snapshot></app-platform-revenue-snapshot>
+        </div>
+
+        <!-- RIGHT COLUMN -->
+        <div class="right-column">
+            <app-platform-system-health></app-platform-system-health>
+        </div>
+
+    </div>
+
+</div>

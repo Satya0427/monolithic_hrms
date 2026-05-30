@@ -1,0 +1,36 @@
+<mat-card class="revenue-card">
+
+    <div class="header">
+        <h3>Revenue Snapshot</h3>
+        <span class="growth">
+            {{ revenue.growth }} MoM
+        </span>
+    </div>
+
+    <!-- REVENUE SUMMARY -->
+    <div class="revenue-grid">
+        <div>
+            <label>MRR</label>
+            <p>{{ revenue.mrr }}</p>
+        </div>
+
+        <div>
+            <label>ARR</label>
+            <p>{{ revenue.arr }}</p>
+        </div>
+    </div>
+
+    <!-- PLAN DISTRIBUTION -->
+    <div class="plan-section">
+        <h4>Plan Distribution</h4>
+
+        @for (plan of plans; track plan.name) {
+        <div class="plan-row">
+            <span>{{ plan.name }}</span>
+            <strong>{{ plan.count }}</strong>
+        </div>
+        }
+
+    </div>
+
+</mat-card>

@@ -1,0 +1,243 @@
+<div class="page-container">
+
+    <!-- Header -->
+    <div class="page-header">
+        <div>
+            <h1>Create Subscription Plan</h1>
+            <p class="page-subtitle">
+                Define pricing, limits, and available modules
+            </p>
+        </div>
+
+        <!-- Back button (required) -->
+        <button mat-stroked-button class="back-btn" routerLink="/home/paltform-management/subscription-plan/subscription-plan-list">
+            Back
+        </button>
+    </div>
+
+    <mat-card class="card">
+        <form [formGroup]="planForm">
+            <mat-tab-group>
+
+                <!-- TAB 1: Basic Info -->
+                <mat-tab label="Basic Info">
+                    <div class="tab-content">
+
+                        <div class="form-grid">
+                            <mat-form-field appearance="outline" class="full-width">
+                                <mat-label>Plan Name <span class="required">*</span></mat-label>
+                                <input matInput formControlName="name" placeholder="e.g., Standard, Premium" />
+                                @if (planForm.get('name')?.hasError('required')) {
+                                <mat-error>
+                                    Plan name is required
+                                </mat-error>
+                                }
+                                @if (planForm.get('name')?.hasError('minlength')) {
+                                <mat-error>
+                                    Plan name must be at least 3 characters
+                                </mat-error>
+                                }
+                                @if (!planForm.get('name')?.value) {
+                                <mat-hint>Enter a descriptive plan name</mat-hint>
+                                }
+                            </mat-form-field>
+
+                            <mat-form-field appearance="outline" class="full-width">
+                                <mat-label>Plan Code <span class="required">*</span></mat-label>
+                                <input matInput formControlName="plan_code" placeholder="e.g., STANDARD, PREMIUM" />
+                                @if (planForm.get('plan_code')?.hasError('required')) {
+                                <mat-error>
+                                    Plan code is required
+                                </mat-error>
+                                }
+                                @if (planForm.get('plan_code')?.hasError('pattern')) {
+                                <mat-error>
+                                    Plan code must be uppercase alphanumeric (A-Z, 0-9, _)
+                                </mat-error>
+                                }
+                                <mat-hint>Unique identifier for the plan (e.g., STANDARD_PLAN)</mat-hint>
+                            </mat-form-field>
+                        </div>
+
+                    </div>
+                </mat-tab>
+
+                <!-- TAB 2: Pricing -->
+                <mat-tab label="Pricing">
+                    <div class="tab-content">
+
+                        <div class="form-grid">
+                            <mat-form-field appearance="outline" class="full-width">
+                                <mat-label>Monthly Price (₹) <span class="required">*</span></mat-label>
+                                <input matInput type="number" formControlName="monthlyPrice" min="0"
+                                    placeholder="e.g., 999" />
+                                @if (planForm.get('monthlyPrice')?.hasError('required')) {
+                                <mat-error>
+                                    Monthly price is required
+                                </mat-error>
+                                }
+                                @if (planForm.get('monthlyPrice')?.hasError('min')) {
+                                <mat-error>
+                                    Monthly price must be greater than 0
+                                </mat-error>
+                                }
+                                @if (planForm.get('monthlyPrice')?.value) {
+                                <mat-hint>
+                                    Monthly: ₹{{ planForm.get('monthlyPrice')?.value | number }}
+                                </mat-hint>
+                                }
+                            </mat-form-field>
+
+                            <mat-form-field appearance="outline" class="full-width">
+                                <mat-label>Yearly Price (₹) <span class="required">*</span></mat-label>
+                                <input matInput type="number" formControlName="yearlyPrice" min="0"
+                                    placeholder="e.g., 9999" />
+                                @if (planForm.get('yearlyPrice')?.hasError('required')) {
+                                <mat-error>
+                                    Yearly price is required
+                                </mat-error>
+                                }
+                                @if (planForm.get('yearlyPrice')?.hasError('min')) {
+                                <mat-error>
+                                    Yearly price must be greater than 0
+                                </mat-error>
+                                }
+                                @if (planForm.get('yearlyPrice')?.value) {
+                                <mat-hint>
+                                    Yearly: ₹{{ planForm.get('yearlyPrice')?.value | number }}
+                                </mat-hint>
+                                }
+                            </mat-form-field>
+                        </div>
+
+                        <!-- Pricing comparison -->
+                        @if (planForm.get('monthlyPrice')?.value && planForm.get('yearlyPrice')?.value) {
+                        <div class="pricing-info">
+                            <p><strong>Savings:</strong> ₹{{ (planForm.get('monthlyPrice')?.value * 12 -
+                                planForm.get('yearlyPrice')?.value) | number }} per year</p>
+                        </div>
+                        }
+
+                    </div>
+                </mat-tab>
+
+                <!-- TAB 3: Limits -->
+                <mat-tab label="Limits">
+                    <div class="tab-content">
+
+                        <div class="form-grid">
+                            <mat-form-field appearance="outline" class="full-width">
+                                <mat-label>Employee Limit <span class="required">*</span></mat-label>
+                                <input matInput type="number" formControlName="employeeLimit" min="0"
+                                    placeholder="e.g., 500" />
+                                @if (planForm.get('employeeLimit')?.hasError('required')) {
+                                <mat-error>
+                                    Employee limit is required
+                                </mat-error>
+                                }
+                                @if (planForm.get('employeeLimit')?.hasError('min')) {
+                                <mat-error>
+                                    Employee limit must be greater than 0
+                                </mat-error>
+                                }
+                                @if (planForm.get('employeeLimit')?.value) {
+                                <mat-hint>
+                                    Up to {{ planForm.get('employeeLimit')?.value | number }} employees
+                                </mat-hint>
+                                }
+                            </mat-form-field>
+
+                            <mat-form-field appearance="outline" class="full-width">
+                                <mat-label>Storage Limit (GB) <span class="required">*</span></mat-label>
+                                <input matInput type="number" formControlName="storageLimit" min="0"
+                                    placeholder="e.g., 100" />
+                                @if (planForm.get('storageLimit')?.hasError('required')) {
+                                <mat-error>
+                                    Storage limit is required
+                                </mat-error>
+                                }
+                                @if (planForm.get('storageLimit')?.hasError('min')) {
+                                <mat-error>
+                                    Storage limit must be greater than 0
+                                </mat-error>
+                                }
+                                @if (planForm.get('storageLimit')?.value) {
+                                <mat-hint>
+                                    {{ planForm.get('storageLimit')?.value | number }} GB storage
+                                </mat-hint>
+                                }
+                            </mat-form-field>
+                        </div>
+
+                    </div>
+                </mat-tab>
+
+                <!-- TAB 4: Modules -->
+                <mat-tab label="Modules">
+                    <div class="tab-content modules-list" [formGroup]="modules">
+
+                        <div class="module-item">
+                            <mat-checkbox formControlName="recruitment">
+                                <span class="module-name">Recruitment</span><br>
+                                <span class="module-desc">Manage job postings and candidates</span>
+                            </mat-checkbox>
+                        </div>
+
+                        <div class="module-item">
+                            <mat-checkbox formControlName="onboarding">
+                                <span class="module-name">Onboarding</span><br>
+                                <span class="module-desc">Employee onboarding workflows</span>
+                            </mat-checkbox>
+                        </div>
+
+                        <div class="module-item">
+                            <mat-checkbox formControlName="payroll">
+                                <span class="module-name">Payroll</span><br>
+                                <span class="module-desc">Salary processing and management</span>
+                            </mat-checkbox>
+                        </div>
+
+                        <div class="module-item">
+                            <mat-checkbox formControlName="performance">
+                                <span class="module-name">Performance</span><br>
+                                <span class="module-desc">Performance reviews and appraisals</span>
+                            </mat-checkbox>
+                        </div>
+
+                        <div class="module-item">
+                            <mat-checkbox formControlName="learning">
+                                <span class="module-name">Learning</span><br>
+                                <span class="module-desc">Training and development management</span>
+                            </mat-checkbox>
+                        </div>
+
+                        @if (!isAtLeastOneModuleSelected() && modules.touched) {
+                        <p class="required-hint">
+                            <mat-icon>info</mat-icon>
+                            Please select at least one module
+                        </p>
+                        }
+
+                    </div>
+                </mat-tab>
+
+            </mat-tab-group>
+        </form>
+    </mat-card>
+
+    <!-- ACTIONS -->
+    <div class="action-bar">
+        <button mat-stroked-button (click)="resetForm()">
+            Reset
+        </button>
+
+        <button mat-stroked-button routerLink="/home/paltform-management/subscription-plan/subscription-plan-list">
+            Cancel
+        </button>
+
+        <button mat-flat-button color="primary" (click)="createPlan()">
+            <!-- <mat-spinner diameter="20" *ngIf="isLoading()"></mat-spinner> -->
+            <span>Create Plan</span>
+        </button>
+    </div>
+</div>

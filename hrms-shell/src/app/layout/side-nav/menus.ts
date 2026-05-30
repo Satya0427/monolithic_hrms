@@ -265,12 +265,12 @@ export const MODULE_FEATURES = [
         active: false,
         expanded: false,
         subItems: [
-            { label: 'Platform Dashboard', route: '/home/platform-management/dashboard', key: 'PLATFORM_DASHBOARD', active: false },
-            { label: 'Organizations', route: '/home/platform-management/orginization', key: 'ORGANIZATIONS', active: false },
-            { label: 'Global Admin Users', route: '/home/platform-management/global-admin', key: 'GLOBAL_ADMIN_USERS', active: false },
-            { label: 'Subscription & Plans', route: '/home/platform-management/subscription-plans', key: 'SUBSCRIPTION_PLANS', active: false },
-            { label: 'Module & Feature Management', route: '/home/platform-management/module-feature-management', key: 'MODULE_FEATURE_MANAGEMENT', active: false },
-            { label: 'Usage & Limits', route: '/home/platform-management/usage-limits', key: 'USAGE_LIMITS', active: false }
+            { label: 'Platform Dashboard', route: '/home/platform-admin-module/platform-dashboard', key: 'PLATFORM_DASHBOARD', active: false },
+            { label: 'Organizations', route: '/home/platform-admin-module/orginization', key: 'ORGANIZATIONS', active: false },
+            { label: 'Global Admin Users', route: '/home/platform-admin-module/global-admin', key: 'GLOBAL_ADMIN_USERS', active: false },
+            { label: 'Subscription & Plans', route: '/home/platform-admin-module/subscription-plan', key: 'SUBSCRIPTION_PLANS', active: false },
+            { label: 'Module & Feature Management', route: '/home/platform-admin-module/module-featurs-management', key: 'MODULE_FEATURE_MANAGEMENT', active: false },
+            { label: 'Usage & Limits', route: '/home/platform-admin-module/usage-limit', key: 'USAGE_LIMITS', active: false }
         ]
     },
 

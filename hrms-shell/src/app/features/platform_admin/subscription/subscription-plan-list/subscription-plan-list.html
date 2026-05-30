@@ -1,0 +1,104 @@
+<div class="page-container">
+
+    <!-- Header -->
+    <div class="page-header">
+        <div>
+            <h1>Subscription Plans</h1>
+            <p class="page-subtitle">
+                Manage pricing plans and feature availability
+            </p>
+        </div>
+
+        <button mat-flat-button color="primary"
+            routerLink="/home/paltform-management/subscription-plan/subscription-plan-create">
+            <mat-icon>add</mat-icon>
+            Create Plan
+        </button>
+    </div>
+
+    <!-- Plans Table -->
+    <div class="table-container mat-elevation-z1">
+        <table mat-table [dataSource]="plans_data">
+
+            <!-- Name -->
+            <ng-container matColumnDef="plan_name">
+                <th mat-header-cell *matHeaderCellDef> Plan Name </th>
+                <td mat-cell *matCellDef="let plan">
+                    <strong>{{ plan.plan_name }}</strong>
+                </td>
+            </ng-container>
+
+            <!-- Pricing -->
+            <ng-container matColumnDef="yearly_price">
+                <th mat-header-cell *matHeaderCellDef> Yearly Pricing </th>
+                <td mat-cell *matCellDef="let plan">
+                    <ng-container *ngIf="plan.yearly_price; else custom">
+                        ₹{{ plan.monthly_price }} / mo<br />
+                        <span class="muted">₹{{ plan.yearly_price }} / yr</span>
+                    </ng-container>
+                    <ng-template #custom>
+                        <span class="custom">Custom</span>
+                    </ng-template>
+                </td>
+            </ng-container>
+
+            <!-- Employees -->
+            <ng-container matColumnDef="employee_size">
+                <th mat-header-cell *matHeaderCellDef> Employees Size</th>
+                <td mat-cell *matCellDef="let plan">
+                    {{ plan.employee_size }}
+                </td>
+            </ng-container>
+
+            <!-- Status -->
+            <ng-container matColumnDef="status">
+                <th mat-header-cell *matHeaderCellDef> Status </th>
+                <td mat-cell *matCellDef="let plan">
+                    <span class="status-chip" [ngClass]="plan.status">
+                        {{ plan.status }}
+                    </span>
+                </td>
+            </ng-container>
+
+            <!-- Created -->
+            <ng-container matColumnDef="created_on">
+                <th mat-header-cell *matHeaderCellDef> Created On </th>
+                <td mat-cell *matCellDef="let plan">
+                    {{ plan.created_on | date:'dd MMM yyyy' }}
+                </td>
+            </ng-container>
+
+            <!-- Actions -->
+            <ng-container matColumnDef="actions">
+                <th mat-header-cell *matHeaderCellDef> Actions </th>
+                <td mat-cell *matCellDef="let plan">
+
+                    <button mat-icon-button
+                        [routerLink]="['../subscription-plan-view', plan.id]">
+                        <mat-icon>visibility</mat-icon>
+                    </button>
+
+                    <button mat-icon-button
+                        [routerLink]="['../subscription-plan-edit', plan.id]">
+                        <mat-icon>edit</mat-icon>
+                    </button>
+
+                    <button mat-icon-button (click)="openStatusDialog(plan)">
+                        <mat-icon>
+                            {{ plan.status
+                            ? 'pause_circle'
+                            : 'play_circle' }}
+                        </mat-icon>
+                    </button>
+
+
+                </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+        </table>
+    </div>
+
+</div>

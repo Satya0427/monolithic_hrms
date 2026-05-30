@@ -1,0 +1,54 @@
+.revenue-card {
+    padding: 16px;
+    border-radius: 16px;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+
+    h3 {
+        margin: 0;
+        font-size: 16px;
+        font-weight: 600;
+    }
+    .growth {
+        font-size: 13px;
+        color: #2e7d32;
+        font-weight: 500;
+    }
+}
+
+.revenue-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin-bottom: 20px;
+    label {
+        font-size: 12px;
+        color: rgba(0, 0, 0, 0.55);
+    }
+    p {
+        margin: 4px 0 0;
+        font-size: 22px;
+        font-weight: 600;
+    }
+}
+
+.plan-section {
+    h4 {
+        margin: 0 0 12px;
+        font-size: 14px;
+        font-weight: 600;
+    }
+}
+
+.plan-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    font-size: 13px;
+    border-bottom: 1px dashed #e0e0e0;
+}

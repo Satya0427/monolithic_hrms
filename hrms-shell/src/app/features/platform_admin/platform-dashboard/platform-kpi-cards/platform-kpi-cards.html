@@ -1,0 +1,20 @@
+<div class="kpi-grid">
+
+    @for (kpi of kpis; track kpi.label) {
+    <mat-card class="kpi-card">
+
+        <div class="kpi-header">
+            <mat-icon>{{ kpi.icon }}</mat-icon>
+            <span class="label">{{ kpi.label }}</span>
+        </div>
+
+        <h2 [class.healthy]="kpi.status === 'healthy'">
+            {{ kpi.value }}
+        </h2>
+
+        <span class="hint">{{ kpi.hint }}</span>
+
+    </mat-card>
+    }
+
+</div>

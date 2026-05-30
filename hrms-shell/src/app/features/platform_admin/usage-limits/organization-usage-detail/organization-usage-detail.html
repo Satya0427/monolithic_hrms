@@ -1,0 +1,96 @@
+<div class="page-container">
+
+  <!-- Header -->
+  <div class="page-header">
+    <div>
+      <h1>{{ organization.name }}</h1>
+      <p class="subtitle">
+        Usage details and consumption metrics
+      </p>
+    </div>
+
+    <!-- Back button (required) -->
+    <button mat-stroked-button class="back-btn" routerLink="../usage-limit-overview">
+      Back
+    </button>
+  </div>
+
+  <!-- ORG OVERVIEW -->
+  <mat-card class="card">
+    <h3>Organization Overview</h3>
+
+    <div class="overview-grid">
+      <div>
+        <label>Plan</label>
+        <p>{{ organization.plan }}</p>
+      </div>
+
+      <div>
+        <label>Status</label>
+        <p>{{ organization.status }}</p>
+      </div>
+
+      <div>
+        <label>Created On</label>
+        <p>{{ organization.createdOn }}</p>
+      </div>
+    </div>
+  </mat-card>
+
+  <!-- LIMITS -->
+  <mat-card class="card">
+    <h3>Usage vs Limits</h3>
+
+    <div class="limit-block">
+      <div class="limit-header">
+        <span>Employees</span>
+        <strong>
+          {{ limits.employees.used }} /
+          {{ limits.employees.limit }}
+        </strong>
+      </div>
+
+      <mat-progress-bar
+        mode="determinate"
+        [value]="(limits.employees.used / limits.employees.limit) * 100">
+      </mat-progress-bar>
+    </div>
+
+    <div class="limit-block">
+      <div class="limit-header">
+        <span>Storage (GB)</span>
+        <strong>
+          {{ limits.storage.used }} /
+          {{ limits.storage.limit }}
+        </strong>
+      </div>
+
+      <mat-progress-bar
+        mode="determinate"
+        [value]="(limits.storage.used / limits.storage.limit) * 100">
+      </mat-progress-bar>
+    </div>
+  </mat-card>
+
+  <!-- MODULE USAGE -->
+  <mat-card class="card">
+    <h3>Module Usage</h3>
+
+    @for (module of modules; track module.name) {
+      <div class="module-row">
+
+        <div class="module-header">
+          <span>{{ module.name }}</span>
+          <strong>{{ module.usage }}%</strong>
+        </div>
+
+        <mat-progress-bar
+          mode="determinate"
+          [value]="module.usage">
+        </mat-progress-bar>
+
+      </div>
+    }
+  </mat-card>
+
+</div>

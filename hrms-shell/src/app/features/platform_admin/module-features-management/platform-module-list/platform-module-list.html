@@ -1,0 +1,86 @@
+<div class="page-container">
+
+    <!-- Header -->
+    <div class="page-header">
+        <div>
+            <h1>Platform Modules</h1>
+            <p class="page-subtitle">
+                Manage system-level modules and features
+            </p>
+        </div>
+
+        <button mat-flat-button color="primary" routerLink="../platform-module-create">
+            <mat-icon>add</mat-icon>
+            Create Module
+        </button>
+    </div>
+
+    <!-- Modules Table -->
+    <div class="table-container mat-elevation-z1">
+        <table mat-table [dataSource]="modules">
+
+            <!-- Name -->
+            <ng-container matColumnDef="name">
+                <th mat-header-cell *matHeaderCellDef> Module Name </th>
+                <td mat-cell *matCellDef="let module">
+                    <strong>{{ module.name }}</strong>
+                </td>
+            </ng-container>
+
+            <!-- Code -->
+            <ng-container matColumnDef="code">
+                <th mat-header-cell *matHeaderCellDef> Code </th>
+                <td mat-cell *matCellDef="let module">
+                    {{ module.code }}
+                </td>
+            </ng-container>
+
+            <!-- Features -->
+            <ng-container matColumnDef="features">
+                <th mat-header-cell *matHeaderCellDef> Features </th>
+                <td mat-cell *matCellDef="let module">
+                    {{ module.features }}
+                </td>
+            </ng-container>
+
+            <!-- Status -->
+            <ng-container matColumnDef="status">
+                <th mat-header-cell *matHeaderCellDef> Status </th>
+                <td mat-cell *matCellDef="let module">
+                    <span class="status-chip" [ngClass]="module.status.toLowerCase()">
+                        {{ module.status }}
+                    </span>
+                </td>
+            </ng-container>
+
+            <!-- Actions -->
+            <ng-container matColumnDef="actions">
+                <th mat-header-cell *matHeaderCellDef> Actions </th>
+                <td mat-cell *matCellDef="let module">
+
+                    <button mat-icon-button routerLink="../platform-module-view">
+                        <mat-icon>visibility</mat-icon>
+                    </button>
+
+                    <button mat-icon-button routerLink="../platform-module-edit">
+                        <mat-icon>edit</mat-icon>
+                    </button>
+
+                    <button mat-icon-button>
+                        <mat-icon>
+                            {{ module.status === 'Enabled'
+                            ? 'toggle_on'
+                            : 'toggle_off' }}
+                        </mat-icon>
+                    </button>
+
+                </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+        </table>
+    </div>
+
+</div>

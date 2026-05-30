@@ -1,0 +1,40 @@
+<mat-card class="usage-card">
+
+    <div class="header">
+        <h3>Usage Overview</h3>
+        <span class="sub">
+            {{ stats.activeOrgs }} of {{ stats.totalOrgs }} organizations active
+        </span>
+    </div>
+
+    <!-- ORG SUMMARY -->
+    <div class="org-summary">
+        <div>
+            <label>Total Organizations</label>
+            <p>{{ stats.totalOrgs }}</p>
+        </div>
+
+        <div>
+            <label>Active Organizations</label>
+            <p>{{ stats.activeOrgs }}</p>
+        </div>
+    </div>
+
+    <!-- MODULE USAGE -->
+    <div class="module-usage">
+        <h4>Module Adoption</h4>
+
+        <div class="module-row" *ngFor="let module of modules">
+
+            <div class="module-info">
+                <span>{{ module.name }}</span>
+                <span class="percent">{{ module.usage }}%</span>
+            </div>
+
+            <mat-progress-bar mode="determinate" [value]="module.usage">
+            </mat-progress-bar>
+
+        </div>
+    </div>
+
+</mat-card>

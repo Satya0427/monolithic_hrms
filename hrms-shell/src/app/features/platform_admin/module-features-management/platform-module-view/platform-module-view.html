@@ -1,0 +1,92 @@
+<div class="page-container">
+
+    <!-- Header -->
+    <div class="page-header">
+        <div>
+            <h1>{{ module.name }}</h1>
+
+            <div class="meta-row">
+                <span class="code">
+                    Code: {{ module.code }}
+                </span>
+
+                <span class="status-chip" [ngClass]="module.status.toLowerCase()">
+                    {{ module.status }}
+                </span>
+            </div>
+        </div>
+
+        <!-- Back button (required) -->
+        <button mat-stroked-button class="back-btn" routerLink="../platform-module-list">
+            Back
+        </button>
+    </div>
+
+    <div class="content-grid">
+
+        <!-- LEFT -->
+        <div>
+            <mat-card class="card">
+                <h3>Module Information</h3>
+
+                <div class="info-grid">
+                    <div>
+                        <label>Description</label>
+                        <p>{{ module.description }}</p>
+                    </div>
+
+                    <div>
+                        <label>Created On</label>
+                        <p>{{ module.createdOn }}</p>
+                    </div>
+                </div>
+            </mat-card>
+        </div>
+
+        <!-- RIGHT -->
+        <div>
+            <mat-card class="card">
+                <h3>Actions</h3>
+
+                <button mat-stroked-button>
+                    Edit Module
+                </button>
+
+                <button mat-stroked-button color="warn">
+                    {{ module.status === 'Enabled'
+                    ? 'Disable Module'
+                    : 'Enable Module' }}
+                </button>
+            </mat-card>
+        </div>
+
+    </div>
+
+    <!-- FEATURES -->
+    <mat-card class="card">
+        <h3>Features</h3>
+
+        <table class="feature-table">
+            <thead>
+                <tr>
+                    <th>Feature Name</th>
+                    <th>Code</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <tr *ngFor="let feature of module.features">
+                    <td>{{ feature.name }}</td>
+                    <td class="muted">{{ feature.code }}</td>
+                    <td>
+                        <span class="status-chip" [ngClass]="feature.status.toLowerCase()">
+                            {{ feature.status }}
+                        </span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </mat-card>
+
+</div>

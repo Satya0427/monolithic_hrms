@@ -1,0 +1,36 @@
+<mat-card class="health-card">
+
+    <div class="header">
+        <h3>System Health</h3>
+        <span class="overall healthy">
+            All systems operational
+        </span>
+    </div>
+
+    <div class="service-list">
+
+        @for (service of services; track service.name) {
+        <div class="service-row">
+
+            <div class="service-info">
+                <mat-icon [ngClass]="service.status.toLowerCase()">
+                    @if (service.status === 'Healthy') {
+                    check_circle
+                    } @else {
+                    warning
+                    }
+                </mat-icon>
+
+                <span>{{ service.name }}</span>
+            </div>
+
+            <span class="status" [ngClass]="service.status.toLowerCase()">
+                {{ service.status }}
+            </span>
+
+        </div>
+        }
+
+    </div>
+
+</mat-card>

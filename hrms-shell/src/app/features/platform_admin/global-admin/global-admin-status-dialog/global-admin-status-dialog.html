@@ -1,0 +1,43 @@
+<h2 mat-dialog-title>
+  {{ data.status === 'deactivate'
+      ? 'Deactivate Global Admin'
+      : 'Activate Global Admin' }}
+</h2>
+
+<mat-dialog-content>
+
+  <p class="description">
+    Are you sure you want to
+    <strong>{{ data.status }}</strong>
+    <strong>{{ data.adminName }}</strong>?
+  </p>
+
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Reason</mat-label>
+    <textarea
+      matInput
+      rows="3"
+      placeholder="Provide a reason for this action"
+      [(ngModel)]="reason">
+    </textarea>
+  </mat-form-field>
+
+  <mat-hint *ngIf="data.status === 'deactivate'">
+    This user will lose access to the organization.
+  </mat-hint>
+
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-stroked-button (click)="cancel()">
+    Cancel
+  </button>
+
+  <button
+    mat-flat-button
+    [color]="data.status === 'deactivate' ? 'warn' : 'primary'"
+    [disabled]="!reason"
+    (click)="confirm()">
+    Confirm
+  </button>
+</mat-dialog-actions>

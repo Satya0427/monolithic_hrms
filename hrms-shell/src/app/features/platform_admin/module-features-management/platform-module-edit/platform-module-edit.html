@@ -1,0 +1,99 @@
+<div class="page-container">
+
+    <!-- Header -->
+    <div class="page-header">
+        <div>
+            <h1>Edit Module</h1>
+            <p class="page-subtitle">
+                Changes affect all subscription plans
+            </p>
+        </div>
+
+        <!-- Back button (required) -->
+        <button mat-stroked-button class="back-btn">
+            Back
+        </button>
+    </div>
+
+    <!-- MODULE IDENTITY (LOCKED) -->
+    <mat-card class="card">
+        <h3>Module Identity</h3>
+
+        <div class="form-grid">
+            <mat-form-field appearance="outline">
+                <mat-label>Module Name</mat-label>
+                <input matInput [value]="module.name" disabled />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+                <mat-label>Module Code</mat-label>
+                <input matInput [value]="module.code" disabled />
+            </mat-form-field>
+        </div>
+    </mat-card>
+
+    <!-- MODULE CONFIG -->
+    <mat-card class="card">
+        <h3>Module Configuration</h3>
+
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Description</mat-label>
+            <textarea matInput rows="3" [(ngModel)]="module.description">
+      </textarea>
+        </mat-form-field>
+
+        <mat-checkbox [(ngModel)]="module.enabled">
+            Module Enabled
+        </mat-checkbox>
+
+        <p class="warning">
+            Disabling this module will hide it from all subscription plans.
+        </p>
+    </mat-card>
+
+    <!-- FEATURES -->
+    <mat-card class="card">
+        <div class="feature-header">
+            <h3>Features</h3>
+
+            <button mat-stroked-button color="primary" (click)="addFeature()">
+                <mat-icon>add</mat-icon>
+                Add Feature
+            </button>
+        </div>
+
+        <div class="feature-row" *ngFor="let feature of module.features; let i = index">
+
+            <mat-form-field appearance="outline">
+                <mat-label>Feature Name</mat-label>
+                <input matInput [(ngModel)]="feature.name" />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+                <mat-label>Feature Code</mat-label>
+                <input matInput [(ngModel)]="feature.code" />
+            </mat-form-field>
+
+            <mat-checkbox [(ngModel)]="feature.enabled">
+                Enabled
+            </mat-checkbox>
+
+            <button mat-icon-button color="warn" (click)="removeFeature(i)">
+                <mat-icon>delete</mat-icon>
+            </button>
+        </div>
+
+    </mat-card>
+
+    <!-- ACTIONS -->
+    <div class="action-bar">
+        <button mat-stroked-button>
+            Cancel
+        </button>
+
+        <button mat-flat-button color="primary">
+            Save Changes
+        </button>
+    </div>
+
+</div>

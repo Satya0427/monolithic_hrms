@@ -1,0 +1,52 @@
+.page-container {
+    padding: 20px;
+}
+
+.page-header {
+    margin-bottom: 16px;
+
+    h1 {
+        margin: 0;
+        font-size: 22px;
+        font-weight: 600;
+    }
+
+    .subtitle {
+        font-size: 13px;
+        color: rgba(0, 0, 0, 0.6);
+    }
+}
+
+.table-card {
+    border-radius: 14px;
+    padding: 0;
+    overflow: hidden;
+}
+
+mat-progress-bar {
+    margin-top: 6px;
+    height: 6px;
+    border-radius: 4px;
+}
+
+.status-chip {
+    padding: 4px 10px;
+    border-radius: 14px;
+    font-size: 12px;
+    font-weight: 500;
+
+    &.normal {
+        background: #e8f5e9;
+        color: #2e7d32;
+    }
+
+    &.near-limit {
+        background: #fff8e1;
+        color: #f9a825;
+    }
+
+    &.exceeded {
+        background: #fdecea;
+        color: #c62828;
+    }
+}

@@ -1,0 +1,128 @@
+<div class="page-container">
+
+    <!-- Header -->
+    <div class="page-header">
+        <div>
+            <h1>Create Global Admin</h1>
+            <p class="page-subtitle">
+                Add a primary owner for an organization
+            </p>
+        </div>
+
+        <!-- Back button (required) -->
+        <button mat-stroked-button class="back-btn"
+            routerLink="/home/paltform-management/global-admin/global-admin-list">
+            Back
+        </button>
+    </div>
+
+    <form [formGroup]="adminForm">
+
+        <!-- BASIC DETAILS -->
+        <mat-card class="card">
+            <h3>Admin Details</h3>
+
+            <div class="form-grid">
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Full Name <span class="required">*</span></mat-label>
+                    <input matInput formControlName="name" placeholder="Enter full name" />
+                    @if (adminForm.get('name')?.hasError('required')) {
+                    <mat-error>Full name is required</mat-error>
+                    }
+                    @if (adminForm.get('name')?.hasError('minlength')) {
+                    <mat-error>Name must be at least 2 characters</mat-error>
+                    }
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Email Address <span class="required">*</span></mat-label>
+                    <input matInput formControlName="email" placeholder="Enter email address" />
+                    @if (adminForm.get('email')?.hasError('required')) {
+                    <mat-error>Email is required</mat-error>
+                    }
+                    @if (adminForm.get('email')?.hasError('email')) {
+                    <mat-error>Please enter a valid email address</mat-error>
+                    }
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Mobile Number <span class="required">*</span></mat-label>
+                    <input matInput formControlName="mobile_number" placeholder="+91 XXXXX XXXXX" />
+                    @if (adminForm.get('mobile_number')?.hasError('required')) {
+                    <mat-error>Mobile number is required</mat-error>
+                    }
+                    @if (adminForm.get('mobile_number')?.hasError('pattern')) {
+                    <mat-error>Please enter a valid mobile number</mat-error>
+                    }
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Password <span class="required">*</span></mat-label>
+                    <input matInput type="password" formControlName="password" placeholder="Enter password"
+                        [readonly]="adminId?true:false" />
+                    @if (adminForm.get('password')?.hasError('required')) {
+                    <mat-error>Password is required</mat-error>
+                    }
+                    @if (adminForm.get('password')?.hasError('minlength')) {
+                    <mat-error>Password must be at least 8 characters</mat-error>
+                    }
+                </mat-form-field>
+            </div>
+        </mat-card>
+
+        <!-- ORGANIZATION ASSIGNMENT -->
+        <mat-card class="card">
+            <h3>Organization Assignment</h3>
+
+            <div class="form-grid">
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Select Organization <span class="required">*</span></mat-label>
+                    <mat-select formControlName="organization_id">
+                        <mat-option value="">-- Select Organization --</mat-option>
+                        @for (org of organizations(); track org.id) {
+                        <mat-option [value]="org.id">{{ org.name }}</mat-option>
+                        }
+                    </mat-select>
+                    @if (adminForm.get('organization_id')?.hasError('required')) {
+                    <mat-error>Organization is required</mat-error>
+                    }
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Role</mat-label>
+                    <input matInput value="Global Admin" disabled />
+                </mat-form-field>
+            </div>
+        </mat-card>
+
+        <!-- ACCESS SETTINGS -->
+        <mat-card class="card">
+            <h3>Access & Invitation</h3>
+
+            <mat-checkbox formControlName="send_invitation_email">
+                Send login invitation email
+            </mat-checkbox>
+
+            <p class="hint">
+                An email will be sent to the user with login instructions.
+            </p>
+        </mat-card>
+
+        <!-- ACTIONS -->
+        <div class="action-bar">
+            <button mat-stroked-button type="button" (click)="resetForm()">
+                Reset
+            </button>
+
+            <button mat-stroked-button type="button" (click)="cancel()">
+                Cancel
+            </button>
+
+            <button mat-flat-button color="primary" type="button" (click)="saveAdmin()">
+                <span>{{ adminId ? 'Update Global Admin' : 'Create Global Admin' }}</span>
+            </button>
+        </div>
+
+    </form>
+
+</div>

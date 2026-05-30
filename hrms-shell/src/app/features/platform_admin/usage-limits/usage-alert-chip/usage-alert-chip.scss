@@ -1,0 +1,22 @@
+.usage-chip {
+    padding: 4px 10px;
+    border-radius: 14px;
+    font-size: 12px;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.normal {
+    background: #e8f5e9;
+    color: #2e7d32;
+}
+
+.near-limit {
+    background: #fff8e1;
+    color: #f9a825;
+}
+
+.exceeded {
+    background: #fdecea;
+    color: #c62828;
+}

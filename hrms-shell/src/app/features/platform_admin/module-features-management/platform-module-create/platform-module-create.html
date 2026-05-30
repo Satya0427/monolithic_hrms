@@ -1,0 +1,100 @@
+<div class="page-container">
+
+    <!-- Header -->
+    <div class="page-header">
+        <div>
+            <h1>Create Platform Module</h1>
+            <p class="page-subtitle">
+                Define a system-level module and its features
+            </p>
+        </div>
+
+        <!-- Back button (required) -->
+        <button mat-stroked-button class="back-btn" routerLink="../platform-module-list">
+            Back
+        </button>
+    </div>
+
+    <!-- MODULE DETAILS -->
+    <form [formGroup]="moduleForm">
+        <mat-card class="card">
+            <h3>Module Information</h3>
+
+            <div class="form-grid">
+                <mat-form-field appearance="outline">
+                    <mat-label>Module Name</mat-label>
+                    <input matInput formControlName="name" placeholder="e.g. Recruitment" />
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+                    <mat-label>Module Code</mat-label>
+                    <input matInput formControlName="code" placeholder="RECRUITMENT" />
+                </mat-form-field>
+            </div>
+
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Description</mat-label>
+                <textarea matInput rows="3" formControlName="description"></textarea>
+            </mat-form-field>
+
+            <mat-checkbox formControlName="enabled">
+                Enabled by default
+            </mat-checkbox>
+        </mat-card>
+
+        <!-- FEATURES -->
+        <mat-card class="card">
+            <div class="feature-header">
+                <h3>Features</h3>
+
+                <button mat-stroked-button color="primary" type="button" (click)="addFeature()">
+                    <mat-icon>add</mat-icon>
+                    Add Feature
+                </button>
+            </div>
+
+                <div formArrayName="features">
+                    <div *ngFor="let feature of features.controls; let i = index" [formGroupName]="i" class="feature-row" style="display:flex;align-items:center;gap:12px;flex-wrap:nowrap;">
+                        <div style="flex:1 1 0; min-width:0; display:flex; gap:12px;">
+                            <mat-form-field appearance="outline" style="flex:1 1 0; min-width:0;">
+                                <mat-label>Feature Name</mat-label>
+                                <input matInput formControlName="name" placeholder="Feature Name*" />
+                                <mat-error *ngIf="feature.get('name')?.invalid && feature.get('name')?.touched">Feature name is required</mat-error>
+                            </mat-form-field>
+
+                            <mat-form-field appearance="outline" style="flex:1 1 0; min-width:0;">
+                                <mat-label>Feature Code</mat-label>
+                                <input matInput formControlName="code" placeholder="Feature Code*" />
+                                <mat-error *ngIf="feature.get('code')?.invalid && feature.get('code')?.touched">Feature code is required</mat-error>
+                            </mat-form-field>
+
+                            <mat-form-field appearance="outline" style="flex:1 1 0; min-width:0;">
+                                <mat-label>Feature Route</mat-label>
+                                <input matInput formControlName="route" placeholder="/path/to/feature" />
+                            </mat-form-field>
+                        </div>
+
+                        <div style="display:flex;align-items:center;gap:8px;">
+                            <mat-checkbox formControlName="enabled">Enabled</mat-checkbox>
+                            <button mat-icon-button color="warn" type="button" (click)="removeFeature(i)">
+                                <mat-icon>delete</mat-icon>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+        </mat-card>
+
+        <!-- ACTIONS -->
+        <div class="action-bar">
+            <button mat-stroked-button routerLink="../platform-module-list" type="button">
+                Cancel
+            </button>
+
+            <button mat-flat-button color="primary" type="button" (click)="saveModule()">
+                {{ moduleId ? 'Update Module' : 'Create Module' }}
+            </button>
+        </div>
+    </form>
+
+</div>

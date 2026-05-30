@@ -1,0 +1,304 @@
+<div class="page-container">
+
+    <div class="page-header">
+        <div>
+            <h1>Create Organization</h1>
+            <p class="page-subtitle">
+                Set up a new customer organization and assign subscription
+            </p>
+        </div>
+
+        <!-- Back button (required) -->
+        <button mat-stroked-button class="back-btn"
+            routerLink="/home/paltform-management/orginization/orginization-list">
+            Back
+        </button>
+    </div>
+
+    <mat-card class="stepper-card">
+        <mat-horizontal-stepper linear>
+
+            <!-- STEP 1: Organization Details -->
+            <mat-step label="Organization" [stepControl]="organizationForm">
+                <form [formGroup]="organizationForm">
+                    <div class="form-grid">
+                        <mat-form-field appearance="outline">
+                            <mat-label>Organization Name</mat-label>
+                            <input matInput placeholder="Company legal name" formControlName="organization_name" />
+                            <mat-error *ngIf="organizationForm.get('organization_name')?.hasError('required')">
+                                Organization name is required
+                            </mat-error>
+                            <mat-error *ngIf="organizationForm.get('organization_name')?.hasError('minlength')">
+                                Minimum 3 characters required
+                            </mat-error>
+                        </mat-form-field>
+
+                        <mat-form-field appearance="outline">
+                            <mat-label>Organization Code</mat-label>
+                            <input matInput placeholder="Company Code" formControlName="organization_code" />
+                            <mat-error *ngIf="organizationForm.get('organization_code')?.hasError('required')">
+                                Organization name is required
+                            </mat-error>
+                            <mat-error *ngIf="organizationForm.get('organization_code')?.hasError('minlength')">
+                                Minimum 2 characters required
+                            </mat-error>
+                            <mat-error *ngIf="organizationForm.get('organization_code')?.hasError('maxlength')">
+                                Minimum 5 characters required
+                            </mat-error>
+                        </mat-form-field>
+
+                        <mat-form-field appearance="outline">
+                            <mat-label>Domain</mat-label>
+                            <input matInput placeholder="example.com" formControlName="domain" />
+                            <mat-error *ngIf="organizationForm.get('domain')?.hasError('required')">
+                                Domain is required
+                            </mat-error>
+                        </mat-form-field>
+
+                        <mat-form-field appearance="outline">
+                            <mat-label>Industry</mat-label>
+                            <mat-select formControlName="industry">
+                                <mat-option value="IT / Software">IT / Software</mat-option>
+                                <mat-option value="Finance">Finance</mat-option>
+                                <mat-option value="Manufacturing">Manufacturing</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+
+                        <mat-form-field appearance="outline">
+                            <mat-label>Country</mat-label>
+                            <mat-select formControlName="country">
+                                <mat-option value="India">India</mat-option>
+                                <mat-option value="USA">USA</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+
+                        <mat-form-field appearance="outline">
+                            <mat-label>Company Size</mat-label>
+                            <input matInput type="number" placeholder="Eg: 100" formControlName="company_size" />
+                            <mat-error *ngIf="organizationForm.get('company_size')?.hasError('min')">
+                                Company size must be at least 1
+                            </mat-error>
+                        </mat-form-field>
+
+                        <mat-form-field appearance="outline">
+                            <mat-label>Address</mat-label>
+                            <input matInput placeholder="Eg: Kakinada" formControlName="address" />
+                        </mat-form-field>
+
+                    </div>
+
+                    <div class="step-actions">
+                        <button mat-flat-button color="primary" matStepperNext [disabled]="organizationForm.invalid">
+                            Next
+                        </button>
+                    </div>
+
+                </form>
+            </mat-step>
+
+            <!-- STEP 2: Subscription -->
+            <mat-step label="Subscription">
+                <!-- PLAN SELECTION -->
+                <div class="plan-grid">
+                    @for (plan of plans(); track plan.id) {
+                    <mat-card class="plan-card" [class.selected]="selectedPlanReview.subscription_plan_id === plan.id"
+                        (click)="onPlanSelect(plan)">
+                        <h3>{{ plan.plan_name }}</h3>
+                        <p class="price">
+                            @if (plan.monthly_price) {
+                            ₹{{ plan.monthly_price }} / month
+                            } @else {
+                            Custom
+                            }
+                        </p>
+                        <p class="desc">
+                            Max {{ plan.employee_limit }} employees
+                        </p>
+                    </mat-card>
+                    }
+                </div>
+
+                <mat-divider></mat-divider>
+
+                <!-- PLAN DETAILS -->
+                <form [formGroup]="subscriptionForm">
+                    <div class="form-grid">
+                        <mat-form-field appearance="outline">
+                            <mat-label>Employee Limit</mat-label>
+                            <input matInput type="number" formControlName="employee_limit" readonly />
+                        </mat-form-field>
+                        <mat-form-field appearance="outline">
+                            <mat-label>Trial Period (days)</mat-label>
+                            <input matInput type="number" formControlName="trial_days" placeholder="Eg: 30" />
+                            @if (subscriptionForm.get('trial_days')?.hasError('min')) {
+                            <mat-error>
+                                Trial days must be at least 1
+                            </mat-error>
+                            }
+                        </mat-form-field>
+                    </div>
+
+                </form>
+
+
+                <!-- ACTIONS -->
+                <div class="step-actions">
+                    <button mat-button matStepperPrevious>Back</button>
+                    <button mat-flat-button color="primary" matStepperNext>
+                        Next
+                    </button>
+                </div>
+            </mat-step>
+
+            <!-- STEP 3: Global Admin -->
+            <!-- <mat-step label="Global Admin" [stepControl]="globalAdminForm">
+                <form [formGroup]="globalAdminForm">
+                    <div class="form-grid">
+                        <mat-form-field appearance="outline">
+                            <mat-label>Admin Name</mat-label>
+                            <input matInput formControlName="name" placeholder="Admin full name" />
+                            <mat-error *ngIf="globalAdminForm.get('name')?.hasError('required')">
+                                Admin name is required
+                            </mat-error>
+                        </mat-form-field>
+
+                        <mat-form-field appearance="outline">
+                            <mat-label>Email</mat-label>
+                            <input matInput type="email" formControlName="contact_email"
+                                placeholder="admin@company.com" />
+                            <mat-error *ngIf="globalAdminForm.get('contact_email')?.hasError('required')">
+                                Email is required
+                            </mat-error>
+                            <mat-error *ngIf="globalAdminForm.get('contact_email')?.hasError('email')">
+                                Enter a valid email address
+                            </mat-error>
+                        </mat-form-field>
+
+                        <mat-form-field appearance="outline">
+                            <mat-label>Mobile Number</mat-label>
+                            <input matInput type="tel" formControlName="contact_phone" placeholder="+91XXXXXXXXXX" />
+                        </mat-form-field>
+                    </div>
+                    <mat-hint>
+                        This user will become the primary owner of the organization.
+                    </mat-hint>
+                    <div class="step-actions">
+                        <button mat-button matStepperPrevious>Back</button>
+
+                        <button mat-flat-button color="primary" matStepperNext [disabled]="globalAdminForm.invalid">
+                            Review
+                        </button>
+                    </div>
+                </form>
+            </mat-step> -->
+
+
+            <!-- STEP 4: Review -->
+            <mat-step label="Review & Confirm">
+
+                <div class="review-box">
+
+                    <!-- ORGANIZATION DETAILS -->
+                    <p>
+                        <strong>Organization:</strong>
+                        {{ organizationReview.organization_name }}
+                    </p>
+
+                    <p>
+                        <strong>Domain:</strong>
+                        {{ organizationReview.domain }}
+                    </p>
+
+                    @if (organizationReview.industry) {
+                    <p>
+                        <strong>Industry:</strong>
+                        {{ organizationReview.industry }}
+                    </p>
+                    }
+
+                    @if (organizationReview.country) {
+                    <p>
+                        <strong>Country:</strong>
+                        {{ organizationReview.country }}
+                    </p>
+                    }
+
+                    @if (organizationReview.company_size) {
+                    <p>
+                        <strong>Company Size:</strong>
+                        {{ organizationReview.company_size }}
+                    </p>
+                    }
+
+                    @if (organizationReview.address) {
+                    <p>
+                        <strong>Address:</strong>
+                        {{ organizationReview.address }}
+                    </p>
+                    }
+
+                    <mat-divider></mat-divider>
+
+                    <!-- SUBSCRIPTION DETAILS -->
+                    <p>
+                        <strong>Plan:</strong>
+                        {{ selectedPlanReview.plan_name }}
+                    </p>
+
+                    <p>
+                        <strong>Employee Limit:</strong>
+                        {{ selectedPlanReview.employee_limit }}
+                    </p>
+
+                    @if (selectedPlanReview.trial_days) {
+                    <p>
+                        <strong>Trial Period:</strong>
+                        {{ selectedPlanReview.trial_days }} days
+                    </p>
+                    }
+
+                    <mat-divider></mat-divider>
+
+                    <!-- GLOBAL ADMIN DETAILS -->
+                    <!-- <p>
+                        <strong>Admin Name:</strong>
+                        {{ globalAdminReview.name }}
+                    </p>
+
+                    <p>
+                        <strong>Admin Email:</strong>
+                        {{ globalAdminReview.contact_email }}
+                    </p>
+
+                    @if (globalAdminReview.contact_phone) {
+                    <p>
+                        <strong>Admin Phone:</strong>
+                        {{ globalAdminReview.contact_phone }}
+                    </p>
+                    } -->
+
+                    <mat-divider></mat-divider>
+
+                    <!-- STATUS -->
+                    <p>
+                        <strong>Status:</strong>
+                        Trial
+                    </p>
+
+                </div>
+
+                <div class="step-actions">
+                    <button mat-button matStepperPrevious>Back</button>
+
+                    <button mat-flat-button color="primary" (click)="createOrganization()" [disabled]="organizationForm.invalid
+                || subscriptionForm.invalid">
+                        Create Organization
+                    </button>
+                </div>
+
+            </mat-step>
+
+        </mat-horizontal-stepper>
+    </mat-card>
+
+</div>

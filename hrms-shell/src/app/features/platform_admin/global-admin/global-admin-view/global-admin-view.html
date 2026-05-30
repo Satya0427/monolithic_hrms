@@ -1,0 +1,174 @@
+<div class="page-container">
+
+  <!-- ================= HEADER ================= -->
+  <div class="page-header">
+    <div>
+      <h1>{{ admin_details().name }}</h1>
+
+      <div class="meta-row">
+        <span class="meta-item">
+          <mat-icon>mail</mat-icon>
+          {{ admin_details().email }}
+        </span>
+
+        <span
+          class="status-chip"
+          [ngClass]="admin_details().status?.toLowerCase()">
+          {{ admin_details().status || 'INACTIVE' }}
+        </span>
+      </div>
+    </div>
+
+    <button
+      mat-stroked-button
+      class="back-btn"
+      routerLink="/home/paltform-management/global-admin/global-admin-list">
+      Back
+    </button>
+  </div>
+
+  <!-- ================= CONTENT ================= -->
+  <div class="content-grid">
+
+    <!-- ================= LEFT COLUMN ================= -->
+    <div>
+
+      <!-- BASIC INFO -->
+      <mat-card class="card">
+        <h3>Admin Information</h3>
+
+        <div class="info-grid">
+          <div>
+            <label>Full Name</label>
+            <p>{{ admin_details().name }}</p>
+          </div>
+
+          <div>
+            <label>Email</label>
+            <p>{{ admin_details().email }}</p>
+          </div>
+
+          <div>
+            <label>Phone Number</label>
+            <p>{{ admin_details().phone_number || 'N/A' }}</p>
+          </div>
+
+          <div>
+            <label>User Type</label>
+            <p>{{ admin_details().user_type }}</p>
+          </div>
+
+          <div>
+            <label>Role</label>
+            <p>{{ admin_details().role }}</p>
+          </div>
+        </div>
+      </mat-card>
+
+      <!-- ORGANIZATION INFO -->
+      <mat-card class="card">
+        <h3>Organization</h3>
+
+        <div class="info-grid">
+          <div>
+            <label>Organization ID</label>
+            <p>{{ admin_details().organization_id || 'N/A' }}</p>
+          </div>
+        </div>
+      </mat-card>
+
+      <!-- SECURITY INFO -->
+      <mat-card class="card">
+        <h3>Security Status</h3>
+
+        <div class="info-grid">
+          <div>
+            <label>Email Verified</label>
+            <p>
+              <mat-icon
+                [color]="admin_details().is_email_verified ? 'primary' : 'warn'">
+                {{ admin_details().is_email_verified ? 'check_circle' : 'cancel' }}
+              </mat-icon>
+              {{ admin_details().is_email_verified ? 'Yes' : 'No' }}
+            </p>
+          </div>
+
+          <div>
+            <label>Phone Verified</label>
+            <p>
+              <mat-icon
+                [color]="admin_details().is_phone_verified ? 'primary' : 'warn'">
+                {{ admin_details().is_phone_verified ? 'check_circle' : 'cancel' }}
+              </mat-icon>
+              {{ admin_details().is_phone_verified ? 'Yes' : 'No' }}
+            </p>
+          </div>
+
+          <div>
+            <label>Failed Login Attempts</label>
+            <p>{{ admin_details().failed_login_attempts }}</p>
+          </div>
+        </div>
+      </mat-card>
+
+    </div>
+
+    <!-- ================= RIGHT COLUMN ================= -->
+    <div>
+
+      <!-- ACTIONS -->
+      <mat-card class="card">
+        <h3>Actions</h3>
+
+        <div class="action-stack">
+          <button
+            mat-flat-button
+            color="primary"
+            [routerLink]="[
+              '/home/paltform-management/global-admin/global-admin-edit',
+              admin_details()._id
+            ]">
+            Edit Admin
+          </button>
+
+          <button
+            mat-stroked-button
+            color="warn">
+            {{ admin_details().is_active ? 'Deactivate Admin' : 'Activate Admin' }}
+          </button>
+        </div>
+      </mat-card>
+
+      <!-- AUDIT INFO -->
+      <mat-card class="card">
+        <h3>Audit Information</h3>
+
+        <div class="info-grid">
+          <div>
+            <label>Created On</label>
+            <p>{{ admin_details().createdAt | date:'medium' }}</p>
+          </div>
+
+          <div>
+            <label>Last Updated</label>
+            <p>{{ admin_details().updatedAt | date:'medium' }}</p>
+          </div>
+
+          <div>
+            <label>Account Active</label>
+            <p>
+              <span
+                class="status-chip"
+                [ngClass]="admin_details().is_active ? 'active' : 'inactive'">
+                {{ admin_details().is_active ? 'Active' : 'Inactive' }}
+              </span>
+            </p>
+          </div>
+        </div>
+      </mat-card>
+
+    </div>
+
+  </div>
+
+</div>

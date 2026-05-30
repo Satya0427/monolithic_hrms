@@ -1,0 +1,212 @@
+/* =========================
+   PAGE BACKGROUND
+========================= */
+// .page-container {
+//     padding: 24px;
+//     background: #eef4fb;
+//     /* soft blue */
+//     min-height: 100%;
+// }
+
+/* =========================
+   PAGE HEADER
+========================= */
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 20px 24px;
+    background: #ffffff;
+    border-radius: 16px;
+    margin-bottom: 24px;
+}
+
+.page-header h1 {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 600;
+    color: #1f2937;
+}
+
+/* =========================
+   META ROW
+========================= */
+.meta-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 6px;
+    font-size: 13px;
+    color: #6b7280;
+}
+
+/* =========================
+   ACTIVE PILL
+========================= */
+.status-chip {
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    background: #e6f7ec;
+    color: #15803d;
+}
+
+/* =========================
+   BACK BUTTON
+========================= */
+.back-btn {
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-weight: 500;
+}
+
+/* =========================
+   GRID
+========================= */
+.content-grid {
+    display: grid;
+    grid-template-columns: 2.4fr 1fr;
+    gap: 20px;
+}
+
+/* =========================
+   CARD STYLE (KEY)
+========================= */
+.card {
+    background: #f7f7f9;
+    /* light grey card */
+    border-radius: 18px;
+    padding: 20px;
+    border: 1px solid #e5e7eb;
+}
+
+.card+.card {
+    margin-top: 20px;
+}
+
+.card h3 {
+    margin: 0 0 16px;
+    font-size: 15px;
+    font-weight: 600;
+    color: #111827;
+}
+
+/* =========================
+   INFO GRID
+========================= */
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px 32px;
+}
+
+.info-grid label {
+    font-size: 12px;
+    color: #6b7280;
+}
+
+.info-grid p {
+    margin-top: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #111827;
+}
+
+/* =========================
+   DIVIDER
+========================= */
+.divider {
+    margin: 16px 0;
+    border-top: 1px solid #e5e7eb;
+}
+
+/* =========================
+   MODULE TAGS
+========================= */
+.module-tags {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.module-tags span {
+    padding: 4px 10px;
+    font-size: 11px;
+    border-radius: 999px;
+    background: #eef2ff;
+    color: #1e40af;
+    font-weight: 500;
+}
+
+/* =========================
+   ACTION PANEL
+========================= */
+.card button {
+    width: 100%;
+    border-radius: 999px;
+    margin-top: 10px;
+    font-weight: 600;
+}
+
+/* =========================
+   LIFECYCLE LIST
+========================= */
+.lifecycle {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.lifecycle-item {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+}
+
+.lifecycle-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-top: 6px;
+}
+
+.lifecycle-dot.green {
+    background: #22c55e;
+}
+
+.lifecycle-dot.blue {
+    background: #3b82f6;
+}
+
+.lifecycle-text {
+    font-size: 13px;
+    color: #374151;
+}
+
+.lifecycle-text small {
+    display: block;
+    font-size: 11px;
+    color: #6b7280;
+}
+
+/* =========================
+   RIGHT COLUMN STACK
+========================= */
+.right-column .card+.card {
+    margin-top: 16px;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+@media (max-width: 1024px) {
+    .content-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .page-header {
+        flex-direction: column;
+        gap: 12px;
+    }
+}

@@ -1,0 +1,67 @@
+.health-card {
+    padding: 16px;
+    border-radius: 16px;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+
+    h3 {
+        margin: 0;
+        font-size: 16px;
+        font-weight: 600;
+    }
+
+    .overall {
+        font-size: 13px;
+        font-weight: 500;
+    }
+
+    .healthy {
+        color: #2e7d32;
+    }
+}
+
+.service-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.service-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+}
+
+.service-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    mat-icon {
+        font-size: 18px;
+    }
+    .healthy {
+        color: #2e7d32;
+    }
+    .degraded {
+        color: #f57c00;
+    }
+}
+
+.status {
+    font-weight: 500;
+
+    &.healthy {
+        color: #2e7d32;
+    }
+
+    &.degraded {
+        color: #f57c00;
+    }
+}

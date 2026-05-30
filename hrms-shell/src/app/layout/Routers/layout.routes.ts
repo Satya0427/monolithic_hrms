@@ -14,6 +14,7 @@ export const layoutRoutes: Routes = [
 
             { path: 'payroll-module', loadChildren: () => import('../../features/payroll_module/payroll-module.router').then(m => m.PAYROLL_MODULE_ROUTES) },
             { path: 'requests-module', loadChildren: () => import('../../features/requests/request.router').then(m => m.REQUEST_ROUTER) },
+            {path:'platform-admin-module', loadChildren: () => import('../../features/platform_admin/platform-admin.router').then(m => m.PLATFORM_MANAGEMENT_ROUTES)},
 
             { path: '**', redirectTo: 'employees', },
             { path: '', redirectTo: 'hrms-core', pathMatch: 'full' }
