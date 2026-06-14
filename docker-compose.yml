@@ -10,7 +10,7 @@ services:
     environment:
       MONGO_INITDB_DATABASE: recruitment-hrms
     ports:
-      - "27017:27017"
+      - "2301:27017"
     volumes:
       # Persistent data storage
       - mongo_data:/data/db
@@ -42,7 +42,7 @@ services:
     restart: unless-stopped
     command: redis-server --appendonly yes --loglevel warning
     ports:
-      - "6380:6379"
+      - "2401:6379"
     volumes:
       - redis_data:/data
     networks:
@@ -85,7 +85,7 @@ services:
       REDIS_PASSWORD: ""
 
       # ── CORS ──
-      ALLOWED_DOMINES: '["http://localhost:8080","http://localhost:80","http://localhost:4200","http://frontend"]'
+      ALLOWED_DOMINES: '["http://localhost:2101","http://localhost:8080","http://localhost:80","http://localhost:4200","http://frontend"]'
 
       # ── Token secrets (CHANGE THESE in production!) ──
       ACCESS_TOKEN_SECRET: ${ACCESS_TOKEN_SECRET:-Satya@0427}
@@ -101,7 +101,7 @@ services:
 
       JWT_SECRET: ${JWT_SECRET:-}
     ports:
-      - "4000:4000"
+      - "2201:4000"
     volumes:
       - backend_logs:/app/logs
     networks:
@@ -125,7 +125,7 @@ services:
     depends_on:
       - backend
     ports:
-      - "8080:80"
+      - "2101:80"
     networks:
       - hrms_network
 

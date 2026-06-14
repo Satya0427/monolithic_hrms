@@ -18,7 +18,7 @@ COPY . .
 # Build Angular app in production mode
 # Output goes to dist/Hrms_Shell  (matches angular.json outputPath)
 # SASS_SILENCE_DEPRECATION_WARNINGS suppresses the lighten()/darken() noise
-RUN SASS_SILENCE_DEPRECATION_WARNINGS=1 npm run build -- --configuration production
+RUN SASS_SILENCE_DEPRECATION_WARNINGS=1 npm run build -- --configuration docker
 
 # ─────────────────────────────────────────────
 # Stage 2: SERVE with Nginx

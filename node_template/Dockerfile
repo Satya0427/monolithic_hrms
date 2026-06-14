@@ -6,10 +6,10 @@ FROM node:20-alpine AS builder
 WORKDIR /app
 
 # Copy manifests first for better layer caching
-COPY package.json package-lock.json tsconfig.json ./
+COPY package.json tsconfig.json ./
 
 # Install ALL dependencies (devDeps needed for tsc)
-RUN npm ci
+RUN npm install
 
 # Copy source code
 COPY src ./src
@@ -28,10 +28,10 @@ RUN addgroup -S hrms && adduser -S hrms -G hrms
 WORKDIR /app
 
 # Copy only production dependency manifests
-COPY package.json package-lock.json ./
+COPY package.json ./
 
 # Install ONLY production dependencies
-RUN npm ci --omit=dev && npm cache clean --force
+RUN npm install --omit=dev && npm cache clean --force
 
 # Copy compiled JS from builder stage
 COPY --from=builder /app/dist ./dist

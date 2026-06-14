@@ -30,6 +30,12 @@
 					},
 					"configurations": {
 						"production": {
+							"fileReplacements": [
+								{
+									"replace": "src/environments/environement.ts",
+									"with": "src/environments/environement.prod.ts"
+								}
+							],
 							"budgets": [
 								{
 									"type": "initial",
@@ -45,9 +51,25 @@
 							"outputHashing": "all"
 						},
 						"development": {
+							"fileReplacements": [
+								{
+									"replace": "src/environments/environement.ts",
+									"with": "src/environments/environement.dev.ts"
+								}
+							],
 							"optimization": false,
 							"extractLicenses": false,
 							"sourceMap": true
+						},
+						"docker": {
+							"fileReplacements": [
+								{
+									"replace": "src/environments/environement.ts",
+									"with": "src/environments/environement.docker.ts"
+								}
+							],
+							"optimization": true,
+							"outputHashing": "all"
 						}
 					},
 					"defaultConfiguration": "production"
