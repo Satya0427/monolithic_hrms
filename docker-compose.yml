@@ -85,7 +85,7 @@ services:
       REDIS_PASSWORD: ""
 
       # ── CORS ──
-      ALLOWED_DOMINES: '["http://localhost:2101","http://localhost:8080","http://localhost:80","http://localhost:4200","http://frontend"]'
+      ALLOWED_DOMINES: '["http://localhost:2101","http://100.100.56.54:2101""http://localhost:8080","http://localhost:80","http://localhost:4200","http://frontend"]'
 
       # ── Token secrets (CHANGE THESE in production!) ──
       ACCESS_TOKEN_SECRET: ${ACCESS_TOKEN_SECRET:-Satya@0427}
