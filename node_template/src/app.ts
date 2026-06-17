@@ -12,6 +12,7 @@ const app: Express = express();
 app.use(express.urlencoded({ extended: true }));  // This is used for to understand the request body in urlencoded format
 
 let allowedOrigins: string[] = [
+    "http://100.100.56.54:4101",
     "http://localhost:4201",
     "http://localhost:4200",
     "http://192.168.0.8:4201",
